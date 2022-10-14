@@ -8,18 +8,15 @@
 int main() {
 
     trans t{};
-    t.translationX = 0;
-    t.translationY = 0;
-    t.translationZ = 0;
+    t.translation = Vec3(0, 0, 0);
 
     Transformation transformationSphere(t);
 
     Sphere newSphere(transformationSphere);
 
-    Ray eyeRay(10, 10, 10, -1, -1, -1);
+    Ray eyeRay(Vec3(10, 10, 10), Vec3(-1, -1, -1));
 
     Collision c = newSphere.checkCollision(eyeRay);
-
 
     return 0;
 }

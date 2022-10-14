@@ -1,7 +1,7 @@
 #include "Shape.h"
-#include <iostream>
 
-Shape::Shape(Transformation t) {
-    this->t = t;
-    std::cout << "Base shape class generated"<< std::endl;
+Shape::Shape(Transformation t) : t(t) { }
+
+const Transformation &Shape::getT() const {
+    return t;
 }

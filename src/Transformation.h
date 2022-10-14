@@ -1,9 +1,12 @@
 #ifndef RAYTRACER_TRANSFORMATION_H
 #define RAYTRACER_TRANSFORMATION_H
+
+#include "Vec3.h"
+
 struct trans{
-    double translationX, translationY, translationZ;
-    //double scaleX, scaleY, scaleZ;
-    //double rotationX, rotationY, rotationZ;
+    Vec3 translation;
+    //Vec3 scale;
+    //Vec3 rotation;
 };
 
 class Transformation {

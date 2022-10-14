@@ -2,11 +2,13 @@
 
 Collision Sphere::checkCollision(Ray r) {
     // Inverse transform the ray
+    trans inverseT = this->getT().getInverseTransformation();
+    Vec3 newRayStart = r.getStartPoint()+inverseT.translation;
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
-    double A = pow(r.getVx(), 2) + pow(r.getVy(), 2) + pow(r.getVz(), 2);
-    double B = 2.0 * (r.getX() * r.getVx() + r.getY() * r.getVy() + r.getZ() * r.getVz());
-    double C = pow(r.getX(), 2) + pow(r.getY(), 2) + pow(r.getZ(), 2) - 1;
+    double A = Vec3::dot(r.getDirectionVector(), r.getDirectionVector());
+    double B = 2.0 * Vec3::dot(newRayStart, r.getDirectionVector());
+    double C = Vec3::dot(newRayStart, newRayStart) - 1;
 
     // Discriminant
     double D = pow(B, 2)-4*A*C;
@@ -23,7 +25,7 @@ Collision Sphere::checkCollision(Ray r) {
 
     // Check for color
 
-    return {r.getX()+ r.getVx() * t, r.getY() + r.getVy() * t, r.getZ() + r.getVz() * t, t, 0, 0, 0};
+    return {r.getStartPoint()+(r.getDirectionVector()*t), t, 0, 0, 0};
 }
 
 Sphere::Sphere(const Transformation &t) : Shape(t) {}

@@ -2,6 +2,7 @@
 #define RAYTRACER_SPHERE_H
 
 #include "Shape.h"
+#include "Vec3.h"
 #include <cmath>
 
 class Sphere: public Shape{

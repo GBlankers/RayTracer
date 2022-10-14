@@ -9,8 +9,10 @@ class Shape {
 private:
     Transformation t;
 public:
-    Shape(Transformation t);
+    explicit Shape(Transformation t);
     virtual Collision checkCollision(Ray r) = 0;
+
+    const Transformation &getT() const;
 };
 
 

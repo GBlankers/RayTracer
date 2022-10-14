@@ -1,26 +1,18 @@
 #ifndef RAYTRACER_RAY_H
 #define RAYTRACER_RAY_H
 
+#include "Vec3.h"
+
 class Ray {
 private:
-    double x,y,z; // Starting point
-    double vx,vy,vz; // Direction
-    int reflectionNr; // How many reflections have been made
+    Vec3 startPoint; // Starting point
+    Vec3 directionVector; // Direction
 public:
-    Ray(int x, int y, int z, double vx, double vy, double vz, int reflectionNr);
-    Ray(int x, int y, int z, double vx, double vy, double vz);
+    Ray(Vec3 start, Vec3 direction);
 
-    double getX() const;
+    const Vec3 &getStartPoint() const;
 
-    double getY() const;
-
-    double getZ() const;
-
-    double getVx() const;
-
-    double getVy() const;
-
-    double getVz() const;
+    const Vec3 &getDirectionVector() const;
 };
 
 #endif //RAYTRACER_RAY_H
