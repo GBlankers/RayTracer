@@ -9,7 +9,6 @@ private:
     Matrix4 forward;
     Matrix4 inverse;
     bool firstTransformation = true;
-//TODO: if not first transformation -> combine matrices
 public:
     explicit Transformation() = default;
     void addTranslation(double x, double y, double z);

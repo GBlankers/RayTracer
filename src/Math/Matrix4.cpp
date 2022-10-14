@@ -31,7 +31,8 @@ Vec4 Matrix4::operator*(Vec4 vectorToTransform) const {
 }
 
 Matrix4 Matrix4::operator*(Matrix4 otherMatrix) const {
-    double multi[4][4];
+    double multi[4][4] = {{0,0,0,0}, {0,0,0,0}, {0,0,0,0},
+                          {0,0,0,0}};
     for(int i = 0; i < 4; ++i)
         for(int j = 0; j < 4; ++j)
             for(int k = 0; k < 4; ++k)

@@ -1,5 +1,5 @@
 #include "Sphere.h"
-
+// TODO: FIX
 Collision Sphere::checkCollision(Ray r) {
     // Inverse transform the ray
     trans inverseT = this->getT().getInverseTransformation();

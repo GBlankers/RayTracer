@@ -2,7 +2,7 @@
 
 //#include "src/Sphere.h"
 //#include "src/Ray.h"
-//#include "src/Transformation.h"
+#include "src/Transformation.h"
 //#include "src/Collision.h"
 #include "src/settings.h"
 #include "src/Math/Matrix4.h"
@@ -96,6 +96,9 @@ int main(int argc, char** argv) {
 //
 //    glutMainLoop();
 
+    Transformation t;
+    t.addScaling(3, 4, 5);
+    t.addTranslation(7, 8, 9);
 
     return 0;
 }
