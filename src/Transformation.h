@@ -1,27 +1,19 @@
 #ifndef RAYTRACER_TRANSFORMATION_H
 #define RAYTRACER_TRANSFORMATION_H
 
-#include "Vec3.h"
-
-struct trans{
-    Vec3 translation;
-    //Vec3 scale;
-    //Vec3 rotation;
-};
+#include "Math/Vec4.h"
+#include "Math/Matrix4.h"
 
 class Transformation {
 private:
-    trans forwardTransformation{};
-    trans inverseTransformation{};
+    Matrix4 forward;
+    Matrix4 inverse;
+    bool firstTransformation = true;
+//TODO: if not first transformation -> combine matrices
 public:
-    explicit Transformation(trans forwardTransformation);
-
-    Transformation();
-
-    void calculateInverseTransformation();
-
-    const trans &getInverseTransformation() const;
-    const trans &getForwardTransformation() const;
+    explicit Transformation() = default;
+    void addTranslation(double x, double y, double z);
+    void addScaling(double sx, double sy, double sz);
 };
 
 

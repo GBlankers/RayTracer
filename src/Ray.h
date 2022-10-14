@@ -1,18 +1,22 @@
 #ifndef RAYTRACER_RAY_H
 #define RAYTRACER_RAY_H
 
-#include "Vec3.h"
+#include "Math/Vec4.h"
 
 class Ray {
 private:
-    Vec3 startPoint; // Starting point
-    Vec3 directionVector; // Direction
+    Vec4 startPoint; // Starting point
+    Vec4 directionVector; // Direction
 public:
-    Ray(Vec3 start, Vec3 direction);
+    Ray(Vec4 start, Vec4 direction);
 
-    const Vec3 &getStartPoint() const;
+    void setStartPoint(const Vec4 &startPoint);
 
-    const Vec3 &getDirectionVector() const;
+    void setDirectionVector(const Vec4 &directionVector);
+
+    const Vec4 &getStartPoint() const;
+
+    const Vec4 &getDirectionVector() const;
 };
 
 #endif //RAYTRACER_RAY_H

@@ -1,22 +1,22 @@
 #include "Transformation.h"
 
-const trans &Transformation::getForwardTransformation() const {
-    return forwardTransformation;
+void Transformation::addTranslation(double x, double y, double z) {
+    if(firstTransformation){
+        this->forward.addTranslation(x, y, z);
+        this->inverse.addTranslation(-x, -y, -z);
+        firstTransformation = false;
+    } else {
+        Matrix4 tempForward;
+        Matrix4 tempInverse;
+        tempForward.addTranslation(x, y, z);
+        tempInverse.addTranslation(-x, -y, -z);
+        this->forward = tempForward*this->forward;
+        this->inverse = tempInverse* this->inverse;
+    }
+
 }
 
-const trans &Transformation::getInverseTransformation() const {
-    return inverseTransformation;
+void Transformation::addScaling(double sx, double sy, double sz) {
+    this->forward.addScaling(sx, sy, sz);
+    this->inverse.addScaling(1/sx, 1/sy, 1/sz);
 }
-
-Transformation::Transformation(trans forwardTransformation) : forwardTransformation(forwardTransformation){
-    this->calculateInverseTransformation();
-}
-
-void Transformation::calculateInverseTransformation() {
-    this->inverseTransformation.translation.setX(-this->forwardTransformation.translation.getX());
-    this->inverseTransformation.translation.setY(-this->forwardTransformation.translation.getY());
-    this->inverseTransformation.translation.setZ(-this->forwardTransformation.translation.getZ());
-    // TODO: Add rotation and scaling
-}
-
-Transformation::Transformation() = default;
