@@ -11,7 +11,6 @@ private:
 public:
     explicit Shape(Transformation t);
     virtual Collision checkCollision(Ray r) = 0;
-
     const Transformation &getT() const;
 };
 

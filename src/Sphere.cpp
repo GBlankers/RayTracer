@@ -1,15 +1,14 @@
 #include "Sphere.h"
-// TODO: FIX
+
 Collision Sphere::checkCollision(Ray r) {
     // Inverse transform the ray
-    trans inverseT = this->getT().getInverseTransformation();
-    Vec4 newRayStart = r.getStartPoint() + inverseT.translation;
-    Vec4 newRayDirection = r.getDirectionVector().pointMultiplication(inverseT.scale);
+    Matrix4 inverse = this->getT().getInverse();
+    r.transform(inverse);
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
-    double A = Vec4::dot(newRayDirection, newRayDirection);
-    double B = 2.0 * Vec4::dot(newRayStart, newRayDirection);
-    double C = Vec4::dot(newRayStart, newRayStart) - 1;
+    double A = Vec4::dot(r.getDirectionVector(), r.getDirectionVector());
+    double B = 2.0 * Vec4::dot(r.getStartPoint(), r.getDirectionVector());
+    double C = Vec4::dot(r.getStartPoint(), r.getStartPoint()) - 1;
 
     // Discriminant
     double D = pow(B, 2)-4*A*C;

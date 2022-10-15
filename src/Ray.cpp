@@ -17,3 +17,8 @@ void Ray::setStartPoint(const Vec4 &startPoint) {
 void Ray::setDirectionVector(const Vec4 &directionVector) {
     Ray::directionVector = directionVector;
 }
+
+void Ray::transform(Matrix4 trans) {
+    this->startPoint = trans * this->startPoint;
+    this->directionVector = trans * this->directionVector;
+}
