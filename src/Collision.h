@@ -12,6 +12,8 @@ private:
 public:
     Collision(Vec4 collisionPoint, double t, double r, double g, double b);
 
+    Collision();
+
     double getT() const;
 };
 

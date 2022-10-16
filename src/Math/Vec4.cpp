@@ -46,4 +46,15 @@ int Vec4::getHomogeneous() const {
     return homogeneous;
 }
 
+bool Vec4::operator==(const Vec4 &rhs) const {
+    return x == rhs.x &&
+           y == rhs.y &&
+           z == rhs.z &&
+           homogeneous == rhs.homogeneous;
+}
+
+bool Vec4::operator!=(const Vec4 &rhs) const {
+    return !(rhs == *this);
+}
+
 Vec4::Vec4() = default;

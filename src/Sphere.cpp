@@ -27,4 +27,4 @@ Collision Sphere::checkCollision(Ray r) {
     return {r.getStartPoint()+(r.getDirectionVector()*t), t, 0, 0, 0};
 }
 
-Sphere::Sphere(const Transformation &t) : Shape(t) {}
+Sphere::Sphere(const Transformation &t, double r, double g, double b) : Shape(t, r, g, b) {}

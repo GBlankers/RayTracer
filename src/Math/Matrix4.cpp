@@ -18,12 +18,12 @@ void Matrix4::addScaling(double Sx, double Sy, double Sz) {
 
 Vec4 Matrix4::operator*(Vec4 vectorToTransform) const {
     double vector[4] = {vectorToTransform.getX(), vectorToTransform.getY(), vectorToTransform.getZ(), (double)vectorToTransform.getHomogeneous()};
-    double transformed[4];
-    double temp;
+    double transformed[4] = {0.0,0.0,0.0,0.0};
+    double temp, v, m;
     for(int i = 0; i<4; i++){
         temp = 0.0;
         for(int j = 0; j<4;j++){
-            temp += vector[i]*matrix[i][j];
+            temp += vector[j]*matrix[i][j];
         }
         transformed[i] = temp;
     }
@@ -50,3 +50,13 @@ Matrix4::Matrix4(double (*newMatrix)[4]){
     }
 }
 
+bool Matrix4::operator==(const Matrix4 &rhs) const {
+    for(int i = 0; i<4; i++){
+        for(int j = 0; j<4; j++){
+            if(this->matrix[i][j] != rhs.matrix[i][j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}

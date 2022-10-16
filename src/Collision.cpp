@@ -6,3 +6,5 @@ Collision::Collision(Vec4 collisionPoint, double t, double r, double g, double b
 double Collision::getT() const {
     return t;
 }
+
+Collision::Collision() {}

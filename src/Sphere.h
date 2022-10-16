@@ -7,7 +7,7 @@
 
 class Sphere: public Shape{
 public:
-    explicit Sphere(const Transformation &t);
+    explicit Sphere(const Transformation &t, double r, double g, double b);
 
     Collision checkCollision(Ray r) override;
 };

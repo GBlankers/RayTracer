@@ -5,7 +5,7 @@
 class Vec4 {
 private:
     double x, y, z;
-    int homogeneous;
+    int homogeneous; // 1 if it is a point, 0 if it is a vector
 public:
     Vec4(double x, double y, double z, int homogeneous);
 
@@ -20,6 +20,10 @@ public:
     Vec4 pointMultiplication(Vec4 vector2) const;
 
     static double dot(Vec4 vector1, Vec4 vector2);
+
+    bool operator==(const Vec4 &rhs) const;
+
+    bool operator!=(const Vec4 &rhs) const;
 
     // Basic get/set
     double getX() const;
