@@ -41,7 +41,6 @@ void testMatrixMatrixMulti(){
     assert(multi2==expected2);
 }
 
-
 int main(){
     testVectorMatrixMulti();
     testMatrixMatrixMulti();

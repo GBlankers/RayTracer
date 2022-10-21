@@ -10,12 +10,12 @@ const Vec4 &Ray::getDirectionVector() const {
     return directionVector;
 }
 
-void Ray::setStartPoint(const Vec4 &startPoint) {
-    Ray::startPoint = startPoint;
+void Ray::setStartPoint(const Vec4 &startPointArg) {
+    Ray::startPoint = startPointArg;
 }
 
-void Ray::setDirectionVector(const Vec4 &directionVector) {
-    Ray::directionVector = directionVector;
+void Ray::setDirectionVector(const Vec4 &directionVectorArg) {
+    Ray::directionVector = directionVectorArg;
 }
 
 void Ray::transform(Matrix4 trans) {

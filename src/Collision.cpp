@@ -7,4 +7,6 @@ double Collision::getT() const {
     return t;
 }
 
-Collision::Collision() {}
+const Vec4 &Collision::getCollisionPoint() const {
+    return collisionPoint;
+}
