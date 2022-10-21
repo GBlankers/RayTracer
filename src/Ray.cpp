@@ -6,6 +6,11 @@ Ray::Ray(Vec4 start, Vec4 screenVector, Vec4 upVector) : startPoint(start), scre
     this->crossVector = Vec4::cross(screenVector, upVector);
 }
 
+Ray::Ray(const Vec4 &startPoint, const Vec4 &directionVector, const Vec4 &screenVector, const Vec4 &upVector)
+        : startPoint(startPoint), directionVector(directionVector), screenVector(screenVector), upVector(upVector) {
+    this->crossVector = Vec4::cross(screenVector, upVector);
+}
+
 const Vec4 &Ray::getStartPoint() const {
     return startPoint;
 }
@@ -22,9 +27,10 @@ void Ray::setDirectionVector(const Vec4 &directionVectorArg) {
     Ray::directionVector = directionVectorArg;
 }
 
-void Ray::transform(Matrix4 trans) {
+Ray Ray::transform(Matrix4 trans) {
     this->startPoint = trans * this->startPoint;
     this->directionVector = trans * this->directionVector;
+    return {trans*this->startPoint, trans* this->directionVector, this->screenVector, this->upVector};
 }
 
 void Ray::setPixel(int distance, int width, int height) {

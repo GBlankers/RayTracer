@@ -15,7 +15,6 @@ public:
     void addScaling(double sx, double sy, double sz);
 
     const Matrix4 &getForward() const;
-
     const Matrix4 &getInverse() const;
 };
 

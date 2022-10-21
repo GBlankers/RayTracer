@@ -15,7 +15,9 @@ public:
     Ray(Vec4 start, Vec4 direction);
     Ray(Vec4 start, Vec4 screenVector, Vec4 upVector);
 
-    void transform(Matrix4 trans);
+    Ray(const Vec4 &startPoint, const Vec4 &directionVector, const Vec4 &screenVector, const Vec4 &upVector);
+
+    Ray transform(Matrix4 trans);
 
     void setStartPoint(const Vec4 &startPoint);
     void setDirectionVector(const Vec4 &directionVector);

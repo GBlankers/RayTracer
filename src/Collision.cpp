@@ -10,3 +10,15 @@ double Collision::getT() const {
 const Vec4 &Collision::getCollisionPoint() const {
     return collisionPoint;
 }
+
+double Collision::getR() const {
+    return r;
+}
+
+double Collision::getG() const {
+    return g;
+}
+
+double Collision::getB() const {
+    return b;
+}
