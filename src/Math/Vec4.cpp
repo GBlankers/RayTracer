@@ -9,6 +9,10 @@ Vec4 Vec4::operator+(const Vec4 vector) const {
     return {this->x+vector.getX(), this->y+vector.getY(), this->z+vector.getZ(), this->homogeneous+vector.getHomogeneous()};
 }
 
+Vec4 Vec4::operator-(Vec4 vector) const {
+    return {this->x-vector.getX(), this->y-vector.getY(), this->z-vector.getZ(), this->homogeneous-vector.getHomogeneous()};
+}
+
 Vec4 Vec4::operator*(double t) const {
     return {this->x*t, this->y*t, this->z*t, 0};
 }
@@ -24,10 +28,10 @@ bool Vec4::operator!=(const Vec4 &rhs) const {
     return !(rhs == *this);
 }
 
+
 double Vec4::dot(Vec4 vector1, Vec4 vector2) {
     return vector1.getX()*vector2.getX()+vector1.getY()*vector2.getY()+vector1.getZ()*vector2.getZ();
 }
-
 
 // Get/set
 double Vec4::getX() const {
@@ -44,4 +48,9 @@ double Vec4::getZ() const {
 
 int Vec4::getHomogeneous() const {
     return homogeneous;
+}
+
+Vec4 Vec4::cross(Vec4 vector1, Vec4 vector2) {
+    return Vec4((vector1.getY()*vector2.getZ()-vector1.getZ()*vector2.getY()), -(vector1.getX()*vector2.getZ()-vector1.getZ()*vector2.getX()),
+                (vector1.getX()*vector2.getY()-vector1.getY()*vector2.getX()), 0);
 }

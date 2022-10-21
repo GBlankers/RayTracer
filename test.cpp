@@ -41,8 +41,20 @@ void testMatrixMatrixMulti(){
     assert(multi2==expected2);
 }
 
+void testCrossProduct(){
+    Vec4 vec1(1, 0, 0, 0);
+    Vec4 vec2(0, 1, 0, 0);
+
+    Vec4 result;
+    Vec4 expected(0, 0, 1, 0);
+
+    result = Vec4::cross(vec1, vec2);
+    assert(result==expected);
+}
+
 int main(){
     testVectorMatrixMulti();
     testMatrixMatrixMulti();
+    testCrossProduct();
     return 0;
 }
