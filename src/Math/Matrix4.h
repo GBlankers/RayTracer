@@ -2,6 +2,7 @@
 #define RAYTRACER_MATRIX4_H
 
 #include "Vec4.h"
+#include <cmath>
 
 class Matrix4 {
 public:
@@ -13,6 +14,9 @@ public:
     // Add transformations
     void addTranslation(double x, double y, double z);
     void addScaling(double Sx, double Sy, double Sz);
+    void addRotationX(double thetaX);
+    void addRotationY(double thetaY);
+    void addRotationZ(double thetaZ);
     // Operator overloading
     bool operator==(const Matrix4 &rhs) const;
     Vec4 operator*(Vec4 vectorToTransform) const;

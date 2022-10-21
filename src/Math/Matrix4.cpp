@@ -16,6 +16,28 @@ void Matrix4::addScaling(double Sx, double Sy, double Sz) {
     matrix[3][3] = 1;
 }
 
+void Matrix4::addRotationX(double thetaX) {
+    matrix[0][0] = 1;
+    matrix[1][1] = cos(thetaX);
+    matrix[1][2] = sin(thetaX);
+    matrix[2][1] = -1*sin(thetaX);
+    matrix[2][2] = cos(thetaX);
+    matrix[3][3] = 1;
+}
+
+void Matrix4::addRotationY(double thetaY) {
+    matrix[0][0] = cos(thetaY);
+    matrix[1][1] = 1;
+    matrix[0][2] = -1*sin(thetaY);
+    matrix[2][0] = sin(thetaY);
+    matrix[2][2] = cos(thetaY);
+    matrix[3][3] = 1;
+}
+
+void Matrix4::addRotationZ(double thetaZ) {
+
+}
+
 Vec4 Matrix4::operator*(Vec4 vectorToTransform) const {
     double vector[4] = {vectorToTransform.getX(), vectorToTransform.getY(), vectorToTransform.getZ(), (double)vectorToTransform.getHomogeneous()};
     double transformed[4] = {0.0,0.0,0.0,0.0};

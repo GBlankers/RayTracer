@@ -28,6 +28,38 @@ void Transformation::addScaling(double sx, double sy, double sz) {
     }
 }
 
+void Transformation::addRotationX(double thetaX) {
+    Matrix4 temp;
+    if(this->firstTransformation) {
+        this->forward.addRotationX(thetaX);
+        this->inverse.addRotationX(-1*thetaX);
+        this->firstTransformation = false;
+    } else {
+        temp.addRotationX(thetaX);
+        this->forward = temp*this->forward;
+        temp.addRotationX(-thetaX);
+        this->inverse = temp*this->inverse;//*temp;
+    }
+}
+
+void Transformation::addRotationY(double thetaY) {
+    Matrix4 temp;
+    if(this->firstTransformation) {
+        this->forward.addRotationY(thetaY);
+        this->inverse.addRotationY(-1*thetaY);
+        this->firstTransformation = false;
+    } else {
+        temp.addRotationY(thetaY);
+        this->forward = temp*this->forward;
+        temp.addRotationY(-1*thetaY);
+        this->inverse = temp*this->inverse;//*temp;
+    }
+}
+
+void Transformation::addRotationZ(double thetaZ) {
+
+}
+
 const Matrix4 &Transformation::getForward() const {
     return forward;
 }
