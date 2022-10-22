@@ -9,10 +9,10 @@
 
 #include "GL/glut.h"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-#define W ((double)WINDOW_WIDTH/2)
-#define H ((double)WINDOW_HEIGHT/2)
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
+#define W ((double)WINDOW_WIDTH)
+#define H ((double)WINDOW_HEIGHT)
 #define N 300 // Distance to near plane
 
 #define DEG_TO_RADIANS(X) (X*M_PI/180)
@@ -52,15 +52,15 @@ void renderer(){
 
     // Generate sphere
     Transformation t;
-    t.addTranslation(800, 0, 0);
-    t.addScaling(200, 200, 200);
-    //t.addRotationX(DEG_TO_RADIANS(30));
+    t.addScaling(400, 400, 400);
+    t.addRotationX(DEG_TO_RADIANS(30));
     t.addRotationY(DEG_TO_RADIANS(30));
+    t.addTranslation(1600, 0, 0);
 //    Sphere testSphere(t, 1, 1, 0);
-    Transformation t2;
-    t2.addTranslation(600, 200,-250);
-    t2.addScaling(200, 200, 200);
-    Sphere testSphere2(t2, 1, 0, 0);
+//    Transformation t2;
+//    t2.addTranslation(600, 200,-250);
+//    t2.addScaling(200, 200, 200);
+//    Sphere testSphere2(t2, 1, 0, 0);
 //    Transformation t3;
 //    t3.addTranslation(600, 100,100);
 //    t3.addScaling(40, 40, 40);
@@ -68,7 +68,7 @@ void renderer(){
 
     Cube testCube(t, 0, 1, 0);
 
-    int numObjects = 2;
+    int numObjects = 1;
     Shape *scene[numObjects];
     scene[0] = &testCube;
 //    scene[0] = &testSphere;

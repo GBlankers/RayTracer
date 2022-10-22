@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-bool checkInCube(Ray r, double t){
+bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.getStartPoint()+(r.getDirectionVector()*t);
     if (collisionPoint.getX() >= -1 && collisionPoint.getX() <= 1 &&
         collisionPoint.getY() >= -1 && collisionPoint.getY() <= 1 &&
@@ -87,6 +87,16 @@ Collision Cube::checkCollision(Ray r) {
             }
         }
     }
+
+// Try to draw edges of the cube
+//    if(t>-1){
+//        Vec4 pointInObjectSpace = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
+//        if(pointInObjectSpace.getX() == 1 || pointInObjectSpace.getX() == -1 ||
+//           pointInObjectSpace.getY() == 1 || pointInObjectSpace.getY() == -1 ||
+//           pointInObjectSpace.getZ() == 1 || pointInObjectSpace.getZ() == -1){
+//            return {r.getStartPoint()+(r.getDirectionVector()*t), t, 0, 0, 0};
+//        }
+//    }
 
     return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR(), this->getG(), this->getB()};
 }

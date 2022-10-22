@@ -10,7 +10,7 @@ void Transformation::addTranslation(double x, double y, double z) {
         temp.addTranslation(x, y, z);
         this->forward = temp*this->forward;
         temp.addTranslation(-x, -y, -z);
-        this->inverse = temp*this->inverse;//*temp;
+        this->inverse = this->inverse*temp;
     }
 }
 
@@ -24,7 +24,7 @@ void Transformation::addScaling(double sx, double sy, double sz) {
         temp.addScaling(sx, sy, sz);
         this->forward = temp*this->forward;
         temp.addScaling(1/sx, 1/sy, 1/sz);
-        this->inverse = temp*this->inverse;//*temp;
+        this->inverse = this->inverse*temp;
     }
 }
 
@@ -38,7 +38,7 @@ void Transformation::addRotationX(double thetaX) {
         temp.addRotationX(thetaX);
         this->forward = temp*this->forward;
         temp.addRotationX(-thetaX);
-        this->inverse = temp*this->inverse;//*temp;
+        this->inverse = this->inverse*temp;
     }
 }
 
@@ -52,12 +52,22 @@ void Transformation::addRotationY(double thetaY) {
         temp.addRotationY(thetaY);
         this->forward = temp*this->forward;
         temp.addRotationY(-1*thetaY);
-        this->inverse = temp*this->inverse;//*temp;
+        this->inverse = this->inverse*temp;
     }
 }
 
 void Transformation::addRotationZ(double thetaZ) {
-
+    Matrix4 temp;
+    if(this->firstTransformation) {
+        this->forward.addRotationZ(thetaZ);
+        this->inverse.addRotationZ(-1*thetaZ);
+        this->firstTransformation = false;
+    } else {
+        temp.addRotationZ(thetaZ);
+        this->forward = temp*this->forward;
+        temp.addRotationZ(-1*thetaZ);
+        this->inverse = this->inverse*temp;
+    }
 }
 
 const Matrix4 &Transformation::getForward() const {

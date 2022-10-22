@@ -35,7 +35,12 @@ void Matrix4::addRotationY(double thetaY) {
 }
 
 void Matrix4::addRotationZ(double thetaZ) {
-
+    matrix[0][0] = cos(thetaZ);
+    matrix[1][1] = cos(thetaZ);
+    matrix[0][1] = -1*sin(thetaZ);
+    matrix[1][0] = sin(thetaZ);
+    matrix[2][2] = 1;
+    matrix[3][3] = 1;
 }
 
 Vec4 Matrix4::operator*(Vec4 vectorToTransform) const {
