@@ -28,9 +28,7 @@ void Ray::setDirectionVector(const Vec4 &directionVectorArg) {
 }
 
 Ray Ray::transform(Matrix4 trans) {
-    this->startPoint = trans * this->startPoint;
-    this->directionVector = trans * this->directionVector;
-    return {trans*this->startPoint, trans* this->directionVector, this->screenVector, this->upVector};
+    return {trans*this->startPoint, trans*this->directionVector, this->screenVector, this->upVector};
 }
 
 void Ray::setPixel(int distance, int width, int height) {

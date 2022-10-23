@@ -12,10 +12,11 @@ bool Cube::checkInCube(Ray r, double t){
 
 Cube::Cube(const Transformation &t, double r, double g, double b) : Shape(t, r, g, b) {}
 
-Collision Cube::checkCollision(Ray r) {
-    // Inverse transform the ray
+Collision Cube::checkCollision(Ray r, LightSource l) {
+    // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
+    LightSource transformedLight = l.transform(inverse);
 
     // Calculate the intersection with a cube from (-/+1, -/+1, -/+1) centered around (0,0,0)
     double tempT0, tempT1, t = -1;
@@ -88,15 +89,33 @@ Collision Cube::checkCollision(Ray r) {
         }
     }
 
-// Try to draw edges of the cube
-//    if(t>-1){
-//        Vec4 pointInObjectSpace = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
-//        if(pointInObjectSpace.getX() == 1 || pointInObjectSpace.getX() == -1 ||
-//           pointInObjectSpace.getY() == 1 || pointInObjectSpace.getY() == -1 ||
-//           pointInObjectSpace.getZ() == 1 || pointInObjectSpace.getZ() == -1){
-//            return {r.getStartPoint()+(r.getDirectionVector()*t), t, 0, 0, 0};
-//        }
-//    }
+    // there is a hit -> calculate shading
+    if(t>-1){
+        // Calculate hit point in local coordinates
+        Vec4 hit = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
+        // Calculate the normal vector at that point
+        Vec4 normal = calculateNormal(hit);
 
-    return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR(), this->getG(), this->getB()};
+        double intensity = l.calculateIntensity(normal, hit);
+
+        return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR()*intensity, this->getG()*intensity,
+                this->getB()*intensity};
+    }
+
+    return {{0,0,0,0}, -1, 0, 0, 0};
+}
+
+Vec4 Cube::calculateNormal(Vec4 hitPoint) {
+    double x = hitPoint.getX(), y = hitPoint.getY(), z = hitPoint.getZ();
+    double nx=0, ny=0, nz=0;
+    if(x == 1 || x == -1){
+        nx = x;
+    }
+    if(y == 1 || y == -1){
+        ny = y;
+    }
+    if(z == 1 || z == -1){
+        nz = z;
+    }
+    return {nx, ny, nz, 0};
 }

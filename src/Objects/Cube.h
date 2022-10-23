@@ -7,8 +7,10 @@
 class Cube : public Shape{
 public:
     explicit Cube(const Transformation &t, double r, double g, double b);
-    Collision checkCollision(Ray r) override;
+    Collision checkCollision(Ray r, LightSource l) override;
     static bool checkInCube(Ray r, double t);
+
+    Vec4 calculateNormal(Vec4 hitPoint) override;
 };
 
 

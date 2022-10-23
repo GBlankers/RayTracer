@@ -2,14 +2,15 @@
 #define RAYTRACER_SPHERE_H
 
 #include "Shape.h"
-#include "Math/Vec4.h"
+#include "../Math/Vec4.h"
 #include <cmath>
 
 class Sphere: public Shape{
 public:
     explicit Sphere(const Transformation &t, double r, double g, double b);
 
-    Collision checkCollision(Ray r) override;
+    Collision checkCollision(Ray r, LightSource l) override;
+    Vec4 calculateNormal(Vec4 hitPoint) override;
 };
 
 

@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_VEC4_H
 #define RAYTRACER_VEC4_H
 
+#include <cmath>
 
 class Vec4 {
 private:
@@ -10,6 +11,8 @@ public:
     // Constructor
     Vec4(double x, double y, double z, int homogeneous);
     explicit Vec4() = default;
+
+    void normalize();
     // Operator overloading
     Vec4 operator+(Vec4 vector) const;
     Vec4 operator-(Vec4 vector) const;
@@ -24,6 +27,7 @@ public:
     double getY() const;
     double getZ() const;
     int getHomogeneous() const;
+    void setHomogeneous(int homogeneous);
 };
 
 
