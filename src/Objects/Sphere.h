@@ -7,7 +7,7 @@
 
 class Sphere: public Shape{
 public:
-    explicit Sphere(const Transformation &t, double r, double g, double b);
+    explicit Sphere(const Transformation &t, Vec4 color);
 
     Collision checkCollision(Ray r, LightSource l) override;
     Vec4 calculateNormal(Vec4 hitPoint) override;

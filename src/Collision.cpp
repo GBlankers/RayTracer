@@ -1,7 +1,6 @@
 #include "Collision.h"
 
-Collision::Collision(Vec4 collisionPoint, double t, double r, double g, double b) : collisionPoint(collisionPoint), t(t),
-                                                                                    r(r), g(g), b(b) {}
+Collision::Collision(Vec4 collisionPoint, double t, Vec4 color) : collisionPoint(collisionPoint), t(t), color(color) {}
 
 double Collision::getT() const {
     return t;
@@ -12,13 +11,13 @@ const Vec4 &Collision::getCollisionPoint() const {
 }
 
 double Collision::getR() const {
-    return r;
+    return this->color.getX();
 }
 
 double Collision::getG() const {
-    return g;
+    return this->color.getY();
 }
 
 double Collision::getB() const {
-    return b;
+    return this->color.getZ();
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include "src/Objects/Sphere.h"
 #include "src/Objects/Cube.h"
@@ -54,27 +55,27 @@ void renderer(){
     Transformation t1;
     t1.addScaling(400, 400, 400);
     t1.addTranslation(2000, -1000,-1000);
-    Sphere testSphere(t1, 0, 0, 1);
+    Sphere testSphere(t1, {0, 0, 1, 0});
 
     Transformation t3;
     t3.addScaling(400, 400, 400);
     t3.addTranslation(2000, -500,-500);
-    Sphere testSphere3(t3, 0, 1, 0);
+    Sphere testSphere3(t3, {0, 1, 0, 0});
 
     Transformation t4;
     t4.addScaling(400, 400, 400);
     t4.addTranslation(2000, 0,0);
-    Sphere testSphere4(t4, 1, 0, 0);
+    Sphere testSphere4(t4, {1, 0, 0, 0});
 
     Transformation t5;
     t5.addScaling(400, 400, 400);
     t5.addTranslation(2000, 500,500);
-    Sphere testSphere5(t5, 0, 1, 0);
+    Sphere testSphere5(t5, {0, 1, 0, 0});
 
     Transformation t6;
     t6.addScaling(400, 400, 400);
     t6.addTranslation(2000, 1000,1000);
-    Sphere testSphere6(t6, 0, 0, 1);
+    Sphere testSphere6(t6, {0, 0, 1, 0});
 
 
     Transformation tCube;
@@ -82,18 +83,18 @@ void renderer(){
     tCube.addRotationY(DEG_TO_RADIANS(-30));
     tCube.addRotationX(DEG_TO_RADIANS(30));
     tCube.addTranslation(2000, 800, -1200);
-    Cube testCube(tCube, 1, 1, 0);
+    Cube testCube(tCube, {1, 1, 0, 0});
 
     Transformation tCube2;
     tCube2.addScaling(400, 400, 400);
     tCube2.addRotationY(DEG_TO_RADIANS(-30));
     tCube2.addRotationX(DEG_TO_RADIANS(30));
     tCube2.addTranslation(2000, -800, 1200);
-    Cube testCube2(tCube2, 0, 1, 1);
+    Cube testCube2(tCube2, {0, 1, 1, 0});
 
     Transformation tPlane;
     tPlane.addTranslation(0, -2000, 0);
-    Plane testPlane(tPlane, 0.5, 0.5, 0.5);
+    Plane testPlane(tPlane, {0.5, 0.5, 0.5, 0});
 
 
     int numObjects = 8;
@@ -116,6 +117,7 @@ void renderer(){
     double progress = 0;
     glClear(GL_COLOR_BUFFER_BIT);
 
+    auto start = std::chrono::high_resolution_clock::now();
     for(int i = -W; i<W; i++){
         for(int j = -H; j<H; j++){
             previousHit = MAXFLOAT;
@@ -132,4 +134,7 @@ void renderer(){
         //std::cout << "Progress: " << ((i+W)*100/(2*W)) << "%" << std::endl;
         glFlush();
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+    std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }

@@ -1,15 +1,15 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, double r, double g, double b) : Shape(t, r, g, b){}
+Plane::Plane(const Transformation &t, Vec4 color) : Shape(t, color){}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r, LightSource l) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
-    LightSource transformedLight = l.transform(inverse);
+    l.transform(inverse);
 
-    double t = -1, t1, t2;
+    double t, t1, t2;
 
     // Ray is not parallel to the plane
     if(transformedRay.getDirectionVector().getY() != 0.0){
@@ -18,25 +18,15 @@ Collision Plane::checkCollision(Ray r, LightSource l) {
 
         t = (t1>t2) ? t2 : t1;
 
-        Vec4 hit = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
+        Vec4 hit = transformedRay.at(t);
         Vec4 normal = calculateNormal(hit);
 
-        Vec4 normalizedDirection = transformedLight.getPosition()-hit;
-        normalizedDirection.normalize();
+        double intensity = l.calculateIntensity(normal, hit);
 
-        double intensity, angle;
-        angle = acos(Vec4::dot(normal, normalizedDirection));
-
-        if(angle > M_PI_2){
-            intensity = 0.0;
-        } else {
-            intensity = 1-(angle/M_PI_2);
-        }
-        return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR()*intensity, this->getG()*intensity,
-                this->getB()*intensity};
+        return {r.at(t), t, this->getColor(hit, intensity)};
     }
 
-    return {{0,0,0,0}, -1, 0, 0, 0};
+    return {{0,0,0,0}, -1, {0, 0, 0, 0}};
 }
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint) {

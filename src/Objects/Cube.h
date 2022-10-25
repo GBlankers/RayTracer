@@ -6,7 +6,7 @@
 
 class Cube : public Shape{
 public:
-    explicit Cube(const Transformation &t, double r, double g, double b);
+    explicit Cube(const Transformation &t, Vec4 color);
     Collision checkCollision(Ray r, LightSource l) override;
     static bool checkInCube(Ray r, double t);
 

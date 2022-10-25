@@ -1,12 +1,12 @@
 #include "Sphere.h"
 
-Sphere::Sphere(const Transformation &t, double r, double g, double b) : Shape(t, r, g, b) {}
+Sphere::Sphere(const Transformation &t, Vec4 color) : Shape(t, color) {}
 
 Collision Sphere::checkCollision(Ray r, LightSource l) {
     // Inverse transform the ray
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
-    LightSource transformedLight = l.transform(inverse);
+    l.transform(inverse);
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
     double A = Vec4::dot(transformedRay.getDirectionVector(), transformedRay.getDirectionVector());
@@ -26,26 +26,16 @@ Collision Sphere::checkCollision(Ray r, LightSource l) {
         t = (t1>t2) ? t2 : t1;
 
         // Calculate hit point in local coordinates
-        Vec4 hit = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
+        Vec4 hit = transformedRay.at(t);
         // Calculate the normal vector at that point
         Vec4 normal = calculateNormal(hit);
-        // Get the direction vector and normalize
-        Vec4 normalizedDirection = transformedLight.getPosition()-hit;
-        normalizedDirection.normalize();
-        // Get the angle between the normal and the direction vector
-        double intensity, angle;
-        angle = acos(Vec4::dot(normal, normalizedDirection));
-        if(angle > M_PI_2){
-            intensity = 0.0;
-        } else {
-            intensity = 1-(angle/M_PI_2);
-        }
+        // Get the intensity of the light source
+        double intensity = l.calculateIntensity(normal, hit);
 
-        return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR()*intensity,
-                this->getG()*intensity, this->getB()*intensity};
+        return {r.at(t), t, this->getColor(hit, intensity)};
     }
 
-    return {{0,0,0,0}, -1, 0, 0, 0};
+    return {{0,0,0,0}, -1, {0, 0, 0, 0}};
 }
 
 Vec4 Sphere::calculateNormal(Vec4 hitPoint) {

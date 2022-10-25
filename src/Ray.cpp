@@ -34,3 +34,7 @@ Ray Ray::transform(Matrix4 trans) {
 void Ray::setPixel(int distance, int width, int height) {
     this->setDirectionVector((startPoint + screenVector*distance + crossVector*width + upVector*height) - this->startPoint);
 }
+
+Vec4 Ray::at(double t) const {
+    return this->getStartPoint()+(this->getDirectionVector()*t);
+}

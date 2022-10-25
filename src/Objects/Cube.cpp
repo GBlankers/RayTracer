@@ -1,7 +1,7 @@
 #include "Cube.h"
 
 bool Cube::checkInCube(Ray r, double t){
-    Vec4 collisionPoint = r.getStartPoint()+(r.getDirectionVector()*t);
+    Vec4 collisionPoint = r.at(t);
     if (collisionPoint.getX() >= -1 && collisionPoint.getX() <= 1 &&
         collisionPoint.getY() >= -1 && collisionPoint.getY() <= 1 &&
         collisionPoint.getZ() >= -1 && collisionPoint.getZ() <= 1) {
@@ -10,13 +10,13 @@ bool Cube::checkInCube(Ray r, double t){
     return false;
 }
 
-Cube::Cube(const Transformation &t, double r, double g, double b) : Shape(t, r, g, b) {}
+Cube::Cube(const Transformation &t, Vec4 color) : Shape(t, color) {}
 
 Collision Cube::checkCollision(Ray r, LightSource l) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
-    LightSource transformedLight = l.transform(inverse);
+    l.transform(inverse);
 
     // Calculate the intersection with a cube from (-/+1, -/+1, -/+1) centered around (0,0,0)
     double tempT0, tempT1, t = -1;
@@ -92,17 +92,16 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
     // there is a hit -> calculate shading
     if(t>-1){
         // Calculate hit point in local coordinates
-        Vec4 hit = transformedRay.getStartPoint()+(transformedRay.getDirectionVector()*t);
+        Vec4 hit = transformedRay.at(t);
         // Calculate the normal vector at that point
         Vec4 normal = calculateNormal(hit);
 
         double intensity = l.calculateIntensity(normal, hit);
 
-        return {r.getStartPoint()+(r.getDirectionVector()*t), t, this->getR()*intensity, this->getG()*intensity,
-                this->getB()*intensity};
+        return {r.at(t), t, this->getColor(hit, intensity)};
     }
 
-    return {{0,0,0,0}, -1, 0, 0, 0};
+    return {{0,0,0,0}, -1, {0, 0, 0, 0}};
 }
 
 Vec4 Cube::calculateNormal(Vec4 hitPoint) {

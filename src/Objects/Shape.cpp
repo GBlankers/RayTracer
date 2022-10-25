@@ -7,10 +7,14 @@
  * @param G green color component, needs to be 0<=G<=1.0
  * @param B blue color component, needs to be 0<=B<=1.0
  */
-Shape::Shape(Transformation t, double R, double G, double B) : t(t), r(R), g(G), b(B){
-    assert(R>=0 && R<=1.0);
-    assert(G>=0 && G<=1.0);
-    assert(B>=0 && B<=1.0);
+Shape::Shape(Transformation t, Vec4 color) : t(t), color(color){
+    assert(this->color.getX()>=0 && this->color.getX()<=1.0);
+    assert(this->color.getY()>=0 && this->color.getY()<=1.0);
+    assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
+}
+
+Vec4 Shape::getColor(Vec4 hit, double intensity) {
+    return color*intensity;
 }
 
 const Transformation &Shape::getT() const {
@@ -18,13 +22,13 @@ const Transformation &Shape::getT() const {
 }
 
 double Shape::getR() const {
-    return r;
+    return color.getX();
 }
 
 double Shape::getG() const {
-    return g;
+    return color.getY();
 }
 
 double Shape::getB() const {
-    return b;
+    return color.getZ();
 }
