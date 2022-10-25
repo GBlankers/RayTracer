@@ -7,7 +7,7 @@ set(OpenGLLinkers -lglut -lGLU -lGL)
 add_library(srcFiles src/Ray.cpp src/Ray.h src/Objects/Shape.cpp src/Objects/Shape.h src/Collision.cpp src/Collision.h src/Transformation.cpp
         src/Transformation.h src/Math/Vec4.cpp src/Math/Vec4.h src/Math/Matrix4.cpp
         src/Math/Matrix4.h src/Objects/Sphere.cpp src/Objects/Sphere.h src/Objects/Cube.cpp src/Objects/Cube.h
-        src/Objects/LightSource.cpp src/Objects/LightSource.h src/Objects/Plane.cpp src/Objects/Plane.h)
+        src/Objects/LightSource.cpp src/Objects/LightSource.h src/Objects/Plane.cpp src/Objects/Plane.h src/Scene.cpp src/Scene.h)
 set_target_properties(srcFiles PROPERTIES LINKER_LANGUAGE CXX)
 
 add_executable(RayTracer main.cpp)

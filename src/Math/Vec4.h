@@ -13,6 +13,7 @@ public:
     explicit Vec4() = default;
 
     void normalize();
+    void reset();
     // Operator overloading
     Vec4 operator+(Vec4 vector) const;
     Vec4 operator-(Vec4 vector) const;

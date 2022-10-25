@@ -10,21 +10,19 @@ Collision Sphere::checkCollision(Ray r, LightSource l) {
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
     double A = Vec4::dot(transformedRay.getDirectionVector(), transformedRay.getDirectionVector());
-    double B = 2.0 * Vec4::dot(transformedRay.getStartPoint(), transformedRay.getDirectionVector());
+    double B = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getDirectionVector());
     double C = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint()) - 1;
 
     // Discriminant
-    double D = pow(B, 2)-4*A*C;
+    double D = pow(B, 2)-(A*C);
 
     // Default value for t, if t<0 then there is no intersection
     double t;
 
     // Check for positive discriminant -> there is an intersection
     if (D>0){
-        double t1 = (-B - sqrt(D))/(2.0*A);
-        double t2 = (-B + sqrt(D))/(2.0*A);
-        t = (t1>t2) ? t2 : t1;
-
+        // This part of the quadratic equation will always be smaller than the other part
+        t = (-B - sqrt(D))/A;
         // Calculate hit point in local coordinates
         Vec4 hit = transformedRay.at(t);
         // Calculate the normal vector at that point

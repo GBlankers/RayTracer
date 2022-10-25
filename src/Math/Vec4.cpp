@@ -65,3 +65,10 @@ int Vec4::getHomogeneous() const {
 void Vec4::setHomogeneous(int argHomogeneous) {
     Vec4::homogeneous = argHomogeneous;
 }
+
+void Vec4::reset() {
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
+    this->homogeneous = 0;
+}

@@ -22,7 +22,7 @@ public:
 
     void setStartPoint(const Vec4 &startPoint);
     void setDirectionVector(const Vec4 &directionVector);
-    void setPixel(int distance, int width, int height);
+    void setPixel(int distance, double width, double height);
     const Vec4 &getStartPoint() const;
     const Vec4 &getDirectionVector() const;
 };

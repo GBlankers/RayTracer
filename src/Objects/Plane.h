@@ -9,6 +9,8 @@ public:
     explicit Plane(const Transformation &t, Vec4 color);
     Collision checkCollision(Ray r, LightSource l) override;
 
+    Vec4 getColor(Vec4 hit, double intensity) override;
+
     Vec4 calculateNormal(Vec4 hitPoint) override;
 };
 

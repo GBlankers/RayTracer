@@ -32,3 +32,7 @@ Collision Plane::checkCollision(Ray r, LightSource l) {
 Vec4 Plane::calculateNormal(Vec4 hitPoint) {
     return Vec4({0, 1, 0, 0});
 }
+
+Vec4 Plane::getColor(Vec4 hit, double intensity) {
+    return Shape::getColor(hit, 1);
+}

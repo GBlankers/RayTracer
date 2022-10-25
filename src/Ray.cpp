@@ -31,7 +31,7 @@ Ray Ray::transform(Matrix4 trans) {
     return {trans*this->startPoint, trans*this->directionVector, this->screenVector, this->upVector};
 }
 
-void Ray::setPixel(int distance, int width, int height) {
+void Ray::setPixel(int distance, double width, double height) {
     this->setDirectionVector((startPoint + screenVector*distance + crossVector*width + upVector*height) - this->startPoint);
 }
 
