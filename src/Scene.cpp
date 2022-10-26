@@ -1,7 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene() {
+Scene::Scene() = default;
 
+void Scene::fillScene() {
     Transformation tSphere1;
     tSphere1.addScaling(400, 400, 400);
     tSphere1.addTranslation(2000, -1000, -1000);
@@ -53,9 +54,8 @@ Scene::Scene() {
     tPlane1.addTranslation(0, -2000, 0);
     Plane plane1(tPlane1, {0.5, 0.5, 0.5, 0});
     objectVector.push_back(std::make_shared<Plane>(plane1));
-
 }
 
-int Scene::numberOfObjects() {
-    return (int)objectVector.size();
+const std::vector<std::shared_ptr<Shape>> &Scene::getObjectVector() const {
+    return objectVector;
 }
