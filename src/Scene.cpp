@@ -50,6 +50,15 @@ void Scene::fillScene() {
     Cube cube2(tCube2, {0, 1, 1, 0});
     objectVector.push_back(std::make_shared<Cube>(cube2));
 
+    Transformation tCone1;
+    tCone1.addScaling(400, 400, 400);
+    tCone1.addRotationZ(DEG_TO_RADIANS(-30));
+    tCone1.addRotationX(DEG_TO_RADIANS(30));
+    tCone1.addTranslation(2000, -700, -1900);
+    Cone cone1(tCone1, {0, 1, 1, 0});
+    objectVector.push_back(std::make_shared<Cone>(cone1));
+
+
     Transformation tPlane1;
     tPlane1.addTranslation(0, -2000, 0);
     Plane plane1(tPlane1, {0.5, 0.5, 0.5, 0});

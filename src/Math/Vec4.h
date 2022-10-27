@@ -20,9 +20,10 @@ public:
     Vec4 operator*(double t) const;
     bool operator==(const Vec4 &rhs) const;
     bool operator!=(const Vec4 &rhs) const;
-    // Dot + cross product between 2 vec4's
+    // math between 2 vec4's
     static double dot(Vec4 vector1, Vec4 vector2);
     static Vec4 cross(Vec4 vector1, Vec4 vector2);
+    static double length(Vec4 vector);
     // Basic get/set
     double getX() const;
     double getY() const;

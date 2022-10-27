@@ -72,3 +72,7 @@ void Vec4::reset() {
     this->z = 0;
     this->homogeneous = 0;
 }
+
+double Vec4::length(Vec4 vector) {
+    return sqrt(pow(vector.getX(), 2)+ pow(vector.getY(), 2)+ pow(vector.getZ(), 2));
+}

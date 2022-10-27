@@ -9,21 +9,16 @@ Collision Plane::checkCollision(Ray r, LightSource l) {
     Ray transformedRay = r.transform(inverse);
     l.transform(inverse);
 
-    double t, t1, t2;
-
     // Ray is not parallel to the plane
     if(transformedRay.getDirectionVector().getY() != 0.0){
-        t1 = (transformedRay.getStartPoint().getY()+1)/(-transformedRay.getDirectionVector().getY());
-        t2 = (transformedRay.getStartPoint().getY()-1)/(-transformedRay.getDirectionVector().getY());
+        double t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
 
-        t = (t1>t2) ? t2 : t1;
+        if(t>0){
+            Vec4 hit = transformedRay.at(t);
+            Vec4 normal = calculateNormal(hit);
 
-        Vec4 hit = transformedRay.at(t);
-        Vec4 normal = calculateNormal(hit);
-
-        double intensity = l.calculateIntensity(normal, hit);
-
-        return {r.at(t), t, this->getColor(hit, intensity)};
+            return {r.at(t), t, this->getColor(hit, l.calculateIntensity(normal, hit))};
+        }
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
