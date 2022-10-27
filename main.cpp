@@ -15,6 +15,7 @@
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
 #define N 1800 // Distance to near plane
+#define ANTI_ALIAS_SAMPLING 1
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
@@ -66,22 +67,27 @@ void renderer(){
     Collision c;
 
     float previousHit;
-    Vec4 color{};
+    Vec4 color{}, tempColor{};
     glClear(GL_COLOR_BUFFER_BIT);
 
     auto start = std::chrono::high_resolution_clock::now();
     for(int i = -W; i<W; i++){
         for(int j = -H; j<H; j++){
-            previousHit = MAXFLOAT;
             color.reset();
-            eye.setPixel(N, i, j);
-            for(auto & worldObject : worldObjects){
-                c = worldObject->checkCollision(eye, light);
-                if(previousHit > c.getT() && c.getT() > 0){
-                    previousHit = (float)c.getT();
-                    color = Vec4(c.getR(), c.getG(), c.getB(), 0);
+            for(int alias = 0; alias<ANTI_ALIAS_SAMPLING; alias++){
+                previousHit = MAXFLOAT;
+                tempColor.reset();
+                eye.setPixel(N, i+randomDouble(), j+randomDouble());
+                for(auto & worldObject : worldObjects){
+                    c = worldObject->checkCollision(eye, light);
+                    if(previousHit > c.getT() && c.getT() > 0){
+                        previousHit = (float)c.getT();
+                        tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
+                    }
                 }
+                color = color + tempColor;
             }
+            color = color*(1.0/ANTI_ALIAS_SAMPLING);
             glColor3d(color.getX(), color.getY(), color.getZ());
             drawDot(i, j);
         }
@@ -92,3 +98,10 @@ void renderer(){
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
+
+// TODO: fix cone ground plane
+// TODO: anti-aliasing
+// TODO: how to do shadows if the scene can't be given as an argument to the shape class?
+// TODO: materials
+// TODO: uv-mapping
+// TODO: extra: progressive rendering, movable camera, dynamically change the scene using ImGUI

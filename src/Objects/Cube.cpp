@@ -20,6 +20,8 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
 
     // Calculate the intersection with a cube from (-/+1, -/+1, -/+1) centered around (0,0,0)
     double tempT0, tempT1, t = -1;
+
+    // Implementation looks weird, but it works and is faster than implementing it using transformed planes
     // intersection with plane 0 and plane 1:
     // If the direction vector is 0 then the ray is parallel to the plane so there will never be a hit
     if(transformedRay.getDirectionVector().getY() != 0.0){

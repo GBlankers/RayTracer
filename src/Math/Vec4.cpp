@@ -45,6 +45,10 @@ Vec4 Vec4::cross(Vec4 vector1, Vec4 vector2) {
             (vector1.getX()*vector2.getY()-vector1.getY()*vector2.getX()), 0};
 }
 
+double Vec4::length(Vec4 vector) {
+    return sqrt(pow(vector.getX(), 2)+ pow(vector.getY(), 2)+ pow(vector.getZ(), 2));
+}
+
 // Get/set
 double Vec4::getX() const {
     return x;
@@ -71,8 +75,4 @@ void Vec4::reset() {
     this->y = 0;
     this->z = 0;
     this->homogeneous = 0;
-}
-
-double Vec4::length(Vec4 vector) {
-    return sqrt(pow(vector.getX(), 2)+ pow(vector.getY(), 2)+ pow(vector.getZ(), 2));
 }
