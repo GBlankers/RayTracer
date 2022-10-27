@@ -100,7 +100,7 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
 
         double intensity = l.calculateIntensity(normal, hit);
 
-        return {r.at(t), t, this->getColor(hit, intensity)};
+        return {r.at(t), t, this->getIntensityCorrectedColor(hit, intensity)};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};

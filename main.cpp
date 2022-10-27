@@ -15,7 +15,7 @@
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
 #define N 1800 // Distance to near plane
-#define ANTI_ALIAS_SAMPLING 1
+#define ANTI_ALIAS_SAMPLING 3
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
@@ -100,8 +100,9 @@ void renderer(){
 }
 
 // TODO: fix cone ground plane
-// TODO: anti-aliasing
+// TODO: dots on cube
 // TODO: how to do shadows if the scene can't be given as an argument to the shape class?
+
 // TODO: materials
 // TODO: uv-mapping
 // TODO: extra: progressive rendering, movable camera, dynamically change the scene using ImGUI

@@ -37,8 +37,8 @@ Collision Cone::checkCollision(Ray r, LightSource l) {
     hit = transformedRay.at(t);
 
     if(hit.getY() >= -1 and hit.getY() <= 0 and t>-1){
-        return {r.at(t), t, getColor(hit,
-                                     l.calculateIntensity(calculateNormal(hit), hit))};
+        return {r.at(t), t, getIntensityCorrectedColor(hit,
+                                                       l.calculateIntensity(calculateNormal(hit), hit))};
     }
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}};
 }

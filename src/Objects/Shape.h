@@ -17,9 +17,10 @@ public:
 
     virtual Collision checkCollision(Ray r, LightSource l) = 0;
     virtual Vec4 calculateNormal(Vec4 hitPoint) = 0;
+    virtual Vec4 getIntensityCorrectedColor(Vec4 hit, double intensity);
 
-    virtual Vec4 getColor(Vec4 hit, double intensity);
-
+    void setColor(const Vec4 &colorArg);
+    const Vec4 &getColor() const;
     const Transformation &getT() const;
     double getR() const;
     double getG() const;

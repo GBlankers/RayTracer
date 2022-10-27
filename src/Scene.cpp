@@ -3,16 +3,16 @@
 Scene::Scene() = default;
 
 void Scene::fillScene() {
-    Transformation tSphere1;
-    tSphere1.addScaling(400, 400, 400);
-    tSphere1.addTranslation(2000, -1000, -1000);
-    Sphere sphere1(tSphere1, {0, 0, 1, 0});
-    objectVector.push_back(std::make_shared<Sphere>(sphere1));
+//    Transformation tSphere1;
+//    tSphere1.addScaling(400, 400, 400);
+//    tSphere1.addTranslation(2000, -1200, -1200);
+//    Sphere sphere1(tSphere1, {0, 0, 1, 0});
+//    objectVector.push_back(std::make_shared<Sphere>(sphere1));
 
     Transformation tSphere2;
     tSphere2.addScaling(400, 400, 400);
-    tSphere2.addTranslation(2000, -500, -500);
-    Sphere sphere2(tSphere2, {0, 1, 0, 0});
+    tSphere2.addTranslation(2000, -600, -600);
+    Sphere sphere2(tSphere2, {0, 0, 1, 0});
     objectVector.push_back(std::make_shared<Sphere>(sphere2));
 
     Transformation tSphere3;
@@ -23,15 +23,15 @@ void Scene::fillScene() {
 
     Transformation tSphere4;
     tSphere4.addScaling(400, 400, 400);
-    tSphere4.addTranslation(2000, 500, 500);
+    tSphere4.addTranslation(2000, 600, 600);
     Sphere sphere4(tSphere4, {0, 1, 0, 0});
     objectVector.push_back(std::make_shared<Sphere>(sphere4));
 
-    Transformation tSphere5;
-    tSphere5.addScaling(400, 400, 400);
-    tSphere5.addTranslation(2000, 1000, 1000);
-    Sphere sphere5(tSphere5, {0, 0, 1, 0});
-    objectVector.push_back(std::make_shared<Sphere>(sphere5));
+//    Transformation tSphere5;
+//    tSphere5.addScaling(400, 400, 400);
+//    tSphere5.addTranslation(2000, 1200, 1200);
+//    Sphere sphere5(tSphere5, {0, 0, 1, 0});
+//    objectVector.push_back(std::make_shared<Sphere>(sphere5));
 
 
     Transformation tCube1;
@@ -62,6 +62,7 @@ void Scene::fillScene() {
     Transformation tPlane1;
     tPlane1.addTranslation(0, -2000, 0);
     Plane plane1(tPlane1, {0.5, 0.5, 0.5, 0});
+    plane1.setCheckerBoardPattern(true);
     objectVector.push_back(std::make_shared<Plane>(plane1));
 }
 

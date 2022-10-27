@@ -13,7 +13,7 @@ Shape::Shape(Transformation t, Vec4 color) : t(t), color(color){
     assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
 }
 
-Vec4 Shape::getColor(Vec4 hit, double intensity) {
+Vec4 Shape::getIntensityCorrectedColor(Vec4 hit, double intensity) {
     return color*intensity;
 }
 
@@ -31,4 +31,12 @@ double Shape::getG() const {
 
 double Shape::getB() const {
     return color.getZ();
+}
+
+void Shape::setColor(const Vec4 &colorArg) {
+    Shape::color = colorArg;
+}
+
+const Vec4 &Shape::getColor() const {
+    return color;
 }

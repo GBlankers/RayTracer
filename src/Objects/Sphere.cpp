@@ -30,7 +30,7 @@ Collision Sphere::checkCollision(Ray r, LightSource l) {
         // Get the intensity of the light source
         double intensity = l.calculateIntensity(normal, hit);
 
-        return {r.at(t), t, this->getColor(hit, intensity)};
+        return {r.at(t), t, this->getIntensityCorrectedColor(hit, intensity)};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
