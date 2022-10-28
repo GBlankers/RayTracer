@@ -14,20 +14,28 @@ Collision Plane::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>>
 
         if(t>0){
             // Calculate the hit point in local coordinates
-            Vec4 hitPoint = transformedRay.at(t);
-            // Calculate the light intensity
+            Vec4 hitPointL = transformedRay.at(t);
+            // Calculate the point in world coordinates
+            Vec4 hitPointW = r.at(t);
+            // Light intensity
             double intensity = 0;
+            // Vector to keep track if there were any hits in between the light and the hitpoint
             std::vector<bool> hitVector;
+            // Go over all the light sources
             for(const auto& light: l){
-                light->transform(inverse);
+                // Check all the world objects
                 for(const auto& s: worldObjects){
-                    if(s.get() != this)
-                        hitVector.push_back(s->checkHit(Ray{r.at(t),(light->getPosition()-r.at(t))}));
+                    // Do not check the lighting with this object itself
+                    if(s.get() != this) {
+                        hitVector.push_back(s->checkHit(Ray{hitPointW,(light->getPosition()-hitPointW)}));
+                    }
                 }
-                if(!std::count(hitVector.begin(), hitVector.end(), true))
-                    intensity += light->calculateIntensity(calculateNormal(hitPoint), hitPoint);
+                if(!std::count(hitVector.begin(), hitVector.end(), true)) {
+                    light->transform(inverse);
+                    intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
+                }
             }
-            return {r.at(t), t, getIntensityCorrectedColor(hitPoint, intensity/(double)l.size())};
+            return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity/(double)l.size())};
         }
     }
 

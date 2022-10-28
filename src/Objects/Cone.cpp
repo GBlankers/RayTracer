@@ -17,7 +17,7 @@ Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
     double t = (-b - sqrt(pow(b, 2)-(a*c)))/a;
 
     double temp;
-    Vec4 hitPoint{};
+    Vec4 hitPointL{};
 
     // Bottom plane
     if(rd.getY()!=0){
@@ -25,31 +25,33 @@ Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
 
         // Check if hit is closer than previous hit
         if(temp>0 and temp<t){
-            hitPoint = transformedRay.at(temp);
+            hitPointL = transformedRay.at(temp);
             // Check if the hit is inside the unit circle
-            if(sqrt(pow(hitPoint.getX(), 2)+pow(hitPoint.getZ(), 2))<=1){
+            if(sqrt(pow(hitPointL.getX(), 2) + pow(hitPointL.getZ(), 2)) <= 1){
                 t = temp;
             }
         }
     }
 
-    hitPoint = transformedRay.at(t);
+    hitPointL = transformedRay.at(t);
 
-    if(hitPoint.getY() >= -1 and hitPoint.getY() <= 0 and t>-1){
+    if(hitPointL.getY() >= -1 and hitPointL.getY() <= 0 and t > -1){
         // Calculate intensity
         double intensity = 0;
+
+        Vec4 hitPointW = r.at(t);
         std::vector<bool> hitVector;
         for(const auto &light: l){
             light->transform(inverse);
             for(const auto& s: worldObjects){
                 if(s.get() != this)
-                    hitVector.push_back(s->checkHit(Ray{hitPoint, light->getPosition()-hitPoint}));
+                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition() - hitPointW}));
             }
             if(!std::count(hitVector.begin(), hitVector.end(), true))
-                intensity += light->calculateIntensity(calculateNormal(hitPoint), hitPoint);
+                intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
         }
 
-        return {r.at(t), t, getIntensityCorrectedColor(hitPoint,intensity/(double)l.size())};
+        return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double)l.size())};
     }
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}};
 }

@@ -58,14 +58,13 @@ double randomDouble(){
 void renderer(){
 
     Scene world;
-    world.fillScene3();
+    world.fillScene2();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
     Ray eye(Vec4(-N, 0, 0, 1), Vec4(1, 0, 0, 0),
             Vec4(0, 1, 0, 0));
     Collision c;
-
     float previousHit;
     Vec4 color{}, tempColor{};
     glClear(GL_COLOR_BUFFER_BIT);

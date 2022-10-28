@@ -89,21 +89,27 @@ Collision Cube::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
     // there is a hit -> calculate shading
     if(hit){
         // Calculate hit point in local coordinates
-        Vec4 hitPoint = transformedRay.at(t);
+        Vec4 hitPointL = transformedRay.at(t);
+        // Calculate hit point in world coordinates
+        Vec4 hitPointW = r.at(t);
         // calculate the intensity of the light
         double intensity = 0;
+
         std::vector<bool> hitVector;
+
         for(const auto& light: l){
-            light->transform(inverse);
             for(const auto& s: worldObjects){
-                if(s.get() != this)
-                    hitVector.push_back(s->checkHit(Ray{hitPoint, light->getPosition()-hitPoint}));
+                if(s.get() != this) {
+                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition()-hitPointW}));
+                }
             }
-            if(!std::count(hitVector.begin(), hitVector.end(), true))
-                intensity += light->calculateIntensity(calculateNormal(hitPoint), hitPoint);
+            if(!std::count(hitVector.begin(), hitVector.end(), true)) {
+                light->transform(inverse);
+                intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
+            }
         }
 
-        return {r.at(t), t, getIntensityCorrectedColor(hitPoint, intensity/(double)l.size())};
+        return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double)l.size())};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};

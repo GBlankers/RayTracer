@@ -22,8 +22,9 @@ Collision Sphere::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>
     if (D>0){
         // This part of the quadratic equation will always be smaller than the other part
         t = (-B - sqrt(D))/A;
-        // Calculate hitPoint point in local coordinates
-        Vec4 hitPoint = transformedRay.at(t);
+        // Calculate hitPointL point in local coordinates
+        Vec4 hitPointL = transformedRay.at(t);
+        Vec4 hitPointW = r.at(t);
         // Calculate the intensity of the light source
         double intensity = 0;
         std::vector<bool> hitVector;
@@ -31,13 +32,13 @@ Collision Sphere::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>
             light->transform(inverse);
             for(const auto& s: worldObjects){
                 if(s.get() != this)
-                    hitVector.push_back(s->checkHit(Ray{hitPoint, light->getPosition()-hitPoint}));
+                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition() - hitPointW}));
             }
             if(!std::count(hitVector.begin(), hitVector.end(), true))
-                intensity += light->calculateIntensity(calculateNormal(hitPoint), hitPoint);
+                intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
         }
 
-        return {r.at(t), t, getIntensityCorrectedColor(hitPoint, intensity / (double) l.size())};
+        return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double) l.size())};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};

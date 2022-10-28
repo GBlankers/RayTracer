@@ -11,11 +11,11 @@ void Scene::fillScene2() {
     Cube cube1(tCube1, {1, 1, 0, 0});
     objectVector.push_back(std::make_shared<Cube>(cube1));
 
-//    Transformation tSphere2;
-//    tSphere2.addScaling(400, 400, 400);
-//    tSphere2.addTranslation(2000, -800, 100);
-//    Sphere sphere2(tSphere2, {0, 0, 1, 0});
-//    objectVector.push_back(std::make_shared<Sphere>(sphere2));
+    Transformation tSphere2;
+    tSphere2.addScaling(400, 400, 400);
+    tSphere2.addTranslation(2000, -800, 100);
+    Sphere sphere2(tSphere2, {0, 0, 1, 0});
+    objectVector.push_back(std::make_shared<Sphere>(sphere2));
 
 //    Transformation tPlane1;
 //    tPlane1.addTranslation(0, -450, 0);
