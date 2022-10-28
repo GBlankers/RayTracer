@@ -10,12 +10,16 @@
 #include "GL/glut.h"
 #include "src/Scene.h"
 
+// Window constants
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
+// Virtual screen coordinates
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
-#define N 1800 // Distance to near plane
+// Anti alias samples
 #define ANTI_ALIAS_SAMPLING 3
+
+#define N 1800 // Distance to near plane
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
