@@ -2,9 +2,10 @@
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
-    if (collisionPoint.getX() >= -1 && collisionPoint.getX() <= 1 &&
-        collisionPoint.getY() >= -1 && collisionPoint.getY() <= 1 &&
-        collisionPoint.getZ() >= -1 && collisionPoint.getZ() <= 1) {
+
+    if (fabs(collisionPoint.getX()) <= (1+tolerance) &&
+        fabs(collisionPoint.getY()) <= (1+tolerance) &&
+        fabs(collisionPoint.getZ()) <= (1+tolerance)) {
         return true;
     }
     return false;
@@ -19,7 +20,8 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
     l.transform(inverse);
 
     // Calculate the intersection with a cube from (-/+1, -/+1, -/+1) centered around (0,0,0)
-    double tempT0, tempT1, t = -1;
+    double tempT0, tempT1,t = MAXFLOAT;
+    bool hit = false;
 
     // Implementation looks weird, but it works and is faster than implementing it using transformed planes
     // intersection with plane 0 and plane 1:
@@ -32,13 +34,18 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
         // Check if the t is bigger than 0 -> there is a hit in front of the eye
         // take the smallest t of the 2 -> closest to the eye
         // if tempT is negative then the hit is not in front of the eye
-        if(tempT0 > 0 && tempT0 < tempT1){
+        if(tempT0 > 0 and tempT0 <= t) {
             // check if the current hit is in the cube
-            if(checkInCube(transformedRay, tempT0))
+            if (checkInCube(transformedRay, tempT0)){
+                hit = true;
                 t = tempT0;
-        } else if (tempT1 > 0 && tempT1 < tempT0){
-            if(checkInCube(transformedRay, tempT1))
+            }
+        }
+        if (tempT1 > 0 and tempT1 <= t){
+            if(checkInCube(transformedRay, tempT1)){
+                hit = true;
                 t = tempT1;
+            }
         }
     }
     // intersection with plane 2 and 3
@@ -46,23 +53,17 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
         tempT0 = (transformedRay.getStartPoint().getZ()+1)/(-transformedRay.getDirectionVector().getZ());
         tempT1 = (transformedRay.getStartPoint().getZ()-1)/(-transformedRay.getDirectionVector().getZ());
 
-        // if the t is still negative then we can loosen the requirements for a hit
-        if(t==-1){
-            if(tempT0 > 0 && tempT0 < tempT1){
-                if(checkInCube(transformedRay, tempT0))
-                    t = tempT0;
-            } else if (tempT1 > 0 && tempT1 < tempT0){
-                if(checkInCube(transformedRay, tempT1))
-                    t = tempT1;
+        if(tempT0 > 0 and tempT0 <= t) {
+            // check if the current hit is in the cube
+            if (checkInCube(transformedRay, tempT0)){
+                hit = true;
+                t = tempT0;
             }
-        } else { // if there is a t we need to check if the tempT is bigger than 0 and smaller than the current t
-            if (tempT0 > 0 && tempT0 < t){
-                if(checkInCube(transformedRay, tempT0))
-                    t = tempT0;
-            }
-            if (tempT1 > 0 && tempT1 < t){
-                if(checkInCube(transformedRay, tempT1))
-                    t = tempT1;
+        }
+        if (tempT1 > 0 and tempT1 <= t){
+            if(checkInCube(transformedRay, tempT1)){
+                hit = true;
+                t = tempT1;
             }
         }
     }
@@ -70,37 +71,32 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
     if(transformedRay.getDirectionVector().getX() != 0.0){
         tempT0 = (transformedRay.getStartPoint().getX()+1)/(-transformedRay.getDirectionVector().getX());
         tempT1 = (transformedRay.getStartPoint().getX()-1)/(-transformedRay.getDirectionVector().getX());
-        if(t==-1){
-            if(tempT0 > 0 && tempT0 < tempT1){
-                if(checkInCube(transformedRay, tempT0))
-                    t = tempT0;
+
+        if(tempT0 > 0 and tempT0 <= t) {
+            // check if the current hit is in the cube
+            if (checkInCube(transformedRay, tempT0)){
+                hit = true;
+                t = tempT0;
             }
-            if (tempT1 > 0 && tempT1 < tempT0){
-                if(checkInCube(transformedRay, tempT1))
-                    t = tempT1;
-            }
-        } else {
-            if (tempT0 > 0 && tempT0 < t){
-                if(checkInCube(transformedRay, tempT0))
-                    t = tempT0;
-            }
-            if (tempT1 > 0 && tempT1 < t){
-                if(checkInCube(transformedRay, tempT1))
-                    t = tempT1;
+        }
+        if (tempT1 > 0 and tempT1 <= t){
+            if(checkInCube(transformedRay, tempT1)){
+                hit = true;
+                t = tempT1;
             }
         }
     }
 
     // there is a hit -> calculate shading
-    if(t>-1){
+    if(hit){
         // Calculate hit point in local coordinates
-        Vec4 hit = transformedRay.at(t);
+        Vec4 hitPoint = transformedRay.at(t);
         // Calculate the normal vector at that point
-        Vec4 normal = calculateNormal(hit);
+        Vec4 normal = calculateNormal(hitPoint);
+        // calculate the intensity of the light
+        double intensity = l.calculateIntensity(normal, hitPoint);
 
-        double intensity = l.calculateIntensity(normal, hit);
-
-        return {r.at(t), t, this->getIntensityCorrectedColor(hit, intensity)};
+        return {r.at(t), t, this->getIntensityCorrectedColor(hitPoint, intensity)};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
@@ -109,13 +105,13 @@ Collision Cube::checkCollision(Ray r, LightSource l) {
 Vec4 Cube::calculateNormal(Vec4 hitPoint) {
     double x = hitPoint.getX(), y = hitPoint.getY(), z = hitPoint.getZ();
     double nx=0, ny=0, nz=0;
-    if(x == 1 || x == -1){
+    if(x >= (1-tolerance) || x <= (-1+tolerance)){
         nx = x;
     }
-    if(y == 1 || y == -1){
+    if(y >= (1-tolerance) || y <= (-1+tolerance)){
         ny = y;
     }
-    if(z == 1 || z == -1){
+    if(z >= (1-tolerance) || z <= (-1+tolerance)){
         nz = z;
     }
     return {nx, ny, nz, 0};

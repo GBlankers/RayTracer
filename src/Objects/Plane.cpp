@@ -30,16 +30,14 @@ Vec4 Plane::calculateNormal(Vec4 hitPoint) {
 
 Vec4 Plane::getIntensityCorrectedColor(Vec4 hit, double intensity) {
     if(checkerBoard){
-        bool black;
+        bool check;
         if(hit.getZ()<0){
-            black = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 0;
+            check = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 0;
         } else {
-            black = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 1;
+            check = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 1;
         }
-        if (black){
-            this->setColor({0, 0, 0, 0});
-        } else {
-            this->setColor({1, 1, 1, 0});
+        if (check){
+            return {0, 0, 0, 0};
         }
     }
     return Shape::getIntensityCorrectedColor(hit, intensity);

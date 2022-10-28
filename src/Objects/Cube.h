@@ -5,6 +5,8 @@
 #include <cmath>
 
 class Cube : public Shape{
+private:
+    constexpr static const double tolerance = 0.0000001;
 public:
     explicit Cube(const Transformation &t, Vec4 color);
     Collision checkCollision(Ray r, LightSource l) override;
