@@ -4,6 +4,7 @@
 #include <cassert>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 #include "../Math/Vec4.h"
 #include "../Collision.h"
@@ -19,6 +20,7 @@ public:
     explicit Shape(Transformation t, Vec4 color);
 
     virtual Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) = 0;
+    virtual bool checkHit(Ray r) = 0;
     virtual Vec4 calculateNormal(Vec4 hitPoint) = 0;
     virtual Vec4 getIntensityCorrectedColor(Vec4 hit, double intensity);
 

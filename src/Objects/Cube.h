@@ -12,6 +12,8 @@ public:
     Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) override;
     static bool checkInCube(Ray r, double t);
 
+    bool checkHit(Ray r) override;
+
     Vec4 calculateNormal(Vec4 hitPoint) override;
 };
 

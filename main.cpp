@@ -58,7 +58,7 @@ double randomDouble(){
 void renderer(){
 
     Scene world;
-    world.fillScene();
+    world.fillScene3();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
@@ -79,7 +79,7 @@ void renderer(){
                 tempColor.reset();
                 eye.setPixel(N, i+randomDouble(), j+randomDouble());
                 for(auto & worldObject : worldObjects){
-                    c = worldObject->checkCollision(eye, light, worldObjects);
+                    c = worldObject->checkCollision(eye, worldLighting, worldObjects);
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
                         tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);

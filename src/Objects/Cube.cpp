@@ -17,7 +17,6 @@ Collision Cube::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
-    l.transform(inverse);
 
     // Calculate the intersection with a cube from (-/+1, -/+1, -/+1) centered around (0,0,0)
     double tempT0, tempT1,t = MAXFLOAT;
@@ -91,12 +90,20 @@ Collision Cube::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
     if(hit){
         // Calculate hit point in local coordinates
         Vec4 hitPoint = transformedRay.at(t);
-        // Calculate the normal vector at that point
-        Vec4 normal = calculateNormal(hitPoint);
         // calculate the intensity of the light
-        double intensity = l.calculateIntensity(normal, hitPoint);
+        double intensity = 0;
+        std::vector<bool> hitVector;
+        for(const auto& light: l){
+            light->transform(inverse);
+            for(const auto& s: worldObjects){
+                if(s.get() != this)
+                    hitVector.push_back(s->checkHit(Ray{hitPoint, light->getPosition()-hitPoint}));
+            }
+            if(!std::count(hitVector.begin(), hitVector.end(), true))
+                intensity += light->calculateIntensity(calculateNormal(hitPoint), hitPoint);
+        }
 
-        return {r.at(t), t, this->getIntensityCorrectedColor(hitPoint, intensity)};
+        return {r.at(t), t, getIntensityCorrectedColor(hitPoint, intensity/(double)l.size())};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
@@ -115,4 +122,8 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint) {
         nz = z;
     }
     return {nx, ny, nz, 0};
+}
+
+bool Cube::checkHit(Ray r) {
+    return false;
 }

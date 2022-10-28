@@ -21,6 +21,8 @@ private:
 public:
     explicit Scene();
     void fillScene();
+    void fillScene2();
+    void fillScene3();
 
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
 

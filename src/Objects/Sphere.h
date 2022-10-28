@@ -11,6 +11,7 @@ public:
 
     Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) override;
     Vec4 calculateNormal(Vec4 hitPoint) override;
+    bool checkHit(Ray r) override;
 };
 
 
