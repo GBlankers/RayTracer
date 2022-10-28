@@ -7,6 +7,7 @@
 class Plane : public Shape{
 private:
     bool checkerBoard = false;
+    int checkerBoardSize = 800;
 public:
     explicit Plane(const Transformation &t, Vec4 color);
 
@@ -15,7 +16,7 @@ public:
     Vec4 calculateNormal(Vec4 hitPoint) override;
     bool checkHit(Ray r) override;
 
-    void setCheckerBoardPattern(bool b);
+    void setCheckerBoardPattern(bool b, int size);
 };
 
 

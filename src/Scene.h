@@ -23,6 +23,7 @@ public:
     void fillScene();
     void fillScene2();
     void fillScene3();
+    void fillScene4();
 
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
 

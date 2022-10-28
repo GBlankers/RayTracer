@@ -58,7 +58,7 @@ double randomDouble(){
 void renderer(){
 
     Scene world;
-    world.fillScene2();
+    world.fillScene();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 

@@ -131,5 +131,66 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint) {
 }
 
 bool Cube::checkHit(Ray r) {
-    return false;
+    // Inverse transform the ray and the light source
+    Matrix4 inverse = this->getT().getInverse();
+    Ray transformedRay = r.transform(inverse);
+
+    double tempT0, tempT1;
+
+    if(transformedRay.getDirectionVector().getY() != 0.0){
+        // Combination of equations of a plane and of a ray -> There will be 1 equation to calculate t
+        tempT0 = (transformedRay.getStartPoint().getY()+1)/(-transformedRay.getDirectionVector().getY());
+        tempT1 = (transformedRay.getStartPoint().getY()-1)/(-transformedRay.getDirectionVector().getY());
+
+        // Check if the t is bigger than 0 -> there is a hit in front of the eye
+        // take the smallest t of the 2 -> closest to the eye
+        // if tempT is negative then the hit is not in front of the eye
+        if(tempT0 > 0) {
+            // check if the current hit is in the cube
+            if (checkInCube(transformedRay, tempT0)){
+                return true;
+            }
+        }
+        if (tempT1 > 0){
+            if(checkInCube(transformedRay, tempT1)){
+                return true;
+            }
+        }
+    }
+    // intersection with plane 2 and 3
+    if(transformedRay.getDirectionVector().getZ() != 0.0){
+        tempT0 = (transformedRay.getStartPoint().getZ()+1)/(-transformedRay.getDirectionVector().getZ());
+        tempT1 = (transformedRay.getStartPoint().getZ()-1)/(-transformedRay.getDirectionVector().getZ());
+
+        if(tempT0 > 0) {
+            // check if the current hit is in the cube
+            if (checkInCube(transformedRay, tempT0)){
+                return true;
+            }
+        }
+        if (tempT1 > 0){
+            if(checkInCube(transformedRay, tempT1)){
+                return true;
+            }
+        }
+    }
+    // intersection with plane 4 and 5
+    if(transformedRay.getDirectionVector().getX() != 0.0){
+        tempT0 = (transformedRay.getStartPoint().getX()+1)/(-transformedRay.getDirectionVector().getX());
+        tempT1 = (transformedRay.getStartPoint().getX()-1)/(-transformedRay.getDirectionVector().getX());
+
+        if(tempT0 > 0) {
+            // check if the current hit is in the cube
+            if (checkInCube(transformedRay, tempT0)){
+                return true;
+            }
+        }
+        if (tempT1 > 0){
+            if(checkInCube(transformedRay, tempT1)){
+                return true;
+            }
+        }
+    }
+
+        return false;
 }

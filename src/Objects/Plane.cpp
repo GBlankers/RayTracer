@@ -64,9 +64,9 @@ Vec4 Plane::getIntensityCorrectedColor(Vec4 hit, double intensity) {
     if(checkerBoard){
         bool check;
         if(hit.getZ()<0){
-            check = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 0;
+            check = (((int)hit.getX()/this->checkerBoardSize) + ((int)hit.getZ()/this->checkerBoardSize)) % 2 == 0;
         } else {
-            check = (((int)hit.getX()/800) + ((int)hit.getZ()/800)) % 2 == 1;
+            check = (((int)hit.getX()/this->checkerBoardSize) + ((int)hit.getZ()/this->checkerBoardSize)) % 2 == 1;
         }
         if (check){
             return {0, 0, 0, 0};
@@ -75,6 +75,7 @@ Vec4 Plane::getIntensityCorrectedColor(Vec4 hit, double intensity) {
     return Shape::getIntensityCorrectedColor(hit, intensity);
 }
 
-void Plane::setCheckerBoardPattern(bool b) {
+void Plane::setCheckerBoardPattern(bool b, int size) {
     this->checkerBoard = b;
+    this->checkerBoardSize = size;
 }
