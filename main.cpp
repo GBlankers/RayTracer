@@ -70,16 +70,24 @@ void renderer(){
     Vec4 color{}, tempColor{};
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // For timing and testing purpose
     auto start = std::chrono::high_resolution_clock::now();
+    // Go over all the pixels in the near screen
     for(int i = -W; i<W; i++){
         for(int j = -H; j<H; j++){
+            // Reset the color for each pixel then we can average for the anti-aliasing
             color.reset();
+            // Shoot a couple rays in almost the same direction
             for(int alias = 0; alias<ANTI_ALIAS_SAMPLING; alias++){
                 previousHit = MAXFLOAT;
                 tempColor.reset();
                 eye.setPixel(N, i+randomDouble(), j+randomDouble());
+                // Go over all the objects
                 for(auto & worldObject : worldObjects){
+                    // For every object, check if the ray hits
                     c = worldObject->checkCollision(eye, light);
+                    // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
+                    // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
                         tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
