@@ -9,7 +9,7 @@ private:
     constexpr static const double tolerance = 0.0000001;
 public:
     explicit Cube(const Transformation &t, Vec4 color);
-    Collision checkCollision(Ray r, LightSource l) override;
+    Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) override;
     static bool checkInCube(Ray r, double t);
 
     Vec4 calculateNormal(Vec4 hitPoint) override;

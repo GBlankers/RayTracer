@@ -2,7 +2,7 @@
 
 Sphere::Sphere(const Transformation &t, Vec4 color) : Shape(t, color) {}
 
-Collision Sphere::checkCollision(Ray r, LightSource l) {
+Collision Sphere::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) {
     // Inverse transform the ray
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);

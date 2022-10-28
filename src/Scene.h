@@ -16,12 +16,15 @@
 class Scene {
 private:
     std::vector<std::shared_ptr<Shape>> objectVector;
+    std::vector<std::shared_ptr<LightSource>> lightVector;
 
 public:
     explicit Scene();
     void fillScene();
 
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
+
+    const std::vector<std::shared_ptr<LightSource>> &getLightVector() const;
 };
 
 

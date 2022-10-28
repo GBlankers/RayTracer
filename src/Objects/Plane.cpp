@@ -3,7 +3,7 @@
 Plane::Plane(const Transformation &t, Vec4 color) : Shape(t, color){}
 
 // Default plane at y=0
-Collision Plane::checkCollision(Ray r, LightSource l) {
+Collision Plane::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);

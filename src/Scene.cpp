@@ -61,11 +61,19 @@ void Scene::fillScene() {
 
     Transformation tPlane1;
     tPlane1.addTranslation(0, -2000, 0);
-    Plane plane1(tPlane1, {1, 0, 1, 0});
-    plane1.setCheckerBoardPattern(true);
+    Plane plane1(tPlane1, {1, 1, 1, 0});
+    //plane1.setCheckerBoardPattern(true);
     objectVector.push_back(std::make_shared<Plane>(plane1));
+
+    // LIGHT
+    LightSource light({0,700,-1000,1}, {2000,-400,1000,0});
+    lightVector.push_back(std::make_shared<LightSource>(light));
 }
 
 const std::vector<std::shared_ptr<Shape>> &Scene::getObjectVector() const {
     return objectVector;
+}
+
+const std::vector<std::shared_ptr<LightSource>> &Scene::getLightVector() const {
+    return lightVector;
 }

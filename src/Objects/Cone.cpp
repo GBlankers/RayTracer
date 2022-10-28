@@ -2,7 +2,7 @@
 
 Cone::Cone(const Transformation &t, const Vec4 &color) : Shape(t, color) {}
 
-Collision Cone::checkCollision(Ray r, LightSource l) {
+Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);

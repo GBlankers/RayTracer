@@ -2,6 +2,9 @@
 #define RAYTRACER_SHAPE_H
 
 #include <cassert>
+#include <vector>
+#include <memory>
+
 #include "../Math/Vec4.h"
 #include "../Collision.h"
 #include "../Ray.h"
@@ -15,7 +18,7 @@ private:
 public:
     explicit Shape(Transformation t, Vec4 color);
 
-    virtual Collision checkCollision(Ray r, LightSource l) = 0;
+    virtual Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) = 0;
     virtual Vec4 calculateNormal(Vec4 hitPoint) = 0;
     virtual Vec4 getIntensityCorrectedColor(Vec4 hit, double intensity);
 

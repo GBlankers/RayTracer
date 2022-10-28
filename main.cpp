@@ -60,10 +60,10 @@ void renderer(){
     Scene world;
     world.fillScene();
     auto worldObjects(world.getObjectVector());
+    auto worldLighting(world.getLightVector());
 
     Ray eye(Vec4(-N, 0, 0, 1), Vec4(1, 0, 0, 0),
             Vec4(0, 1, 0, 0));
-    LightSource light({0,700,-1000,1}, {2000,-400,1000,0});
     Collision c;
 
     float previousHit;
@@ -79,7 +79,7 @@ void renderer(){
                 tempColor.reset();
                 eye.setPixel(N, i+randomDouble(), j+randomDouble());
                 for(auto & worldObject : worldObjects){
-                    c = worldObject->checkCollision(eye, light);
+                    c = worldObject->checkCollision(eye, light, worldObjects);
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
                         tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
@@ -100,7 +100,6 @@ void renderer(){
 }
 
 // TODO: fix cone ground plane
-// TODO: dots on cube
 // TODO: how to do shadows if the scene can't be given as an argument to the shape class?
 
 // TODO: materials
