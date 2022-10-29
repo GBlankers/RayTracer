@@ -2,6 +2,7 @@
 #define RAYTRACER_VEC4_H
 
 #include <cmath>
+#include <cassert>
 
 class Vec4 {
 private:
@@ -10,6 +11,8 @@ private:
 public:
     // Constructor
     Vec4(double x, double y, double z, int homogeneous);
+    // Constructor for a unit length vector using spherical coordinates
+    Vec4(double theta, double phi);
     explicit Vec4() = default;
 
     void normalize();
@@ -24,6 +27,7 @@ public:
     static double dot(Vec4 vector1, Vec4 vector2);
     static Vec4 cross(Vec4 vector1, Vec4 vector2);
     static double length(Vec4 vector);
+    static Vec4 normalize(Vec4 vector);
     // Basic get/set
     double getX() const;
     double getY() const;

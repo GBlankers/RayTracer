@@ -12,13 +12,14 @@ class Camera {
 private:
     Vec4 displacement; // define where the virtual screen is located in space (assume the middle pixel having x=0)
     Vec4 viewDirection; // define the look direction -> 'points at'
+    Vec4 crossDirection; // the cross product between the up vector and the view vector
     Vec4 upDirection; // Which direction is up? Defines an angle relative to the look direction
-    double fov; // calculate the eye point with a fov parameter, the aspect ratio is fixed
-    double distanceEyeFromScreen;
-
+    Vec4 eyePosition; // Where is the eye positioned in front of the screen
+    double distanceEyeFromScreen; // how many pixels is the eye from the screen
 public:
-    Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, Vec4 upVector);
-    Ray getRayFromPixel;
+    Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi);
+    Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement);
+    Ray getRayFromPixel(double pixelX, double pixelY);
 };
 
 

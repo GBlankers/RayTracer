@@ -6,6 +6,7 @@
 #include "src/Ray.h"
 #include "src/Collision.h"
 #include "src/Math/Vec4.h"
+#include "src/Camera.h"
 
 #include "GL/glut.h"
 #include "src/Scene.h"
@@ -65,10 +66,11 @@ void renderer(){
     world.fillScene();
     auto worldObjects(world.getObjectVector());
 
-    Ray eye(Vec4(-N, 0, 0, 1), Vec4(1, 0, 0, 0),
-            Vec4(0, 1, 0, 0));
-    LightSource light({0,700,-1000,1}, {2000,-400,1000,0});
+    Camera camera(2*W, 10, {2000, 0, 0, 1},
+                  {0, 0, 0, 1});
+    LightSource light({0,1500,0,1}, {2000,-1300,0,0});
     Collision c;
+    Ray shotRay{};
 
     float previousHit;
     Vec4 color{}, tempColor{};
@@ -85,11 +87,11 @@ void renderer(){
             for(int alias = 0; alias<ANTI_ALIAS_SAMPLING; alias++){
                 previousHit = MAXFLOAT;
                 tempColor.reset();
-                eye.setPixel(N, i+randomDouble(), j+randomDouble());
+                shotRay = camera.getRayFromPixel(i+randomDouble(), j+randomDouble());
                 // Go over all the objects
                 for(auto & worldObject : worldObjects){
                     // For every object, check if the ray hits
-                    c = worldObject->checkCollision(eye, light);
+                    c = worldObject->checkCollision(shotRay, light);
                     // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
                     // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
