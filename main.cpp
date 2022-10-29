@@ -6,16 +6,21 @@
 #include "src/Ray.h"
 #include "src/Collision.h"
 #include "src/Math/Vec4.h"
+#include "src/Camera.h"
 
 #include "GL/glut.h"
 #include "src/Scene.h"
 
+// Window constants
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
+// Virtual screen coordinates
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
-#define N 1800 // Distance to near plane
+// Anti alias samples
 #define ANTI_ALIAS_SAMPLING 3
+
+#define N 1800 // Distance to near plane
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
@@ -62,23 +67,34 @@ void renderer(){
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
-    Ray eye(Vec4(-N, 0, 0, 1), Vec4(1, 0, 0, 0),
-            Vec4(0, 1, 0, 0));
+    Camera camera(2*W, 10, {2000, 0, 0, 1},
+                  {0, 0, 0, 1});
+    LightSource light({0,1500,0,1}, {2000,-1300,0,0});
     Collision c;
+    Ray shotRay{};
+
     float previousHit;
     Vec4 color{}, tempColor{};
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // For timing and testing purpose
     auto start = std::chrono::high_resolution_clock::now();
+    // Go over all the pixels in the near screen
     for(int i = -W; i<W; i++){
         for(int j = -H; j<H; j++){
+            // Reset the color for each pixel then we can average for the anti-aliasing
             color.reset();
+            // Shoot a couple rays in almost the same direction
             for(int alias = 0; alias<ANTI_ALIAS_SAMPLING; alias++){
                 previousHit = MAXFLOAT;
                 tempColor.reset();
-                eye.setPixel(N, i+randomDouble(), j+randomDouble());
+                shotRay = camera.getRayFromPixel(i+randomDouble(), j+randomDouble());
+                // Go over all the objects
                 for(auto & worldObject : worldObjects){
-                    c = worldObject->checkCollision(eye, worldLighting, worldObjects);
+                    // For every object, check if the ray hits
+                    c = worldObject->checkCollision(shotRay, worldLighting, worldObjects);
+                    // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
+                    // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
                         tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
@@ -99,6 +115,7 @@ void renderer(){
 }
 
 // TODO: fix cone ground plane
+// TODO: dots on cube
 // TODO: how to do shadows if the scene can't be given as an argument to the shape class?
 
 // TODO: materials

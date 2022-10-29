@@ -11,6 +11,13 @@ void Vec4::normalize() {
     this->z = this->z/length;
 }
 
+void Vec4::reset() {
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
+    this->homogeneous = 0;
+}
+
 // Operator overloading to implement vector math
 Vec4 Vec4::operator+(const Vec4 vector) const {
     return {this->x+vector.getX(), this->y+vector.getY(), this->z+vector.getZ(), this->homogeneous+vector.getHomogeneous()};
@@ -19,6 +26,7 @@ Vec4 Vec4::operator+(const Vec4 vector) const {
 Vec4 Vec4::operator-(Vec4 vector) const {
     return {this->x-vector.getX(), this->y-vector.getY(), this->z-vector.getZ(), this->homogeneous-vector.getHomogeneous()};
 }
+
 
 Vec4 Vec4::operator*(double t) const {
     return {this->x*t, this->y*t, this->z*t, 0};
@@ -31,7 +39,6 @@ bool Vec4::operator==(const Vec4 &rhs) const {
            homogeneous == rhs.homogeneous;
 }
 
-
 bool Vec4::operator!=(const Vec4 &rhs) const {
     return !(rhs == *this);
 }
@@ -43,6 +50,11 @@ double Vec4::dot(Vec4 vector1, Vec4 vector2) {
 Vec4 Vec4::cross(Vec4 vector1, Vec4 vector2) {
     return {(vector1.getY()*vector2.getZ()-vector1.getZ()*vector2.getY()), -(vector1.getX()*vector2.getZ()-vector1.getZ()*vector2.getX()),
             (vector1.getX()*vector2.getY()-vector1.getY()*vector2.getX()), 0};
+}
+
+Vec4 Vec4::normalize(Vec4 vector) {
+    double length = sqrt(pow(vector.getX(), 2) + pow(vector.getY(), 2) + pow(vector.getZ(), 2));
+    return {vector.getX()/length, vector.getY()/length, vector.getZ()/length, 0};
 }
 
 double Vec4::length(Vec4 vector) {
@@ -70,9 +82,11 @@ void Vec4::setHomogeneous(int argHomogeneous) {
     Vec4::homogeneous = argHomogeneous;
 }
 
-void Vec4::reset() {
-    this->x = 0;
-    this->y = 0;
-    this->z = 0;
+Vec4::Vec4(double theta, double phi) {
     this->homogeneous = 0;
+    assert(theta>=0 and theta <= 180);
+    assert(phi>=0 and phi <= 360);
+    this->x = 1*sin(theta)*sin(phi);
+    this->y = 1*cos(theta);
+    this->z = 1*sin(theta)*cos(phi);
 }
