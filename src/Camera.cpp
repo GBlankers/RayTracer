@@ -37,8 +37,8 @@ Camera::Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualSc
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
 
     double theta, phi;
-    theta = atan((displacement.getY()-pointsAt.getY())/(pointsAt.getX()-displacement.getX()));
-    phi = M_PI_2-atan((pointsAt.getX()-displacement.getX())/(displacement.getZ()-pointsAt.getZ()));
+    theta = atan(-viewDirection.getY()/viewDirection.getX());
+    phi = M_PI_2-atan(-viewDirection.getZ()/viewDirection.getX());
     // Up direction calculation
     this->upDirection = Vec4(theta, phi);
 

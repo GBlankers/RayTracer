@@ -61,20 +61,23 @@ double randomDouble(){
 }
 
 void renderer(){
-
+    // Define a scene
     Scene world;
     world.fillScene();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
+    // initialise the camera
     Camera camera(2*W, 10, {2000, 0, 0, 1},
                   {0, 0, 0, 1});
-    LightSource light({0,1500,0,1}, {2000,-1300,0,0});
+
+    // Pre defined variables
     Collision c;
     Ray shotRay{};
-
     float previousHit;
     Vec4 color{}, tempColor{};
+
+    // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
 
     // For timing and testing purpose
@@ -115,9 +118,8 @@ void renderer(){
 }
 
 // TODO: fix cone ground plane
-// TODO: dots on cube
-// TODO: how to do shadows if the scene can't be given as an argument to the shape class?
-
+// TODO: reflection
+// TODO: refraction
 // TODO: materials
 // TODO: uv-mapping
 // TODO: extra: progressive rendering, movable camera, dynamically change the scene using ImGUI

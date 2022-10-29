@@ -84,7 +84,7 @@ void Vec4::setHomogeneous(int argHomogeneous) {
 
 Vec4::Vec4(double theta, double phi) {
     this->homogeneous = 0;
-    assert(theta>=0 and theta <= 180);
+    assert(theta>=-90 and theta <= 90);
     assert(phi>=0 and phi <= 360);
     this->x = 1*sin(theta)*sin(phi);
     this->y = 1*cos(theta);

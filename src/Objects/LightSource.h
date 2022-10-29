@@ -8,10 +8,10 @@
 class LightSource {
 private:
     Vec4 position;
-    Vec4 direction;
+    Vec4 direction{};
     Vec4 inversePos{};
 public:
-    LightSource(const Vec4 &position, const Vec4 &direction);
+    LightSource(const Vec4 &position, const Vec4 &pointsAt);
 
     LightSource transform(Matrix4 trans);
 

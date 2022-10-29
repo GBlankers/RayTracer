@@ -89,9 +89,9 @@ void Scene::fillScene() {
 
 
     Transformation tPlane1;
-    tPlane1.addTranslation(0, -200, 0);
-    Plane plane1(tPlane1, {1, 0, 1, 0});
-    //plane1.setCheckerBoardPattern(true);
+    tPlane1.addTranslation(0, -800, 0);
+    Plane plane1(tPlane1, {1, 1, 1, 0});
+    plane1.setCheckerBoardPattern(true, 150);
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
@@ -139,7 +139,7 @@ const std::vector<std::shared_ptr<LightSource>> &Scene::getLightVector() const {
 
 void Scene::fillScene4() {
     Transformation tCube1;
-    tCube1.addScaling(300, 300, 300);
+    tCube1.addScaling(150, 150, 150);
     tCube1.addRotationY(DEG_TO_RADIANS(30));
     tCube1.addRotationZ(DEG_TO_RADIANS(30));
     tCube1.addTranslation(2500, 0, 0);
@@ -147,29 +147,29 @@ void Scene::fillScene4() {
     objectVector.push_back(std::make_shared<Cube>(cube1));
 
     Transformation tCube2;
-    tCube2.addScaling(300, 300, 300);
+    tCube2.addScaling(150, 150, 150);
     tCube2.addRotationZ(DEG_TO_RADIANS(60));
     tCube2.addRotationX(DEG_TO_RADIANS(30));
-    tCube2.addTranslation(2500, -500, 950);
+    tCube2.addTranslation(2500, -250, 475);
     Cube cube2(tCube2, {0, 1, 0, 0});
     objectVector.push_back(std::make_shared<Cube>(cube2));
 
     Transformation tCube3;
-    tCube3.addScaling(300, 300, 300);
+    tCube3.addScaling(150, 150, 150);
     tCube3.addRotationZ(DEG_TO_RADIANS(-60));
     tCube3.addRotationX(DEG_TO_RADIANS(30));
-    tCube3.addTranslation(2500, -500, -950);
+    tCube3.addTranslation(2500, -250, -475);
     Cube cube3(tCube3, {1, 0, 0, 0});
     objectVector.push_back(std::make_shared<Cube>(cube3));
 
 
     Transformation tPlane1;
-    tPlane1.addTranslation(0, -1000, 0);
+    tPlane1.addTranslation(0, -500, 0);
     Plane plane1(tPlane1, {1, 1, 1, 0});
-    plane1.setCheckerBoardPattern(true, 500);
+    plane1.setCheckerBoardPattern(true, 130);
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2500,4000,0,1}, {0,-1000,0,0});
+    LightSource light({2500,200,2000,1}, {2500,0,0,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }

@@ -1,6 +1,8 @@
 #include "LightSource.h"
 
-LightSource::LightSource(const Vec4 &position, const Vec4 &direction) : position(position), direction(direction) {}
+LightSource::LightSource(const Vec4 &position, const Vec4 &pointsAt) : position(position) {
+    this->direction = pointsAt-position;
+}
 
 LightSource LightSource::transform(Matrix4 trans) {
     this->inversePos = trans * this->getPosition();
