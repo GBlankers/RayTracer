@@ -5,11 +5,11 @@
 
 class Cone : public Shape{
 public:
-    bool checkHit(Ray r) override;
+    bool checkHit(Ray r, double &t) override;
 
     Cone(const Transformation &t, const Vec4 &color);
 
-    Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) override;
+    Collision checkCollision(Ray r) override;
 
     Vec4 calculateNormal(Vec4 hitPoint) override;
 };

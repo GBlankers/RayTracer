@@ -2,14 +2,13 @@
 #include <chrono>
 #include <random>
 
-#include "src/Objects/Sphere.h"
 #include "src/Ray.h"
 #include "src/Collision.h"
 #include "src/Math/Vec4.h"
+#include "src/Scene.h"
 #include "src/Camera.h"
 
 #include "GL/glut.h"
-#include "src/Scene.h"
 
 // Window constants
 #define WINDOW_WIDTH 1280
@@ -61,7 +60,7 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene4();
+    world.fillScene();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
@@ -73,6 +72,8 @@ void renderer(){
     Collision c;
     Ray shotRay{};
     float previousHit;
+    double intensity, maxIntensity;
+    bool clearPathToLight;
     Vec4 color{}, tempColor{};
 
     // Clear the screen
@@ -93,11 +94,45 @@ void renderer(){
                 // Go over all the objects
                 for(auto & worldObject : worldObjects){
                     // For every object, check if the ray hits
-                    c = worldObject->checkCollision(shotRay, worldLighting, worldObjects);
+                    c = worldObject->checkCollision(shotRay);
                     // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
                     // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
+
+                        // Add ambient light
+                        intensity = worldObject->ambientIntensity();
+                        // Check if the object is in the shadow
+
+                        // Go over all the light sources
+                        for(const auto& light: worldLighting){
+                            // Assume there is a clear path to the light source
+                            clearPathToLight = true;
+                            // Go over all the objects in the world
+                            for(const auto& obj: worldObjects){
+                                // Do not check the for an intersection with itself
+                                // + check if the light is blocked by other objects
+                                if(obj.get() != worldObject.get() and obj->checkHit(Ray{c.getCollisionPoint(),
+                                                                                        light->getPosition() - c.getCollisionPoint()})) {
+                                    // There is no clear path to the light -> there will be shadows
+                                    clearPathToLight = false;
+                                }
+                            }
+                            // If there is a clear path -> calculate the diffuse and specular components
+                            if(clearPathToLight){
+                                // Inverse transform the light source
+                                Matrix4 inverseTransform = worldObject->getT().getInverse();
+                                light->transform(inverseTransform);
+                                // Calculate the diffuse component
+                                intensity += worldObject->getDiffuse()*light->calculateDiffuse(
+                                        worldObject->calculateNormal(inverseTransform * c.getCollisionPoint()),
+                                        inverseTransform * c.getCollisionPoint())*light->getIntensity();
+                                // calculate the specular component
+                                intensity += worldObject->getSpecular()*light->calculateSpecular(
+                                        Vec4::normalize(shotRay.getDirectionVector())*-1, c.getCollisionPoint())
+                                                *light->getIntensity();
+                            }
+                        }
                         tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
                     }
                 }

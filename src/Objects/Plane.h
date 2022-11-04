@@ -11,10 +11,10 @@ private:
 public:
     explicit Plane(const Transformation &t, Vec4 color);
 
-    Collision checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) override;
+    Collision checkCollision(Ray r) override;
     Vec4 getIntensityCorrectedColor(Vec4 hit, double intensity) override;
     Vec4 calculateNormal(Vec4 hitPoint) override;
-    bool checkHit(Ray r) override;
+    bool checkHit(Ray r, double &t) override;
 
     void setCheckerBoardPattern(bool b, int size);
 };

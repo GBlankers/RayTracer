@@ -1,8 +1,8 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, const Vec4 &color) : Shape(t, color) {}
+Cone::Cone(const Transformation &t, const Vec4 &color) : Shape(t, color, 0.0) {}
 
-Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) {
+Collision Cone::checkCollision(Ray r) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
@@ -36,33 +36,7 @@ Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
     hitPointL = transformedRay.at(t);
 
     if(hitPointL.getY() >= -1 and hitPointL.getY() <= 0 and t > -1){
-        // Calculate intensity
-        double intensity = 0;
-
-        Vec4 hitPointW = r.at(t);
-        // Is there a clear path to the light source
-        bool clearPathToLight;
-
-        // Check all the light sources
-        for(const auto& light: l){
-            // For every light source, assume that there is a clear path at first
-            clearPathToLight = true;
-            // Check all the objects in the scene
-            for(const auto& obj: worldObjects){
-                // Do not check the for an intersection with itself
-                // + check if the light is blocked by other objects
-                if(obj.get() != this and obj->checkHit(Ray{hitPointW, light->getPosition() - hitPointW})) {
-                    // There is no clear path to the light -> there will be shadows
-                    clearPathToLight = false;
-                }
-            }
-            if(clearPathToLight) {
-                light->transform(inverse);
-                intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
-            }
-        }
-
-        return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double)l.size())};
+        return {r.at(t), t, this->getColor()};
     }
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}};
 }
@@ -77,6 +51,6 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint) {
     return temp*(1/Vec4::length(temp));
 }
 
-bool Cone::checkHit(Ray r) {
+bool Cone::checkHit(Ray r, double &t) {
     return false;
 }

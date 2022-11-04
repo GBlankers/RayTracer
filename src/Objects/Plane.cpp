@@ -1,64 +1,28 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, Vec4 color) : Shape(t, color){}
+Plane::Plane(const Transformation &t, Vec4 color) : Shape(t, color, 0.0) {}
 
 // Default plane at y=0
-Collision Plane::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> l, std::vector<std::shared_ptr<Shape>> worldObjects) {
-    // Inverse transform the ray and the light source
-    Matrix4 inverse = this->getT().getInverse();
-    Ray transformedRay = r.transform(inverse);
+Collision Plane::checkCollision(Ray r) {
+    double t;
 
-    // Ray is not parallel to the plane
-    if(transformedRay.getDirectionVector().getY() != 0.0){
-        double t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
-
-        if(t>0){
-            // Calculate the hit point in local coordinates
-            Vec4 hitPointL = transformedRay.at(t);
-            // Calculate the point in world coordinates
-            Vec4 hitPointW = r.at(t);
-            // Keep track of total intensity
-            double intensity = 0;
-            // Is there a clear path to the light source
-            bool clearPathToLight;
-
-            // Check all the light sources
-            for(const auto& light: l){
-                // For every light source, assume that there is a clear path at first
-                clearPathToLight = true;
-                // Check all the objects in the scene
-                for(const auto& obj: worldObjects){
-                    // Do not check the for an intersection with itself
-                    // + check if the light is blocked by other objects
-                    if(obj.get() != this and obj->checkHit(Ray{hitPointW, light->getPosition() - hitPointW})) {
-                        // There is no clear path to the light -> there will be shadows
-                        clearPathToLight = false;
-                    }
-                }
-                if(clearPathToLight) {
-                    light->transform(inverse);
-                    intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
-                }
-            }
-            return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity/(double)l.size())};
-        }
+    if(checkHit(r, t)){
+        return {r.at(t), t, this->getColor()};
     }
 
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
 }
 
-bool Plane::checkHit(Ray r) {
+bool Plane::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = this->getT().getInverse();
     Ray transformedRay = r.transform(inverse);
-
-    double t=-1;
-
     // Ray is not parallel to the plane
-    if(transformedRay.getDirectionVector().getY() != 0.0)
+    if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
         t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
-
-    return t>0;
+        return t>0;
+    }
+    return false;
 }
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint) {

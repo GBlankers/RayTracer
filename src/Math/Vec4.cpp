@@ -32,6 +32,10 @@ Vec4 Vec4::operator*(double t) const {
     return {this->x*t, this->y*t, this->z*t, 0};
 }
 
+Vec4 Vec4::operator*(Vec4 vector) const {
+    return {this->getX()*vector.getX(), this->getY()*vector.getY(), this->getZ()*vector.getZ(), 0};
+}
+
 bool Vec4::operator==(const Vec4 &rhs) const {
     return x == rhs.x &&
            y == rhs.y &&

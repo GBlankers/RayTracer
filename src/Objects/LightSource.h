@@ -10,15 +10,22 @@ private:
     Vec4 position;
     Vec4 direction{};
     Vec4 inversePos{};
+    Vec4 color{};
+    double intensity;
 public:
-    LightSource(const Vec4 &position, const Vec4 &pointsAt);
+    LightSource(const Vec4 &position, const Vec4 &pointsAt, double intensity);
 
     LightSource transform(Matrix4 trans);
 
-    virtual double calculateIntensity(Vec4 normal, Vec4 hitPoint);
+    virtual double calculateDiffuse(Vec4 normal, Vec4 hitPoint);
+    virtual double calculateSpecular(Vec4 viewDirection, Vec4 hitPoint);
 
     const Vec4 &getPosition() const;
     const Vec4 &getDirection() const;
+    const Vec4 &getColor() const;
+    const Vec4 &getInversePos() const;
+
+    double getIntensity() const;
 };
 
 
