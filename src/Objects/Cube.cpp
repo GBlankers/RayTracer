@@ -92,18 +92,25 @@ Collision Cube::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
         Vec4 hitPointL = transformedRay.at(t);
         // Calculate hit point in world coordinates
         Vec4 hitPointW = r.at(t);
-        // calculate the intensity of the light
+        // Keep track of total intensity
         double intensity = 0;
+        // Is there a clear path to the light source
+        bool clearPathToLight;
 
-        std::vector<bool> hitVector;
-
+        // Check all the light sources
         for(const auto& light: l){
-            for(const auto& s: worldObjects){
-                if(s.get() != this) {
-                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition()-hitPointW}));
+            // For every light source, assume that there is a clear path at first
+            clearPathToLight = true;
+            // Check all the objects in the scene
+            for(const auto& obj: worldObjects){
+                // Do not check the for an intersection with itself
+                // + check if the light is blocked by other objects
+                if(obj.get() != this and obj->checkHit(Ray{hitPointW, light->getPosition() - hitPointW})) {
+                    // There is no clear path to the light -> there will be shadows
+                    clearPathToLight = false;
                 }
             }
-            if(!std::count(hitVector.begin(), hitVector.end(), true)) {
+            if(clearPathToLight) {
                 light->transform(inverse);
                 intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
             }
@@ -192,5 +199,5 @@ bool Cube::checkHit(Ray r) {
         }
     }
 
-        return false;
+    return false;
 }

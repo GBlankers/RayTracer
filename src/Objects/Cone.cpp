@@ -40,15 +40,26 @@ Collision Cone::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>> 
         double intensity = 0;
 
         Vec4 hitPointW = r.at(t);
-        std::vector<bool> hitVector;
-        for(const auto &light: l){
-            light->transform(inverse);
-            for(const auto& s: worldObjects){
-                if(s.get() != this)
-                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition() - hitPointW}));
+        // Is there a clear path to the light source
+        bool clearPathToLight;
+
+        // Check all the light sources
+        for(const auto& light: l){
+            // For every light source, assume that there is a clear path at first
+            clearPathToLight = true;
+            // Check all the objects in the scene
+            for(const auto& obj: worldObjects){
+                // Do not check the for an intersection with itself
+                // + check if the light is blocked by other objects
+                if(obj.get() != this and obj->checkHit(Ray{hitPointW, light->getPosition() - hitPointW})) {
+                    // There is no clear path to the light -> there will be shadows
+                    clearPathToLight = false;
+                }
             }
-            if(!std::count(hitVector.begin(), hitVector.end(), true))
+            if(clearPathToLight) {
+                light->transform(inverse);
                 intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
+            }
         }
 
         return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double)l.size())};

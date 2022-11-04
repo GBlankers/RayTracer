@@ -61,13 +61,13 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene();
+    world.fillScene4();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
     // initialise the camera
     Camera camera(2*W, 10, {2000, 0, 0, 1},
-                  {0, 1500, 0, 1});
+                  {0, 200, 0, 1});
 
     // Pre defined variables
     Collision c;

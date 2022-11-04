@@ -28,23 +28,27 @@ Collision Sphere::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>
         Vec4 hitPointW = r.at(t);
         // Keep track of total intensity
         double intensity = 0;
-        // Get a vector with
-        std::vector<bool> hitVector;
+        // Is there a clear path to the light source?
+        bool clearPathToLight;
 
+        // Check all the light sources
         for(const auto& light: l){
+            // For every light source, assume that there is a clear path at first
+            clearPathToLight = true;
+            // Check all the objects in the scene
             for(const auto& obj: worldObjects){
-                if(obj.get() != this) {
-                    hitVector.push_back(obj->checkHit(Ray{hitPointW, light->getPosition()-hitPointW}));
+                // Do not check the for an intersection with itself
+                // + check if the light is blocked by other objects
+                if(obj.get() != this and obj->checkHit(Ray{hitPointW, light->getPosition()-hitPointW})){
+                    // There is no clear path to the light -> there will be shadows
+                    clearPathToLight = false;
                 }
             }
-            if(!std::count(hitVector.begin(), hitVector.end(), true)) {
+            if(clearPathToLight) {
                 light->transform(inverse);
                 intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
-            } else {
-                double d = 0;
             }
         }
-
         return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double) l.size())};
     }
 
@@ -68,8 +72,7 @@ bool Sphere::checkHit(Ray r) {
 }
 
 Vec4 Sphere::calculateNormal(Vec4 hitPoint) {
-    Vec4 normal = hitPoint;
+    Vec4 normal(hitPoint);
     normal.setHomogeneous(0);
-    normal.normalize();
-    return normal;
+    return Vec4::normalize(normal);
 }
