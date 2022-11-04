@@ -18,9 +18,7 @@
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 3
-
-#define N 1800 // Distance to near plane
+#define ANTI_ALIAS_SAMPLING 1
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
@@ -69,7 +67,7 @@ void renderer(){
 
     // initialise the camera
     Camera camera(2*W, 10, {2000, 0, 0, 1},
-                  {0, 0, 0, 1});
+                  {0, 1500, 0, 1});
 
     // Pre defined variables
     Collision c;
@@ -122,4 +120,4 @@ void renderer(){
 // TODO: refraction
 // TODO: materials
 // TODO: uv-mapping
-// TODO: extra: progressive rendering, movable camera, dynamically change the scene using ImGUI
+// TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI

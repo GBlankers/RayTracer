@@ -19,23 +19,30 @@ Collision Sphere::checkCollision(Ray r, std::vector<std::shared_ptr<LightSource>
     double t;
 
     // Check for positive discriminant -> there is an intersection
-    if (D>0){
+    if (D>=0){
         // This part of the quadratic equation will always be smaller than the other part
         t = (-B - sqrt(D))/A;
         // Calculate hitPointL point in local coordinates
         Vec4 hitPointL = transformedRay.at(t);
+        // Calculate hit point in world coordinates
         Vec4 hitPointW = r.at(t);
-        // Calculate the intensity of the light source
+        // Keep track of total intensity
         double intensity = 0;
+        // Get a vector with
         std::vector<bool> hitVector;
+
         for(const auto& light: l){
-            light->transform(inverse);
-            for(const auto& s: worldObjects){
-                if(s.get() != this)
-                    hitVector.push_back(s->checkHit(Ray{hitPointW, light->getPosition() - hitPointW}));
+            for(const auto& obj: worldObjects){
+                if(obj.get() != this) {
+                    hitVector.push_back(obj->checkHit(Ray{hitPointW, light->getPosition()-hitPointW}));
+                }
             }
-            if(!std::count(hitVector.begin(), hitVector.end(), true))
+            if(!std::count(hitVector.begin(), hitVector.end(), true)) {
+                light->transform(inverse);
                 intensity += light->calculateIntensity(calculateNormal(hitPointL), hitPointL);
+            } else {
+                double d = 0;
+            }
         }
 
         return {hitPointW, t, getIntensityCorrectedColor(hitPointL, intensity / (double) l.size())};
@@ -57,7 +64,7 @@ bool Sphere::checkHit(Ray r) {
     // Discriminant
     double D = pow(B, 2)-(A*C);
 
-    return D>0;
+    return D>=0;
 }
 
 Vec4 Sphere::calculateNormal(Vec4 hitPoint) {
