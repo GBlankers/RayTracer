@@ -84,7 +84,6 @@ bool Cone::checkHit(Ray r) {
             hitPointL = transformedRay.at(t1);
             // Check if the hit is inside the unit circle
             if(sqrt(pow(hitPointL.getX(), 2) + pow(hitPointL.getZ(), 2)) <= 1){
-                t = t1;
                 return true;
             }
         }
@@ -93,11 +92,11 @@ bool Cone::checkHit(Ray r) {
 }
 
 Vec4 Cone::calculateNormal(Vec4 hitPoint) {
-    if(hitPoint.getY() == 0){
-        return {0, 1, 0, 0};
-    } else if (hitPoint.getY() == -1){
-        return {0, -1, 0, 0};
+    Vec4 localHit = this->getT().getInverse()*hitPoint;
+    if(fabs(localHit.getY()) < EPSILON){
+        return Vec4::normalize(this->getT().getForward()*Vec4{0, 1, 0, 0});
+    } else if (fabs(localHit.getY()+1) < EPSILON){
+        return Vec4::normalize(this->getT().getForward()*Vec4{0, -1, 0, 0});
     }
-    Vec4 temp(2*hitPoint.getX(), -2*hitPoint.getY(), 2*hitPoint.getZ(), 0);
-    return temp*(1/Vec4::length(temp));
+    return Vec4::normalize(this->getT().getForward()*Vec4{2*localHit.getX(), -2*localHit.getY(), 2*localHit.getZ(), 0});
 }

@@ -60,7 +60,7 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene3();
+    world.fillScene();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
@@ -139,7 +139,6 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: fix cone shading
 // TODO: reflection
 // TODO: refraction
 // TODO: materials

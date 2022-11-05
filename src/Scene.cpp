@@ -60,10 +60,10 @@ void Scene::fillScene() {
 //
     Transformation tCone1;
     tCone1.addScaling(200, 200, 200);
-//    tCone1.addRotationZ(DEG_TO_RADIANS(0));
-//    tCone1.addRotationX(DEG_TO_RADIANS(0));
+    tCone1.addRotationZ(DEG_TO_RADIANS(-30));
+    tCone1.addRotationX(DEG_TO_RADIANS(120));
     tCone1.addTranslation(2000, 350, -950);
-    Cone cone1(tCone1, {0, 0, 1, 0}, 0.4, 0.6, 0, 0);
+    Cone cone1(tCone1, {0, 0, 1, 0}, 0.3, 0.4, 0.3, 10);
     objectVector.push_back(std::make_shared<Cone>(cone1));
 
 
