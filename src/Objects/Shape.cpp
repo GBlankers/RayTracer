@@ -26,18 +26,10 @@ const Vec4 &Shape::getColor() const {
     return color;
 }
 
-double Shape::getDiffuse() const {
-    return diffuse;
-}
-
-double Shape::getSpecular() const {
-    return specular;
-}
-
-double Shape::getSpecularExponent() const {
-    return specularExponent;
-}
-
 double Shape::getAmbient() const {
     return ambient;
+}
+
+double Shape::calculateIntensity(const double diffuseComponent, const double specularComponent) const {
+    return this->diffuse*diffuseComponent+this->specular*pow(specularComponent, this->specularExponent);
 }

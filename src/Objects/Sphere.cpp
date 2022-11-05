@@ -30,12 +30,6 @@ bool Sphere::checkHit(Ray r, double &t) {
     return t>0;
 }
 
-Vec4 Sphere::calculateNormal(Vec4 hitPoint) {
-    Vec4 normal(this->getT().getInverse()*hitPoint);
-    normal.setHomogeneous(0);
-    return Vec4::normalize(this->getT().getForward()*normal);
-}
-
 bool Sphere::checkHit(Ray r) {
     // Inverse transform the ray
     Matrix4 inverse = this->getT().getInverse();
@@ -49,4 +43,10 @@ bool Sphere::checkHit(Ray r) {
 
     // t >= 0 -> hit
     return (-B-sqrt(D))/A > 0 or (-B+sqrt(D))/A > 0;
+}
+
+Vec4 Sphere::calculateNormal(Vec4 hitPoint) {
+    Vec4 normal(this->getT().getInverse()*hitPoint);
+    normal.setHomogeneous(0);
+    return Vec4::normalize(this->getT().getForward()*normal);
 }

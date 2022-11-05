@@ -17,7 +17,7 @@
 #define W ((double)WINDOW_WIDTH)
 #define H ((double)WINDOW_HEIGHT)
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 1
+#define ANTI_ALIAS_SAMPLING 2
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
@@ -60,13 +60,13 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene();
+    world.fillScene3();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
     // initialise the camera
     Camera camera(2*W, 10, {2000, 0, 0, 1},
-                  {0, 200, 0, 1});
+                  {0, 0, 0, 1});
 
     // Pre defined variables
     Collision c;
@@ -114,12 +114,12 @@ void renderer(){
                                     clearPathToLight = false;
                                 }
                             }
+                            // Calculate diffuse and spectral components if there is a clear path to the light source
                             if(clearPathToLight){
                                 normal = worldObject->calculateNormal(c.getCollisionPoint());
                                 diffuse = light->calculateDiffuse(normal, c.getCollisionPoint());
-                                intensity += worldObject->getDiffuse()*diffuse;
                                 specular = light->calculateSpecular(normal, shotRay.getDirectionVector(), c.getCollisionPoint());
-                                intensity += worldObject->getSpecular() * pow(specular,worldObject->getSpecularExponent());
+                                intensity += worldObject->calculateIntensity(diffuse, specular);
                             }
                         }
                         tempColor = Vec4(c.getR()*intensity, c.getG()*intensity, c.getB()*intensity, 0);
@@ -139,7 +139,7 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: fix cone ground plane
+// TODO: fix cone shading
 // TODO: reflection
 // TODO: refraction
 // TODO: materials

@@ -13,6 +13,7 @@ public:
 
     bool checkHit(Ray r, double &t) override;
     bool checkHit(Ray r) override;
+
     Vec4 calculateNormal(Vec4 hitPoint) override;
 };
 

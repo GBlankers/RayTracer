@@ -5,7 +5,7 @@
 #include "Objects/Sphere.h"
 #include "Objects/Cube.h"
 #include "Objects/Plane.h"
-//#include "Objects/Cone.h"
+#include "Objects/Cone.h"
 
 #include <memory>
 #include <vector>

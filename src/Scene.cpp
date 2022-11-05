@@ -2,6 +2,14 @@
 
 Scene::Scene() = default;
 
+const std::vector<std::shared_ptr<Shape>> &Scene::getObjectVector() const {
+    return objectVector;
+}
+
+const std::vector<std::shared_ptr<LightSource>> &Scene::getLightVector() const {
+    return lightVector;
+}
+
 void Scene::fillScene() {
 //    Transformation tSphere1;
 //    tSphere1.addScaling(400, 400, 400);
@@ -50,13 +58,13 @@ void Scene::fillScene() {
 //    Cube cube2(tCube2, {0, 1, 1, 0});
 //    objectVector.push_back(std::make_shared<Cube>(cube2));
 //
-//    Transformation tCone1;
-//    tCone1.addScaling(200, 200, 200);
-//    tCone1.addRotationZ(DEG_TO_RADIANS(-30));
-//    tCone1.addRotationX(DEG_TO_RADIANS(30));
-//    tCone1.addTranslation(2000, -350, -950);
-//    Cone cone1(tCone1, {0, 0, 1, 0});
-//    objectVector.push_back(std::make_shared<Cone>(cone1));
+    Transformation tCone1;
+    tCone1.addScaling(200, 200, 200);
+//    tCone1.addRotationZ(DEG_TO_RADIANS(0));
+//    tCone1.addRotationX(DEG_TO_RADIANS(0));
+    tCone1.addTranslation(2000, 350, -950);
+    Cone cone1(tCone1, {0, 0, 1, 0}, 0.4, 0.6, 0, 0);
+    objectVector.push_back(std::make_shared<Cone>(cone1));
 
 
 //    Transformation tPlane1;
@@ -69,72 +77,64 @@ void Scene::fillScene() {
     LightSource light({2000,1000,0,1}, {2000,0,0,0}, 1);
     lightVector.push_back(std::make_shared<LightSource>(light));
 }
-//
-//void Scene::fillScene2() {
-//    Transformation tCube1;
-//    tCube1.addScaling(400, 400, 400);
-//    tCube1.addRotationY(DEG_TO_RADIANS(-30));
-//    tCube1.addRotationX(DEG_TO_RADIANS(30));
-//    tCube1.addTranslation(2000, 200, -100);
-//    Cube cube1(tCube1, {1, 1, 0, 0});
-//    objectVector.push_back(std::make_shared<Cube>(cube1));
-//
-//    Transformation tSphere2;
-//    tSphere2.addScaling(400, 400, 400);
-//    tSphere2.addTranslation(2000, -800, 100);
-//    Sphere sphere2(tSphere2, {0, 0, 1, 0});
-//    objectVector.push_back(std::make_shared<Sphere>(sphere2));
-//
-////    Transformation tPlane1;
-////    tPlane1.addTranslation(0, -450, 0);
-////    Plane plane1(tPlane1, {1, 1, 1, 0});
-////    //plane1.setCheckerBoardPattern(true);
-////    objectVector.push_back(std::make_shared<Plane>(plane1));
-//
-//    // LIGHT
-//    LightSource light({2000,2000,0,1}, {0,-2000,0,0});
-//    lightVector.push_back(std::make_shared<LightSource>(light));
-//
-//    LightSource l2({0, 0, 0, 1}, {2000, 0, 0, 0});
-//    lightVector.push_back(std::make_shared<LightSource>(l2));
-//}
-//
-//void Scene::fillScene3(){
-//    Transformation tSphere2;
-//    tSphere2.addScaling(400, 400, 400);
-//    tSphere2.addTranslation(2500, -600, -800);
-//    Sphere sphere2(tSphere2, {0, 0, 1, 0});
-//    objectVector.push_back(std::make_shared<Sphere>(sphere2));
-//
-//    Transformation tSphere3;
-//    tSphere3.addScaling(400, 400, 400);
-//    tSphere3.addTranslation(2500, 0, 0);
-//    Sphere sphere3(tSphere3, {1, 0, 0, 0});
-//    objectVector.push_back(std::make_shared<Sphere>(sphere3));
-//
-//    Transformation tSphere4;
-//    tSphere4.addScaling(400, 400, 400);
-//    tSphere4.addTranslation(2500, -600, 800);
-//    Sphere sphere4(tSphere4, {0, 1, 0, 0});
-//    objectVector.push_back(std::make_shared<Sphere>(sphere4));
-//
+
+void Scene::fillScene2() {
+    Transformation tCube1;
+    tCube1.addScaling(200, 200, 200);
+    tCube1.addRotationY(DEG_TO_RADIANS(-30));
+    tCube1.addRotationX(DEG_TO_RADIANS(30));
+    tCube1.addTranslation(2000, 200, -100);
+    Cube cube1(tCube1, {1, 1, 0, 0}, 0.1, 0.9, 0, 0);
+    objectVector.push_back(std::make_shared<Cube>(cube1));
+
+    Transformation tSphere2;
+    tSphere2.addScaling(200, 200, 200);
+    tSphere2.addTranslation(2000, -400, 100);
+    Sphere sphere2(tSphere2, {0, 0, 1, 0}, 0.1, 0.9, 0, 0);
+    objectVector.push_back(std::make_shared<Sphere>(sphere2));
+
 //    Transformation tPlane1;
-//    tPlane1.addTranslation(0, -1000, 0);
-//    Plane plane1(tPlane1, {1, 1, 1, 0});
+//    tPlane1.addTranslation(0, -450, 0);
+//    Plane plane1(tPlane1, {1, 1, 1, 0}, 0.1, 0.9, 0, 0);
 //    //plane1.setCheckerBoardPattern(true);
 //    objectVector.push_back(std::make_shared<Plane>(plane1));
-//
-//    // LIGHT
-//    LightSource light({2500,1000,0,1}, {0,-1000,0,0});
-//    lightVector.push_back(std::make_shared<LightSource>(light));
-//}
-//
-const std::vector<std::shared_ptr<Shape>> &Scene::getObjectVector() const {
-    return objectVector;
+
+    // LIGHT
+    LightSource light({2000,2000,0,1}, {0,-2000,0,0}, 1);
+    lightVector.push_back(std::make_shared<LightSource>(light));
+
+    LightSource l2({0, 0, 0, 1}, {2000, 0, 0, 0}, 1);
+    lightVector.push_back(std::make_shared<LightSource>(l2));
 }
 
-const std::vector<std::shared_ptr<LightSource>> &Scene::getLightVector() const {
-    return lightVector;
+void Scene::fillScene3(){
+    Transformation tSphere2;
+    tSphere2.addScaling(200, 200, 200);
+    tSphere2.addTranslation(2500, -300, -400);
+    Sphere sphere2(tSphere2, {0, 0, 1, 0}, 0.1, 0.7, 0.2, 20);
+    objectVector.push_back(std::make_shared<Sphere>(sphere2));
+
+    Transformation tSphere3;
+    tSphere3.addScaling(220, 220, 220);
+    tSphere3.addTranslation(2300, 0, 0);
+    Sphere sphere3(tSphere3, {1, 0, 0, 0}, 0.1, 0.7, 0.2, 20);
+    objectVector.push_back(std::make_shared<Sphere>(sphere3));
+
+    Transformation tSphere4;
+    tSphere4.addScaling(200, 200, 200);
+    tSphere4.addTranslation(2500, -300, 400);
+    Sphere sphere4(tSphere4, {0, 1, 0, 0}, 0.1, 0.7, 0.2, 20);
+    objectVector.push_back(std::make_shared<Sphere>(sphere4));
+
+    Transformation tPlane1;
+    tPlane1.addTranslation(0, -500, 0);
+    Plane plane1(tPlane1, {1, 1, 1, 0}, 0, 0.5, 0.2, 20);
+    //plane1.setCheckerBoardPattern(true);
+    objectVector.push_back(std::make_shared<Plane>(plane1));
+
+    // LIGHT
+    LightSource light({1500,1000,0,1}, {2500,0,0,0}, 1);
+    lightVector.push_back(std::make_shared<LightSource>(light));
 }
 
 void Scene::fillScene4() {

@@ -5,11 +5,12 @@
 
 class Cone : public Shape{
 public:
-    bool checkHit(Ray r, double &t) override;
-
-    Cone(const Transformation &t, const Vec4 &color);
+    explicit Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent);
 
     Collision checkCollision(Ray r) override;
+
+    bool checkHit(Ray r, double &t) override;
+    bool checkHit(Ray r) override;
 
     Vec4 calculateNormal(Vec4 hitPoint) override;
 };
