@@ -9,12 +9,13 @@ private:
     bool checkerBoard = false;
     int checkerBoardSize = 800;
 public:
-    explicit Plane(const Transformation &t, Vec4 color);
+    explicit Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent);
 
     Collision checkCollision(Ray r) override;
-    Vec4 getIntensityCorrectedColor(Vec4 hit, double intensity) override;
-    Vec4 calculateNormal(Vec4 hitPoint) override;
+
     bool checkHit(Ray r, double &t) override;
+    bool checkHit(Ray r) override;
+    Vec4 calculateNormal(Vec4 hitPoint) override;
 
     void setCheckerBoardPattern(bool b, int size);
 };

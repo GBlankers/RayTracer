@@ -12,7 +12,7 @@ LightSource LightSource::transform(Matrix4 trans) {
 }
 
 double LightSource::calculateDiffuse(Vec4 normal, Vec4 hitPoint) {
-    Vec4 normalizedDirection = Vec4::normalize(this->inversePos-hitPoint);
+    Vec4 normalizedDirection = Vec4::normalize(this->position-hitPoint);
     double angle = acos(Vec4::dot(normal, normalizedDirection));
     if(angle > M_PI_2){
         return 0.0;
@@ -21,10 +21,12 @@ double LightSource::calculateDiffuse(Vec4 normal, Vec4 hitPoint) {
     }
 }
 
-double LightSource::calculateSpecular(Vec4 viewDirection, Vec4 hitPoint) {
-    Vec4 normalizedDirection = Vec4::normalize(this->inversePos-hitPoint);
+double LightSource::calculateSpecular(Vec4 normal, Vec4 viewDirection, Vec4 hitPoint) {
+    Vec4 normalizedDirection = Vec4::normalize(this->position-hitPoint);
+    Vec4 directionToEye = Vec4::normalize(viewDirection*-1);
+    Vec4 halfWayVector = Vec4::normalize(normalizedDirection+directionToEye);
 
-    return 0;
+    return Vec4::dot(halfWayVector, normal);
 }
 
 const Vec4 &LightSource::getPosition() const {

@@ -18,7 +18,7 @@ public:
     LightSource transform(Matrix4 trans);
 
     virtual double calculateDiffuse(Vec4 normal, Vec4 hitPoint);
-    virtual double calculateSpecular(Vec4 viewDirection, Vec4 hitPoint);
+    virtual double calculateSpecular(Vec4 normal, Vec4 viewDirection, Vec4 hitPoint);
 
     const Vec4 &getPosition() const;
     const Vec4 &getDirection() const;

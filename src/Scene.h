@@ -2,9 +2,9 @@
 #define RAYTRACER_SCENE_H
 
 #include "Objects/Shape.h"
-//#include "Objects/Sphere.h"
+#include "Objects/Sphere.h"
 #include "Objects/Cube.h"
-//#include "Objects/Plane.h"
+#include "Objects/Plane.h"
 //#include "Objects/Cone.h"
 
 #include <memory>

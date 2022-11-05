@@ -1,7 +1,7 @@
 #include "Cube.h"
 
-Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular) :
-                                                                        Shape(t, color, ambient, diffuse, specular) {}
+Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent) :
+                                                                        Shape(t, color, ambient, diffuse, specular, specularComponent) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
@@ -25,8 +25,15 @@ Collision Cube::checkCollision(Ray r) {
     return {{0,0,0,0}, -1, {0, 0, 0, 0}};
 }
 
+
+/**
+ * Calculate the normal in world coordinates
+ * @param hitPoint the hit point in world coordinates
+ * @return the normal direction at the hit point in world coordinates
+ */
 Vec4 Cube::calculateNormal(Vec4 hitPoint) {
-    double x = hitPoint.getX(), y = hitPoint.getY(), z = hitPoint.getZ();
+    Vec4 inverseHitPoint = this->getT().getInverse()*hitPoint;
+    double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
     double nx=0, ny=0, nz=0;
     if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
         nx = x;
@@ -37,7 +44,7 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint) {
     if(z >= (1-EPSILON) || z <= (-1+EPSILON)){
         nz = z;
     }
-    return {nx, ny, nz, 0};
+    return Vec4::normalize(this->getT().getForward()*Vec4{nx, ny, nz, 0});
 }
 
 bool Cube::checkHit(Ray r, double &t) {
@@ -181,38 +188,4 @@ bool Cube::checkHit(Ray r){
         }
     }
     return false;
-}
-
-double Cube::shadowDiffuseSpecular(Vec4 hitPoint, std::vector<std::shared_ptr<LightSource>> l,
-                                   std::vector<std::shared_ptr<Shape>> worldObjects) {
-    double intensity = 0, maxIntensity = 0;
-    bool clearPathToLight;
-
-    for(const auto& light: l){
-        // Calculate the max possible intensity
-        maxIntensity += light->getIntensity();
-        // Assume there is a clear path to the light source
-        clearPathToLight = true;
-        // Go over all the objects in the world
-        for(const auto& obj: worldObjects){
-            // Do not check the for an intersection with itself
-            // + check if the light is blocked by other objects
-            if(obj.get() != this and obj->checkHit(Ray{hitPoint, light->getPosition() - hitPoint})) {
-                // There is no clear path to the light -> there will be shadows
-                clearPathToLight = false;
-            }
-        }
-        // If there is a clear path -> calculate the diffuse and specular components
-        if(clearPathToLight){
-            // Inverse transform the light source
-            Matrix4 inverseTransform = this->getT().getInverse();
-            light->transform(inverseTransform);
-            // Calculate the diffuse component
-            intensity += this->getDiffuse()*light->calculateDiffuse(
-                    calculateNormal(inverseTransform * hitPoint),inverseTransform * hitPoint);
-
-        }
-    }
-
-    return 0;
 }

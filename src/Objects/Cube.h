@@ -5,12 +5,9 @@
 
 class Cube : public Shape{
 public:
-    explicit Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular);
+    explicit Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent);
 
     Collision checkCollision(Ray r) override;
-
-    double shadowDiffuseSpecular(Vec4 hitPoint, std::vector<std::shared_ptr<LightSource>> l,
-                                 std::vector<std::shared_ptr<Shape>> worldObjects) override;
 
     bool checkHit(Ray r, double &t) override;
     bool checkHit(Ray r) override;

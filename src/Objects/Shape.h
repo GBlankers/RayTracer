@@ -19,25 +19,22 @@ class Shape {
 private:
     Transformation t;
     Vec4 color;
-    double ambient, diffuse, specular;
+    double ambient, diffuse, specular, specularExponent;
 public:
-    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular);
+    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent);
 
     virtual Collision checkCollision(Ray r) = 0;
-    double ambientIntensity() const;
-    virtual double shadowDiffuseSpecular(Vec4 hitPoint, std::vector<std::shared_ptr<LightSource>> l,
-                                         std::vector<std::shared_ptr<Shape>> worldObjects) = 0;
-
     virtual bool checkHit(Ray r, double &t) = 0;
     virtual bool checkHit(Ray r) = 0;
-
     virtual Vec4 calculateNormal(Vec4 hitPoint) = 0;
+
     void setColor(const Vec4 &colorArg);
     const Vec4 &getColor() const;
 
+    double getAmbient() const;
     double getDiffuse() const;
-
     double getSpecular() const;
+    double getSpecularExponent() const;
 
     const Transformation &getT() const;
 };

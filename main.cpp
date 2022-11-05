@@ -72,9 +72,9 @@ void renderer(){
     Collision c;
     Ray shotRay{};
     float previousHit;
-    double intensity, maxIntensity;
+    double intensity, diffuse, specular;
     bool clearPathToLight;
-    Vec4 color{}, tempColor{};
+    Vec4 color{}, tempColor{}, normal{};
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -99,41 +99,30 @@ void renderer(){
                     // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
-
-                        // Add ambient light
-                        intensity = worldObject->ambientIntensity();
-                        // Check if the object is in the shadow
-
-                        // Go over all the light sources
+                        // Get the ambient intensity
+                        intensity = worldObject->getAmbient();
+                        // Check if in shadow, otherwise do not calculate the diffuse and specular components
                         for(const auto& light: worldLighting){
                             // Assume there is a clear path to the light source
                             clearPathToLight = true;
-                            // Go over all the objects in the world
-                            for(const auto& obj: worldObjects){
-                                // Do not check the for an intersection with itself
-                                // + check if the light is blocked by other objects
-                                if(obj.get() != worldObject.get() and obj->checkHit(Ray{c.getCollisionPoint(),
-                                                                                        light->getPosition() - c.getCollisionPoint()})) {
-                                    // There is no clear path to the light -> there will be shadows
+                            // Calculate the ray between the hit point and the light source
+                            Ray r(c.getCollisionPoint(), light->getPosition()-c.getCollisionPoint());
+                            // Check all the objects in the world
+                            for(const auto & obj: worldObjects){
+                                // If the object is not the current object and the ray hits than there is not clear path
+                                if(obj != worldObject and obj->checkHit(r)){
                                     clearPathToLight = false;
                                 }
                             }
-                            // If there is a clear path -> calculate the diffuse and specular components
                             if(clearPathToLight){
-                                // Inverse transform the light source
-                                Matrix4 inverseTransform = worldObject->getT().getInverse();
-                                light->transform(inverseTransform);
-                                // Calculate the diffuse component
-                                intensity += worldObject->getDiffuse()*light->calculateDiffuse(
-                                        worldObject->calculateNormal(inverseTransform * c.getCollisionPoint()),
-                                        inverseTransform * c.getCollisionPoint())*light->getIntensity();
-                                // calculate the specular component
-                                intensity += worldObject->getSpecular()*light->calculateSpecular(
-                                        Vec4::normalize(shotRay.getDirectionVector())*-1, c.getCollisionPoint())
-                                                *light->getIntensity();
+                                normal = worldObject->calculateNormal(c.getCollisionPoint());
+                                diffuse = light->calculateDiffuse(normal, c.getCollisionPoint());
+                                intensity += worldObject->getDiffuse()*diffuse;
+                                specular = light->calculateSpecular(normal, shotRay.getDirectionVector(), c.getCollisionPoint());
+                                intensity += worldObject->getSpecular() * pow(specular,worldObject->getSpecularExponent());
                             }
                         }
-                        tempColor = Vec4(c.getR(), c.getG(), c.getB(), 0);
+                        tempColor = Vec4(c.getR()*intensity, c.getG()*intensity, c.getB()*intensity, 0);
                     }
                 }
                 color = color + tempColor;
