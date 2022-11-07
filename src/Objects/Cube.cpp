@@ -1,7 +1,7 @@
 #include "Cube.h"
 
-Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent) :
-                                                                        Shape(t, color, ambient, diffuse, specular, specularComponent) {}
+Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);

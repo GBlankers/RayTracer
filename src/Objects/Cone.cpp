@@ -1,7 +1,7 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent) :
-    Shape(t, color, ambient, diffuse, specular, specularComponent) {}
+Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
 
 Collision Cone::checkCollision(Ray r) {
     double t;

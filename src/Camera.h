@@ -19,6 +19,7 @@ private:
 public:
     Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi);
     Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement);
+    Camera() = default;
     Ray getRayFromPixel(double pixelX, double pixelY);
 };
 

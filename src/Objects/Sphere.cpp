@@ -1,7 +1,7 @@
 #include "Sphere.h"
 
-Sphere::Sphere(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent) {}
+Sphere::Sphere(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
 
 Collision Sphere::checkCollision(Ray r) {
     double t;

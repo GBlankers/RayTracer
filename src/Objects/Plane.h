@@ -9,7 +9,8 @@ private:
     bool checkerBoard = false;
     int checkerBoardSize = 800;
 public:
-    explicit Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent);
+    explicit Plane(const Transformation &t, Vec4 color, double ambient, double diffuse,
+                   double specular, double specularComponent, double reflectivity);
 
     Collision checkCollision(Ray r) override;
 

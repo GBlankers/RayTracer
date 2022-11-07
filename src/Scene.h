@@ -6,6 +6,8 @@
 #include "Objects/Cube.h"
 #include "Objects/Plane.h"
 #include "Objects/Cone.h"
+#include "Camera.h"
+#include "settings.h"
 
 #include <memory>
 #include <vector>
@@ -17,6 +19,7 @@ class Scene {
 private:
     std::vector<std::shared_ptr<Shape>> objectVector;
     std::vector<std::shared_ptr<LightSource>> lightVector;
+    Camera camera{};
 
 public:
     explicit Scene();
@@ -27,8 +30,8 @@ public:
     void fillScene5();
 
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
-
     const std::vector<std::shared_ptr<LightSource>> &getLightVector() const;
+    const Camera &getCamera() const;
 };
 
 

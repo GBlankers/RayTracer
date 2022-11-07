@@ -1,7 +1,7 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent) :
-Shape(t, color, ambient, diffuse, specular, specularComponent) {}
+Plane::Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
