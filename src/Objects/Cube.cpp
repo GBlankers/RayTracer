@@ -19,10 +19,10 @@ Collision Cube::checkCollision(Ray r) {
 
     // there is a hit -> calculate shading
     if(checkHit(r, t)){
-        return {r.at(t), t, this->getColor()};
+        return {r.at(t), t, this->getColor(), this->calculateNormal(r.at(t))};
     }
 
-    return {{0,0,0,0}, -1, {0, 0, 0, 0}};
+    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
 }
 
 

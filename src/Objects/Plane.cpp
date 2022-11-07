@@ -25,13 +25,13 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {r.at(t), t, {0, 0, 0, 0}};
+                return {r.at(t), t, {0, 0, 0, 0}, Vec4()};
             }
         }
-        return {r.at(t), t, this->getColor()};
+        return {r.at(t), t, this->getColor(), this->calculateNormal(r.at(t))};
     }
 
-    return {{0,0,0,0}, -1, {0, 0, 0, 0}};
+    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
 }
 
 bool Plane::checkHit(Ray r, double &t) {

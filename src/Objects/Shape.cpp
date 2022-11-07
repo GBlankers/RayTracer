@@ -34,3 +34,15 @@ Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specul
     return lightColor*c.getColor()*this->diffuse*diffuseComponent
             +lightColor*c.getColor()*this->specular*pow(specularComponent, this->specularExponent);
 }
+
+double Shape::getDiffuse() const {
+    return diffuse;
+}
+
+double Shape::getSpecular() const {
+    return specular;
+}
+
+double Shape::getSpecularExponent() const {
+    return specularExponent;
+}

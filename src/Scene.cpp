@@ -165,11 +165,29 @@ void Scene::fillScene4() {
 
     Transformation tPlane1;
     tPlane1.addTranslation(0, -500, 0);
-    Plane plane1(tPlane1, {1, 1, 1, 0}, 0, 0.8, 0, 0);
+    Plane plane1(tPlane1, {1, 1, 1, 0}, 0, 0.6, 0, 0);
     plane1.setCheckerBoardPattern(true, 130);
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2500,200,2000,1}, {2500,0,0,0}, {0.80, 0.4, 0.1, 0});
+    LightSource light({2500,200,2000,1}, {2500,0,0,0}, {1, 1, 1, 0});
+    lightVector.push_back(std::make_shared<LightSource>(light));
+}
+
+void Scene::fillScene5(){
+    Transformation tSphere;
+    tSphere.addScaling(350, 350, 350);
+    tSphere.addTranslation(2300, 0, 0);
+    Sphere sphere(tSphere, {1, 0, 0, 0}, 0.1, 0.6, 0.3, 10);
+    objectVector.push_back(std::make_shared<Sphere>(sphere));
+
+    Transformation tPlane1;
+    tPlane1.addTranslation(0, -500, 0);
+    Plane plane1(tPlane1, {1, 1, 1, 0}, 0, 0.6, 0, 0);
+    plane1.setCheckerBoardPattern(true, 130);
+    objectVector.push_back(std::make_shared<Plane>(plane1));
+
+    // LIGHT
+    LightSource light({2500,1000,0,1}, {2500,0,0,0}, {1, 1, 1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }

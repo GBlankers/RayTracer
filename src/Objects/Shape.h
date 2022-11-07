@@ -32,6 +32,10 @@ public:
     const Vec4 &getColor() const;
 
     double getAmbient() const;
+    double getDiffuse() const;
+    double getSpecular() const;
+    double getSpecularExponent() const;
+
     Vec4 calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const;
 
     const Transformation &getT() const;

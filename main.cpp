@@ -18,11 +18,14 @@
 #define H ((double)WINDOW_HEIGHT)
 // Anti alias samples
 #define ANTI_ALIAS_SAMPLING 2
+// Number of max reflections
+#define REFLECTIONS 3
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
 void renderer();
 double randomDouble();
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const std::vector<std::shared_ptr<Shape>>& world);
 
 int main(int argc, char** argv) {
 
@@ -57,10 +60,42 @@ double randomDouble(){
     return distribution(generator);
 }
 
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const std::vector<std::shared_ptr<Shape>>& world){
+    // Max number of reflections reached
+    if(reflectionsToGo == 0){
+        return {0, 0, 0, 0};
+    }
+
+    // calculate the reflected ray direction
+    Vec4 rayDirection = Vec4::normalize(incomingRay.getDirectionVector() + collisionPoint.getNormal() *
+                            (-2)*Vec4::dot(collisionPoint.getNormal(), incomingRay.getDirectionVector()));
+    // create the ray, starts at t=0.1 to stop reflections with the object itself
+    Ray reflectedRay(collisionPoint.getCollisionPoint()+ rayDirection*0.1,rayDirection);
+
+    // Check all the world objects for a collision
+    Collision c, closestC;
+    double previousHit = MAXFLOAT;
+    for(auto & object : world) {
+        c = object->checkCollision(reflectedRay);
+
+        if (previousHit > c.getT() && c.getT() > 0) {
+            previousHit = (float) c.getT();
+            closestC = c;
+        }
+    }
+
+    if(previousHit == MAXFLOAT){
+        return {0, 0, 0, 0};
+    }
+
+    // Return color of the current hit + further reflections
+    return closestC.getColor() + reflect(reflectedRay, closestC, reflectionsToGo-1, world)*0.2;
+}
+
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene4();
+    world.fillScene5();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
@@ -72,9 +107,9 @@ void renderer(){
     Collision c;
     Ray shotRay{};
     float previousHit;
-    double ambient, diffuse, specular;
+    double ambient, diffuse, specular, intensity;
     bool clearPathToLight;
-    Vec4 color{}, tempColor{}, normal{};
+    Vec4 color{}, reflectedColor{}, tempColor{};
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -99,6 +134,11 @@ void renderer(){
                     // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
+
+                        //
+                        // LIGHTING
+                        //
+
                         // Get the ambient intensity
                         ambient = worldObject->getAmbient();
                         // Check if in shadow, otherwise do not calculate the diffuse and specular components
@@ -116,18 +156,23 @@ void renderer(){
                             }
                             // Calculate diffuse and spectral components if there is a clear path to the light source
                             if(clearPathToLight){
-                                normal = worldObject->calculateNormal(c.getCollisionPoint());
-                                diffuse = light->calculateDiffuse(normal, c.getCollisionPoint());
-                                specular = light->calculateSpecular(normal, shotRay.getDirectionVector(), c.getCollisionPoint());
+                                diffuse = light->calculateDiffuse(c.getNormal(), c.getCollisionPoint());
+                                specular = light->calculateSpecular(c.getNormal(), shotRay.getDirectionVector(), c.getCollisionPoint());
                                 tempColor = worldObject->calculateDiffuseSpecularColor(diffuse, specular, light->getColor(), c);
                             }
                         }
+
+                        //
+                        // REFLECTIONS
+                        //
+
+                        reflectedColor = reflect(shotRay, c, REFLECTIONS, worldObjects);
 
                         // Ambient coefficient * color of object
                         // + diffuse intensity * diffuse coefficient * color of object * color of light
                         // + specular intensity * specular coefficient * color of object * color of light
 
-                        tempColor = Vec4::clamp(tempColor + c.getColor()*ambient);
+                        tempColor = Vec4::clamp(tempColor + c.getColor()*ambient + reflectedColor*0.2);
                     }
                 }
                 color = color + tempColor;
