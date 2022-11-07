@@ -94,3 +94,9 @@ Vec4::Vec4(double theta, double phi) {
     this->y = 1*cos(theta);
     this->z = 1*sin(theta)*cos(phi);
 }
+
+Vec4 Vec4::clamp(Vec4 vector) {
+    return {std::clamp<double>(vector.getX(), 0, 1),
+            std::clamp<double>(vector.getY(), 0, 1),
+            std::clamp<double>(vector.getZ(), 0, 1), 1};
+}

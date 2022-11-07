@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <algorithm>
 
 class Vec4 {
 private:
@@ -29,6 +30,7 @@ public:
     static Vec4 cross(Vec4 vector1, Vec4 vector2);
     static double length(Vec4 vector);
     static Vec4 normalize(Vec4 vector);
+    static Vec4 clamp(Vec4 vector);
     // Basic get/set
     double getX() const;
     double getY() const;

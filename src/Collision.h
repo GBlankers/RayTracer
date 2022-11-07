@@ -16,11 +16,7 @@ public:
 
     double getT() const;
 
-    double getR() const;
-
-    double getG() const;
-
-    double getB() const;
+    const Vec4 &getColor() const;
 
     const Vec4 &getCollisionPoint() const;
 };

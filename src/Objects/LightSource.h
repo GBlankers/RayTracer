@@ -8,24 +8,15 @@
 class LightSource {
 private:
     Vec4 position;
-    Vec4 direction{};
-    Vec4 inversePos{};
     Vec4 color{};
-    double intensity;
 public:
-    LightSource(const Vec4 &position, const Vec4 &pointsAt, double intensity);
+    LightSource(const Vec4 &position, const Vec4 &pointsAt, Vec4 color);
 
-    LightSource transform(Matrix4 trans);
-
-    virtual double calculateDiffuse(Vec4 normal, Vec4 hitPoint);
-    virtual double calculateSpecular(Vec4 normal, Vec4 viewDirection, Vec4 hitPoint);
+    double calculateDiffuse(Vec4 normal, Vec4 hitPoint);
+    double calculateSpecular(Vec4 normal, Vec4 viewDirection, Vec4 hitPoint);
 
     const Vec4 &getPosition() const;
-    const Vec4 &getDirection() const;
     const Vec4 &getColor() const;
-    const Vec4 &getInversePos() const;
-
-    double getIntensity() const;
 };
 
 

@@ -60,19 +60,19 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene();
+    world.fillScene4();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 
     // initialise the camera
     Camera camera(2*W, 10, {2000, 0, 0, 1},
-                  {0, 0, 0, 1});
+                  {0, 100, 0, 1});
 
     // Pre defined variables
     Collision c;
     Ray shotRay{};
     float previousHit;
-    double intensity, diffuse, specular;
+    double ambient, diffuse, specular;
     bool clearPathToLight;
     Vec4 color{}, tempColor{}, normal{};
 
@@ -100,7 +100,7 @@ void renderer(){
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
                         // Get the ambient intensity
-                        intensity = worldObject->getAmbient();
+                        ambient = worldObject->getAmbient();
                         // Check if in shadow, otherwise do not calculate the diffuse and specular components
                         for(const auto& light: worldLighting){
                             // Assume there is a clear path to the light source
@@ -119,10 +119,15 @@ void renderer(){
                                 normal = worldObject->calculateNormal(c.getCollisionPoint());
                                 diffuse = light->calculateDiffuse(normal, c.getCollisionPoint());
                                 specular = light->calculateSpecular(normal, shotRay.getDirectionVector(), c.getCollisionPoint());
-                                intensity += worldObject->calculateIntensity(diffuse, specular);
+                                tempColor = worldObject->calculateDiffuseSpecularColor(diffuse, specular, light->getColor(), c);
                             }
                         }
-                        tempColor = Vec4(c.getR()*intensity, c.getG()*intensity, c.getB()*intensity, 0);
+
+                        // Ambient coefficient * color of object
+                        // + diffuse intensity * diffuse coefficient * color of object * color of light
+                        // + specular intensity * specular coefficient * color of object * color of light
+
+                        tempColor = Vec4::clamp(tempColor + c.getColor()*ambient);
                     }
                 }
                 color = color + tempColor;

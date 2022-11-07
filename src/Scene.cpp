@@ -74,7 +74,7 @@ void Scene::fillScene() {
 //    objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2000,1000,0,1}, {2000,0,0,0}, 1);
+    LightSource light({2000,1000,0,1}, {2000,0,0,0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }
 
@@ -100,10 +100,10 @@ void Scene::fillScene2() {
 //    objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2000,2000,0,1}, {0,-2000,0,0}, 1);
+    LightSource light({2000,2000,0,1}, {0,-2000,0,0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 
-    LightSource l2({0, 0, 0, 1}, {2000, 0, 0, 0}, 1);
+    LightSource l2({0, 0, 0, 1}, {2000, 0, 0, 0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(l2));
 }
 
@@ -133,7 +133,7 @@ void Scene::fillScene3(){
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({1500,1000,0,1}, {2500,0,0,0}, 1);
+    LightSource light({1500,1000,0,1}, {2500,0,0,0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }
 
@@ -170,6 +170,6 @@ void Scene::fillScene4() {
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2500,200,2000,1}, {2500,0,0,0}, 1);
+    LightSource light({2500,200,2000,1}, {2500,0,0,0}, {0.80, 0.4, 0.1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }

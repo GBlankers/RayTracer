@@ -30,6 +30,7 @@ double Shape::getAmbient() const {
     return ambient;
 }
 
-double Shape::calculateIntensity(const double diffuseComponent, const double specularComponent) const {
-    return this->diffuse*diffuseComponent+this->specular*pow(specularComponent, this->specularExponent);
+Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const {
+    return lightColor*c.getColor()*this->diffuse*diffuseComponent
+            +lightColor*c.getColor()*this->specular*pow(specularComponent, this->specularExponent);
 }

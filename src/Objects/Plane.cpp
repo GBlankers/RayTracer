@@ -11,10 +11,18 @@ Collision Plane::checkCollision(Ray r) {
         if(checkerBoard){
             bool check;
             Vec4 localHit = this->getT().getInverse()*r.at(t);
-            if(localHit.getZ()<0){
-                check = (((int)localHit.getX()/this->checkerBoardSize) + ((int)localHit.getZ()/this->checkerBoardSize)) % 2 == 0;
+            if(localHit.getX()<0){
+                if(localHit.getZ()<0){
+                    check = (((int)fabs(localHit.getX())/this->checkerBoardSize) + ((int)fabs(localHit.getZ())/this->checkerBoardSize)) % 2 == 0;
+                } else {
+                    check = (((int)fabs(localHit.getX())/this->checkerBoardSize) + ((int)fabs(localHit.getZ())/this->checkerBoardSize)) % 2 == 1;
+                }
             } else {
-                check = (((int)localHit.getX()/this->checkerBoardSize) + ((int)localHit.getZ()/this->checkerBoardSize)) % 2 == 1;
+                if(localHit.getZ()<0){
+                    check = (((int)fabs(localHit.getX())/this->checkerBoardSize) + ((int)fabs(localHit.getZ())/this->checkerBoardSize)) % 2 == 1;
+                } else {
+                    check = (((int)fabs(localHit.getX())/this->checkerBoardSize) + ((int)fabs(localHit.getZ())/this->checkerBoardSize)) % 2 == 0;
+                }
             }
             if(check){
                 return {r.at(t), t, {0, 0, 0, 0}};

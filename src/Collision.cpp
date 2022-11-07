@@ -10,14 +10,7 @@ const Vec4 &Collision::getCollisionPoint() const {
     return collisionPoint;
 }
 
-double Collision::getR() const {
-    return this->color.getX();
+const Vec4 &Collision::getColor() const {
+    return color;
 }
 
-double Collision::getG() const {
-    return this->color.getY();
-}
-
-double Collision::getB() const {
-    return this->color.getZ();
-}
