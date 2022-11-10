@@ -61,7 +61,7 @@ void renderer(){
     // Define a scene
     Scene world;
     world.fillScene("include/general.json");
-    world.fillScene4();
+    //world.fillScene3();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
 

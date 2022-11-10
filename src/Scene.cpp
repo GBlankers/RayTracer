@@ -170,7 +170,7 @@ void Scene::fillScene4() {
     objectVector.push_back(std::make_shared<Plane>(plane1));
 
     // LIGHT
-    LightSource light({2500,200,2000,1}, {2500,0,0,0}, {0.80, 0.4, 0.1, 0});
+    LightSource light({2500,200,2000,1}, {2500,0,0,0}, {1, 1, 1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }
 
@@ -207,18 +207,72 @@ void Scene::fillScene(const std::string& filename) {
     assert(s["Scene"].GetBool());
 
     // Temporary Variables
-    rapidjson::Value value;
+    rapidjson::Value value, valueArray;
 
     // Add the objects
     assert(s.HasMember("Objects"));
-    Vec4 scaling{}, rotation{}, translation{}, color{};
+    Vec4 color{};
     double ambient, diffuse, specular, specularExponent;
     Transformation temp;
     for(auto& v : s["Objects"].GetArray()){
+        temp.clear();
         // Check for transformations
-        if(v.HasMember("scaling")){
-            value = v["scaling"];
-            scaling = {};
+        if(v.HasMember("transformations")){
+            for(auto& i : v["transformations"].GetArray()){
+                if(i.HasMember("scaling")){
+                    assert(i["scaling"].IsArray());
+                    valueArray = i["scaling"].GetArray();
+                    temp.addScaling(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+                }
+                if(i.HasMember("rotation")){
+                    assert(i["rotation"].IsArray());
+                    for(auto& j : i["rotation"].GetArray()){
+                        if(j.HasMember("x")){
+                            temp.addRotationX(DEG_TO_RADIANS(j["x"].GetDouble()));
+                        } else if(j.HasMember("y")){
+                            temp.addRotationY(DEG_TO_RADIANS(j["y"].GetDouble()));
+                        } else if(j.HasMember("z")){
+                            temp.addRotationZ(DEG_TO_RADIANS(j["z"].GetDouble()));
+                        }
+                    }
+                }
+                if(i.HasMember("translation")){
+                    assert(i["translation"].IsArray());
+                    valueArray = i["translation"].GetArray();
+                    temp.addTranslation(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+                }
+            }
+        }
+        // Check color/material properties
+        assert(v.HasMember("color"));
+        valueArray = v["color"];
+        assert(valueArray.IsArray());
+        color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+        assert(v.HasMember("ambient"));
+        ambient = v["ambient"].GetDouble();
+        assert(v.HasMember("diffuse"));
+        diffuse = v["diffuse"].GetDouble();
+        assert(v.HasMember("specular"));
+        specular = v["specular"].GetDouble();
+        assert(v.HasMember("specularExponent"));
+        specularExponent = v["specularExponent"].GetDouble();
+
+        // Check object type
+        assert(v.HasMember("type"));
+        if(strcmp(v["type"].GetString(), "cube") == 0){
+            objectVector.push_back(std::make_shared<Cube>(Cube(temp, color, ambient, diffuse, specular, specularExponent)));
+        } else if(strcmp(v["type"].GetString(), "sphere") == 0){
+            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular, specularExponent)));
+        } else if(strcmp(v["type"].GetString(), "plane") == 0){
+            Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent);
+            if(v.HasMember("checkerBoard")){
+                tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
+            }
+            objectVector.push_back(std::make_shared<Plane>(tempPlane));
+        } else if(strcmp(v["type"].GetString(), "cone") == 0){
+            objectVector.push_back(std::make_shared<Cone>(Cone(temp, color, ambient, diffuse, specular, specularExponent)));
+        } else {
+            perror("Unknown object type in json file");
         }
     }
 
@@ -227,17 +281,17 @@ void Scene::fillScene(const std::string& filename) {
     Vec4 position{}, pointsAt{};
     for(auto& v : s["Light"].GetArray()){
         assert(v.HasMember("position"));
-        value = v["position"];
-        assert(value.IsArray());
-        position = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 1};
+        valueArray = v["position"];
+        assert(valueArray.IsArray());
+        position = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
         assert(v.HasMember("pointsAt"));
-        value = v["pointsAt"];
-        assert(value.IsArray());
-        pointsAt = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 1};
+        valueArray = v["pointsAt"];
+        assert(valueArray.IsArray());
+        pointsAt = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
         assert(v.HasMember("color"));
-        value = v["color"];
-        assert(value.IsArray());
-        color = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 0};
+        valueArray = v["color"];
+        assert(valueArray.IsArray());
+        color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
 
         lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color}));
     }

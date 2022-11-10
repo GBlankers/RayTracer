@@ -8,9 +8,17 @@
   "Objects": [
     {
       "type": "cube",
-      "scaling": [150, 150, 150],
-      "rotation": [0, 30, 30],
-      "translation": [2500, 0, 0],
+      "transformations": [
+        {
+          "scaling": [150, 150, 150]
+        },
+        {
+          "rotation": [0, 30, 30]
+        },
+        {
+          "translation": [2500, 0, 0]
+        }
+      ],
       "color": [0, 0, 1],
       "ambient": 0.05,
       "diffuse": 0.8,
@@ -20,9 +28,9 @@
   ],
   "Light": [
     {
-      "position": [2500, 200, 2000],
+      "position": [0, 2000, 0],
       "pointsAt": [2500, 0, 0],
-      "color": [0.8, 0.4, 0.1]
+      "color": [1, 1, 1]
     }
   ]
 }

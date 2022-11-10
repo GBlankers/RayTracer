@@ -79,5 +79,7 @@ const Matrix4 &Transformation::getInverse() const{
 }
 
 void Transformation::clear() {
-
+    forward = Matrix4();
+    inverse = Matrix4();
+    firstTransformation = true;
 }
