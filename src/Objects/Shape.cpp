@@ -7,8 +7,10 @@
  * @param G green color component, needs to be 0<=G<=1.0
  * @param B blue color component, needs to be 0<=B<=1.0
  */
-Shape::Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularExponent, double reflectivity)
-    : t(t), color(color), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularExponent), reflectivity(reflectivity){
+Shape::Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
+             double reflectivity, double roughness)
+    : t(t), color(color), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
+    reflectivity(reflectivity), roughness(roughness){
     assert(this->color.getX()>=0 && this->color.getX()<=1.0);
     assert(this->color.getY()>=0 && this->color.getY()<=1.0);
     assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
@@ -37,4 +39,8 @@ double Shape::getReflectivity() const {
 Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const {
     return lightColor*c.getColor()*this->diffuse*diffuseComponent
             +lightColor*c.getColor()*this->specular*pow(specularComponent, this->specularExponent);
+}
+
+double Shape::getRoughness() const {
+    return roughness;
 }

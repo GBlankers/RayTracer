@@ -1,6 +1,5 @@
 #include <iostream>
 #include <chrono>
-#include <random>
 
 #include "src/Ray.h"
 #include "src/Collision.h"
@@ -8,12 +7,14 @@
 #include "src/Scene.h"
 #include "src/settings.h"
 
+#include "src/Math/Utils.h"
+
 #include "GL/glut.h"
 
 void openGLInit();
 void drawDot(GLint x, GLint y);
 void renderer();
-double randomDouble();
+
 Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const std::vector<std::shared_ptr<Shape>>& world, const std::vector<std::shared_ptr<LightSource>>& lightVector);
 Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const std::vector<std::shared_ptr<Shape>>& world, const std::vector<std::shared_ptr<LightSource>>& lightVector);
 
@@ -42,12 +43,6 @@ void drawDot(GLint x, GLint y){
     glBegin(GL_POINTS);
     glVertex2i(x, y);
     glEnd();
-}
-
-double randomDouble(){
-    static std::uniform_real_distribution<double> distribution(-1.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
 }
 
 Vec4 lighting(const std::shared_ptr<Shape>& shape,
@@ -103,7 +98,6 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     double previousHit = MAXFLOAT;
     for(auto & object : world) {
         c = object->checkCollision(reflectedRay);
-
         if (previousHit > c.getT() && c.getT() > 0) {
             previousHit = (float) c.getT();
             closestC = c;
@@ -122,7 +116,7 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene3();
+    world.fillScene4();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
     auto camera(world.getCamera());
@@ -131,7 +125,7 @@ void renderer(){
     Collision c, lastCollision;
     Ray shotRay{};
     float previousHit;
-    Vec4 color{}, reflectedColor{}, tempColor{};
+    Vec4 color{}, reflectedColor{}, lightColor{};
     std::shared_ptr<Shape> lastObjectHit;
 
     // Clear the screen
@@ -148,7 +142,6 @@ void renderer(){
             // Shoot a couple rays in almost the same direction
             for(int alias = 0; alias<ANTI_ALIAS_SAMPLING; alias++){
                 previousHit = MAXFLOAT;
-                tempColor.reset();
                 shotRay = camera.getRayFromPixel(i+randomDouble(), j+randomDouble());
                 // Go over all the objects
                 for(auto & worldObject : worldObjects){
@@ -163,11 +156,11 @@ void renderer(){
                     }
                 }
                 // LIGHTING
-                tempColor = lighting(lastObjectHit, lastCollision, shotRay, worldObjects, worldLighting);
+                lightColor = lighting(lastObjectHit, lastCollision, shotRay, worldObjects, worldLighting);
                 // REFLECTIONS
                 reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, worldObjects, worldLighting);
                 // Cumulate color -> anti alias;
-                color = color + Vec4::clamp(tempColor + reflectedColor*lastObjectHit->getReflectivity());
+                color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
             }
             color = color*(1.0/ANTI_ALIAS_SAMPLING);
             glColor3d(color.getX(), color.getY(), color.getZ());

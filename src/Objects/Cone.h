@@ -5,8 +5,9 @@
 
 class Cone : public Shape{
 public:
-    explicit Cone(const Transformation &t, Vec4 color, double ambient, double diffuse,
-                  double specular, double specularComponent, double reflectivity);
+    explicit Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
+                  double specularComponent,
+                  double reflectivity, double roughness);
 
     Collision checkCollision(Ray r) override;
 

@@ -1,20 +1,22 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
+Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
+           double specularComponent,
+           double reflectivity, double roughness) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness) {}
 
 Collision Cone::checkCollision(Ray r) {
     double t;
 
     if(checkHit(r, t)){
-        return {r.at(t), t, this->getColor(), this->calculateNormal(r.at(t))};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness())};
     }
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
 }
 
 bool Cone::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = this->getT().getInverse();
+    Matrix4 inverse = getT().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Check for hit with cone
@@ -54,7 +56,7 @@ bool Cone::checkHit(Ray r, double &t) {
 
 bool Cone::checkHit(Ray r) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = this->getT().getInverse();
+    Matrix4 inverse = getT().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Check for hit with cone
@@ -91,11 +93,11 @@ bool Cone::checkHit(Ray r) {
 }
 
 Vec4 Cone::calculateNormal(Vec4 hitPoint) {
-    Vec4 localHit = this->getT().getInverse()*hitPoint;
+    Vec4 localHit = getT().getInverse()*hitPoint;
     if(fabs(localHit.getY()) < EPSILON){
-        return Vec4::normalize(this->getT().getForward()*Vec4{0, 1, 0, 0});
+        return Vec4::normalize(getT().getForward()*Vec4{0, 1, 0, 0});
     } else if (fabs(localHit.getY()+1) < EPSILON){
-        return Vec4::normalize(this->getT().getForward()*Vec4{0, -1, 0, 0});
+        return Vec4::normalize(getT().getForward()*Vec4{0, -1, 0, 0});
     }
-    return Vec4::normalize(this->getT().getForward()*Vec4{2*localHit.getX(), -2*localHit.getY(), 2*localHit.getZ(), 0});
+    return Vec4::normalize(getT().getForward()*Vec4{2*localHit.getX(), -2*localHit.getY(), 2*localHit.getZ(), 0});
 }

@@ -19,9 +19,11 @@ class Shape {
 private:
     Transformation t;
     Vec4 color;
-    double ambient, diffuse, specular, specularExponent, reflectivity;
+    double ambient, diffuse, specular, specularExponent, reflectivity, roughness;
 public:
-    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity);
+    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular,
+                   double specularComponent,
+                   double reflectivity, double roughness);
 
     virtual Collision checkCollision(Ray r) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;
@@ -32,6 +34,7 @@ public:
     const Vec4 &getColor() const;
     double getReflectivity() const;
     double getAmbient() const;
+    double getRoughness() const;
 
     Vec4 calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const;
 

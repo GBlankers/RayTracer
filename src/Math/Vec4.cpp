@@ -3,14 +3,6 @@
 // Constructor
 Vec4::Vec4(double x, double y, double z, int homogeneous) : x(x), y(y), z(z), homogeneous(homogeneous){}
 
-
-void Vec4::normalize() {
-    double length = sqrt(pow(this->getX(), 2) + pow(this->getY(), 2) + pow(this->getZ(), 2));
-    this->x = this->x/length;
-    this->y = this->y/length;
-    this->z = this->z/length;
-}
-
 void Vec4::reset() {
     this->x = 0;
     this->y = 0;
@@ -65,6 +57,16 @@ double Vec4::length(Vec4 vector) {
     return sqrt(pow(vector.getX(), 2)+ pow(vector.getY(), 2)+ pow(vector.getZ(), 2));
 }
 
+Vec4 Vec4::clamp(Vec4 vector) {
+    return {std::clamp<double>(vector.getX(), 0, 1),
+            std::clamp<double>(vector.getY(), 0, 1),
+            std::clamp<double>(vector.getZ(), 0, 1), 1};
+}
+
+Vec4 Vec4::random(double min, double max) {
+    return {randomDouble(min, max), randomDouble(min, max), randomDouble(min, max), 0};
+}
+
 // Get/set
 double Vec4::getX() const {
     return x;
@@ -93,10 +95,4 @@ Vec4::Vec4(double theta, double phi) {
     this->x = 1*sin(theta)*sin(phi);
     this->y = 1*cos(theta);
     this->z = 1*sin(theta)*cos(phi);
-}
-
-Vec4 Vec4::clamp(Vec4 vector) {
-    return {std::clamp<double>(vector.getX(), 0, 1),
-            std::clamp<double>(vector.getY(), 0, 1),
-            std::clamp<double>(vector.getZ(), 0, 1), 1};
 }

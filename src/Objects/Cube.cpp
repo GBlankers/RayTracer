@@ -1,7 +1,9 @@
 #include "Cube.h"
 
-Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent, double reflectivity) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity) {}
+Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
+           double specularComponent,
+           double reflectivity, double roughness) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
@@ -19,7 +21,7 @@ Collision Cube::checkCollision(Ray r) {
 
     // there is a hit -> calculate shading
     if(checkHit(r, t)){
-        return {r.at(t), t, this->getColor(), this->calculateNormal(r.at(t))};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness())};
     }
 
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
@@ -32,7 +34,7 @@ Collision Cube::checkCollision(Ray r) {
  * @return the normal direction at the hit point in world coordinates
  */
 Vec4 Cube::calculateNormal(Vec4 hitPoint) {
-    Vec4 inverseHitPoint = this->getT().getInverse()*hitPoint;
+    Vec4 inverseHitPoint = getT().getInverse()*hitPoint;
     double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
     double nx=0, ny=0, nz=0;
     if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
@@ -44,12 +46,12 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint) {
     if(z >= (1-EPSILON) || z <= (-1+EPSILON)){
         nz = z;
     }
-    return Vec4::normalize(this->getT().getForward()*Vec4{nx, ny, nz, 0});
+    return Vec4::normalize(getT().getForward()*Vec4{nx, ny, nz, 0});
 }
 
 bool Cube::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = this->getT().getInverse();
+    Matrix4 inverse = getT().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     double tempT0, tempT1;
@@ -124,7 +126,7 @@ bool Cube::checkHit(Ray r, double &t) {
 
 bool Cube::checkHit(Ray r){
     // Inverse transform the ray and the light source
-    Matrix4 inverse = this->getT().getInverse();
+    Matrix4 inverse = getT().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     double tempT0, tempT1;

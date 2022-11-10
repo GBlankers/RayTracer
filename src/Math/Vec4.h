@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cassert>
 #include <algorithm>
+#include "Utils.h"
 
 class Vec4 {
 private:
@@ -16,7 +17,6 @@ public:
     Vec4(double theta, double phi);
     explicit Vec4() = default;
 
-    void normalize();
     void reset();
     // Operator overloading
     Vec4 operator+(Vec4 vector) const;
@@ -31,6 +31,7 @@ public:
     static double length(Vec4 vector);
     static Vec4 normalize(Vec4 vector);
     static Vec4 clamp(Vec4 vector);
+    static Vec4 random(double min, double max);
     // Basic get/set
     double getX() const;
     double getY() const;
