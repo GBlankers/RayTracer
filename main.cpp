@@ -116,7 +116,8 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene4();
+    world.fillScene("include/general.json");
+    //world.fillScene3();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
     auto camera(world.getCamera());

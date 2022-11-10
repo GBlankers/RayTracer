@@ -6,8 +6,8 @@
 
 class Matrix4 {
 public:
-    double matrix[4][4] = {{0,0,0,0},{0,0,0,0},
-                           {0,0,0,0}, {0,0,0,0}};
+    double matrix[4][4] = {{1,0,0,0},{0,1,0,0},
+                           {0,0,1,0}, {0,0,0,1}};
     // Constructors
     explicit Matrix4() = default;
     explicit Matrix4(double (*matrix)[4]);

@@ -16,6 +16,7 @@ public:
     void addRotationX(double thetaX);
     void addRotationY(double thetaY);
     void addRotationZ(double thetaZ);
+    void clear();
     const Matrix4 &getForward() const;
     const Matrix4 &getInverse() const;
 };

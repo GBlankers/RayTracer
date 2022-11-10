@@ -1,0 +1,36 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [2000, 0, 0],
+    "location": [0, 100, 0]
+  },
+  "Objects": [
+    {
+      "type": "cube",
+      "transformations": [
+        {
+          "scaling": [150, 150, 150]
+        },
+        {
+          "rotation": [0, 30, 30]
+        },
+        {
+          "translation": [2500, 0, 0]
+        }
+      ],
+      "color": [0, 0, 1],
+      "ambient": 0.05,
+      "diffuse": 0.8,
+      "specular": 0,
+      "specularExponent": 0
+    }
+  ],
+  "Light": [
+    {
+      "position": [0, 2000, 0],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ]
+}
