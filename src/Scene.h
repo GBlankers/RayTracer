@@ -7,8 +7,12 @@
 #include "Objects/Plane.h"
 #include "Objects/Cone.h"
 
+#include "rapidjson/document.h"
+
 #include <memory>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 
 #define DEG_TO_RADIANS(X) (X*M_PI/180)
@@ -20,6 +24,7 @@ private:
 
 public:
     explicit Scene();
+    void fillScene(const std::string& filename);
     void fillScene();
     void fillScene2();
     void fillScene3();

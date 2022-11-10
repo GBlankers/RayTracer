@@ -13,5 +13,7 @@ set_target_properties(srcFiles PROPERTIES LINKER_LANGUAGE CXX)
 add_executable(RayTracer main.cpp)
 target_link_libraries(RayTracer srcFiles ${OpenGLLinkers})
 
+find_package(RapidJSON)
+
 add_executable(Test test.cpp)
 target_link_libraries(Test srcFiles ${OpenGLLinkers})

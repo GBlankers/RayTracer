@@ -77,3 +77,7 @@ const Matrix4 &Transformation::getForward() const {
 const Matrix4 &Transformation::getInverse() const{
     return inverse;
 }
+
+void Transformation::clear() {
+
+}

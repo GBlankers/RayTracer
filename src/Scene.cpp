@@ -173,3 +173,72 @@ void Scene::fillScene4() {
     LightSource light({2500,200,2000,1}, {2500,0,0,0}, {0.80, 0.4, 0.1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 }
+
+void Scene::fillScene(const std::string& filename) {
+    // Filename is defined in the main, this file is 1 directory deeper
+    std::ifstream generalFile("../"+filename);
+    // Save and convert the contents of the file to a const c-string
+    std::stringstream bufferGeneralFile;
+    bufferGeneralFile << generalFile.rdbuf();
+    std::string generalString = bufferGeneralFile.str();
+    const char* jsonString = generalString.c_str();
+
+    // Convert to rapidJson object
+    rapidjson::Document generalDocument;
+    generalDocument.Parse(jsonString);
+    assert(generalDocument.IsObject());
+
+    // Load the scene json file defined in the general json file
+    assert(generalDocument.HasMember("scene"));
+    assert(generalDocument["scene"].IsString());
+    std::string sceneFileName(generalDocument["scene"].GetString());
+    std::ifstream sceneFile("../include/"+sceneFileName);
+
+    // Save and convert the contents of the file to a const c-string
+    std::stringstream buffer2;
+    buffer2 << sceneFile.rdbuf();
+    std::string tempString2 = buffer2.str();
+    const char* jsonSceneString = tempString2.c_str();
+
+    // Convert to rapidJSON object
+    rapidjson::Document s;
+    s.Parse(jsonSceneString);
+    assert(s.IsObject());
+    assert(s["Scene"].GetBool());
+
+    // Temporary Variables
+    rapidjson::Value value;
+
+    // Add the objects
+    assert(s.HasMember("Objects"));
+    Vec4 scaling{}, rotation{}, translation{}, color{};
+    double ambient, diffuse, specular, specularExponent;
+    Transformation temp;
+    for(auto& v : s["Objects"].GetArray()){
+        // Check for transformations
+        if(v.HasMember("scaling")){
+            value = v["scaling"];
+            scaling = {};
+        }
+    }
+
+    // Add the lightSources
+    assert(s.HasMember("Light"));
+    Vec4 position{}, pointsAt{};
+    for(auto& v : s["Light"].GetArray()){
+        assert(v.HasMember("position"));
+        value = v["position"];
+        assert(value.IsArray());
+        position = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 1};
+        assert(v.HasMember("pointsAt"));
+        value = v["pointsAt"];
+        assert(value.IsArray());
+        pointsAt = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 1};
+        assert(v.HasMember("color"));
+        value = v["color"];
+        assert(value.IsArray());
+        color = {value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), 0};
+
+        lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color}));
+    }
+}

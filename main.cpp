@@ -60,6 +60,7 @@ double randomDouble(){
 void renderer(){
     // Define a scene
     Scene world;
+    world.fillScene("include/general.json");
     world.fillScene4();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
