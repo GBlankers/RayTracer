@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 #include "Camera.h"
 
 /**
@@ -10,8 +12,8 @@
  * @param theta angle between the up-vector and the positive y-axis
  * @param phi angle between the up-vector and the positive z-axis
  */
-Camera::Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi) : displacement(virtualScreenDisplacement){
-    this->distanceEyeFromScreen = ((double)virtualScreenWidth/2)/(tan(fov*M_PI/360));
+Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi) : displacement(virtualScreenDisplacement){
+    this->distanceEyeFromScreen = W/(tan(fov*M_PI/360));
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
 
     // Up direction calculation
@@ -28,12 +30,11 @@ Camera::Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualSc
 }
 
 Ray Camera::getRayFromPixel(double pixelX, double pixelY) {
-    return {this->eyePosition,
-            Vec4::normalize((this->displacement+this->crossDirection*pixelX+this->upDirection*pixelY)- this->eyePosition)};
+    return {eyePosition,Vec4::normalize((displacement+crossDirection*pixelX+upDirection*pixelY)-eyePosition)};
 }
 
-Camera::Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : displacement(virtualScreenDisplacement){
-    this->distanceEyeFromScreen = ((double)virtualScreenWidth/2)/(tan(fov*M_PI/360));
+Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : displacement(virtualScreenDisplacement){
+    this->distanceEyeFromScreen = W/(tan(fov*M_PI/360));
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
 
     double theta, phi;
@@ -51,3 +52,5 @@ Camera::Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualSc
     // Cross vector calculation
     this->crossDirection = Vec4::cross(this->viewDirection, this->upDirection);
 }
+
+#pragma clang diagnostic pop

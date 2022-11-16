@@ -23,6 +23,7 @@ public:
     Vec4 operator-(Vec4 vector) const;
     Vec4 operator*(double t) const;
     Vec4 operator*(Vec4 vector) const;
+    Vec4 operator/(double t) const;
     bool operator==(const Vec4 &rhs) const;
     bool operator!=(const Vec4 &rhs) const;
     // math between 2 vec4's

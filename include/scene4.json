@@ -2,7 +2,7 @@
   "Scene": true,
   "Camera": {
     "fov": 10,
-    "pointsAt": [2000, 0, 0],
+    "pointsAt": [2000, 100, 0],
     "location": [0, 100, 0]
   },
   "Objects": [
@@ -30,7 +30,9 @@
       "ambient": 0.05,
       "diffuse": 0.8,
       "specular": 0,
-      "specularExponent": 0
+      "specularExponent": 0,
+      "reflectivity": 0.2,
+      "roughness": 0
     },
     {
       "type": "cube",
@@ -56,7 +58,9 @@
       "ambient": 0.05,
       "diffuse": 0.8,
       "specular": 0,
-      "specularExponent": 0
+      "specularExponent": 0,
+      "reflectivity": 0.2,
+      "roughness": 0
     },
     {
       "type": "cube",
@@ -82,7 +86,9 @@
       "ambient": 0.05,
       "diffuse": 0.8,
       "specular": 0,
-      "specularExponent": 0
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0
     },
     {
       "type": "plane",
@@ -96,7 +102,9 @@
       "diffuse": 0.8,
       "specular": 0,
       "specularExponent": 0,
-      "checkerBoard": 130
+      "checkerBoard": 130,
+      "reflectivity": 0,
+      "roughness": 0
     }
   ],
   "Light": [

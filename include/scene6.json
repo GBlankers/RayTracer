@@ -1,0 +1,50 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [200, 0, 0],
+    "location": [0, 100, 0]
+  },
+  "Objects": [
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [50000, 50000, 50000]
+        }
+      ],
+      "color": [0, 0, 1],
+      "ambient": 0.6,
+      "diffuse": 0.2,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0
+    },
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [500, 500, 500]
+        },
+        {
+          "translation": [1000, 0, 0]
+        }
+      ],
+      "color": [1, 0, 1],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0
+    }
+  ],
+  "Light": [
+    {
+      "position": [0, 1000, 0],
+      "pointsAt": [1000, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ]
+}

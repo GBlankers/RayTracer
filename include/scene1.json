@@ -23,7 +23,9 @@
       "ambient": 0.05,
       "diffuse": 0.8,
       "specular": 0,
-      "specularExponent": 0
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0
     }
   ],
   "Light": [

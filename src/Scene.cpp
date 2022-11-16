@@ -81,7 +81,7 @@ void Scene::fillScene() {
     LightSource light({2000,1000,0,1}, {2000,0,0,0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 
-    camera = Camera(2 * W, 10, {2000, 0, 0, 1}, {0, 100, 0, 1});
+    camera = Camera(10, {2000, 0, 0, 1}, {0, 100, 0, 1});
 }
 
 void Scene::fillScene2() {
@@ -112,7 +112,7 @@ void Scene::fillScene2() {
     LightSource l2({0, 0, 0, 1}, {2000, 0, 0, 0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(l2));
 
-    camera = Camera(2 * W, 10, {2000, 0, 0, 1}, {0, 100, 0, 1});
+    camera = Camera(10, {2000, 0, 0, 1}, {0, 100, 0, 1});
 }
 
 void Scene::fillScene3(){
@@ -144,7 +144,7 @@ void Scene::fillScene3(){
     LightSource light({3300,1000,0,1}, {5000,0,0,0}, {1,1,1,0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 
-    camera = Camera(2 * W, 10, {2000, 0, 0, 1}, {0, 100, 0, 1});
+    camera = Camera(10, {2000, 0, 0, 1}, {0, 100, 0, 1});
 }
 
 void Scene::fillScene4() {
@@ -183,7 +183,7 @@ void Scene::fillScene4() {
     LightSource light({2500,200,2000,1}, {2500,0,0,0}, {1, 1, 1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 
-    camera = Camera(2 * W, 10, {1500, 0, 0, 1}, {0, 100, 0, 1});
+    camera = Camera(10, {1500, 0, 0, 1}, {0, 100, 0, 1});
 }
 
 void Scene::fillScene5(){
@@ -203,7 +203,7 @@ void Scene::fillScene5(){
     LightSource light({1500,1500,0,1}, {2500,0,0,0}, {1, 1, 1, 0});
     lightVector.push_back(std::make_shared<LightSource>(light));
 
-    camera = Camera(2 * W, 10, {2000, 0, 0, 1}, {0, 100, 0, 1});
+    camera = Camera(10, {2000, 0, 0, 1}, {0, 100, 0, 1});
 }
 
 void Scene::fillScene(const std::string& filename) {
@@ -240,12 +240,25 @@ void Scene::fillScene(const std::string& filename) {
 
     // Temporary Variables
     rapidjson::Value value, valueArray;
+    Vec4 position{}, pointsAt{}, color{};
+    Transformation temp;
+    double ambient, diffuse, specular, specularExponent, reflectivity, roughness, fov;
+
+    // Add the camera
+    assert(s.HasMember("Camera"));
+    value = s["Camera"];
+    assert(value.HasMember("fov"));
+    fov = value["fov"].GetDouble();
+    assert(value.HasMember("pointsAt"));
+    valueArray = value["pointsAt"].GetArray();
+    pointsAt = Vec4(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1);
+    assert(value.HasMember("location"));
+    valueArray = value["location"].GetArray();
+    position = Vec4(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1);
+    camera = Camera(fov, pointsAt, position);
 
     // Add the objects
     assert(s.HasMember("Objects"));
-    Vec4 color{};
-    double ambient, diffuse, specular, specularExponent;
-    Transformation temp;
     for(auto& v : s["Objects"].GetArray()){
         temp.clear();
         // Check for transformations
@@ -288,21 +301,25 @@ void Scene::fillScene(const std::string& filename) {
         specular = v["specular"].GetDouble();
         assert(v.HasMember("specularExponent"));
         specularExponent = v["specularExponent"].GetDouble();
+        assert(v.HasMember("reflectivity"));
+        reflectivity = v["reflectivity"].GetDouble();
+        assert(v.HasMember("roughness"));
+        roughness = v["roughness"].GetDouble();
 
         // Check object type
         assert(v.HasMember("type"));
         if(strcmp(v["type"].GetString(), "cube") == 0){
-            objectVector.push_back(std::make_shared<Cube>(Cube(temp, color, ambient, diffuse, specular, specularExponent)));
+            objectVector.push_back(std::make_shared<Cube>(Cube(temp, color, ambient, diffuse, specular, specularExponent, reflectivity, roughness)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
-            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular, specularExponent)));
+            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular, specularExponent, reflectivity, roughness)));
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
-            Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent);
+            Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent, reflectivity, roughness);
             if(v.HasMember("checkerBoard")){
                 tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
             }
             objectVector.push_back(std::make_shared<Plane>(tempPlane));
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
-            objectVector.push_back(std::make_shared<Cone>(Cone(temp, color, ambient, diffuse, specular, specularExponent)));
+            objectVector.push_back(std::make_shared<Cone>(Cone(temp, color, ambient, diffuse, specular, specularExponent, reflectivity, roughness)));
         } else {
             perror("Unknown object type in json file");
         }
@@ -310,7 +327,6 @@ void Scene::fillScene(const std::string& filename) {
 
     // Add the lightSources
     assert(s.HasMember("Light"));
-    Vec4 position{}, pointsAt{};
     for(auto& v : s["Light"].GetArray()){
         assert(v.HasMember("position"));
         valueArray = v["position"];

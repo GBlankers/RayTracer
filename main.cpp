@@ -117,7 +117,6 @@ void renderer(){
     // Define a scene
     Scene world;
     world.fillScene("include/general.json");
-    //world.fillScene3();
     auto worldObjects(world.getObjectVector());
     auto worldLighting(world.getLightVector());
     auto camera(world.getCamera());
@@ -156,12 +155,15 @@ void renderer(){
                         lastCollision = c;
                     }
                 }
-                // LIGHTING
-                lightColor = lighting(lastObjectHit, lastCollision, shotRay, worldObjects, worldLighting);
-                // REFLECTIONS
-                reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, worldObjects, worldLighting);
-                // Cumulate color -> anti alias;
-                color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
+
+                if(previousHit != MAXFLOAT){
+                    // LIGHTING
+                    lightColor = lighting(lastObjectHit, lastCollision, shotRay, worldObjects, worldLighting);
+                    // REFLECTIONS
+                    reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, worldObjects, worldLighting);
+                    // Cumulate color -> anti alias;
+                    color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
+                }
             }
             color = color*(1.0/ANTI_ALIAS_SAMPLING);
             glColor3d(color.getX(), color.getY(), color.getZ());

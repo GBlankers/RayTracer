@@ -5,6 +5,7 @@
 
 #include "Ray.h"
 #include "Math/Vec4.h"
+#include "settings.h"
 
 class Camera {
 
@@ -17,8 +18,8 @@ private:
     Vec4 eyePosition; // Where is the eye positioned in front of the screen
     double distanceEyeFromScreen; // how many pixels is the eye from the screen
 public:
-    Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi);
-    Camera(int virtualScreenWidth, double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement);
+    Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double theta, double phi);
+    Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement);
     Camera() = default;
     Ray getRayFromPixel(double pixelX, double pixelY);
 };

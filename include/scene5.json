@@ -1,0 +1,51 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [1500, 100, 0],
+    "location": [0, 500, 0]
+  },
+  "Objects": [
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [350, 350, 350]
+        },
+        {
+          "translation": [2300, 0, 0]
+        }
+      ],
+      "color": [1, 0, 0],
+      "ambient": 0.1,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0.1,
+      "roughness": 0
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "translation": [0, -500, 0]
+        }
+      ],
+      "color": [1, 1, 1],
+      "ambient": 0,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0.1,
+      "roughness": 0.4,
+      "checkerBoard": 130
+    }
+  ],
+  "Light": [
+    {
+      "position": [1500, 5000, 0],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ]
+}

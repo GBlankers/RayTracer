@@ -20,7 +20,9 @@
       "ambient": 0.1,
       "diffuse": 0.7,
       "specular": 0.2,
-      "specularExponent": 20
+      "specularExponent": 20,
+      "reflectivity": 0,
+      "roughness": 0
     },
     {
       "type": "sphere",
@@ -36,7 +38,9 @@
       "ambient": 0.1,
       "diffuse": 0.7,
       "specular": 0.2,
-      "specularExponent": 20
+      "specularExponent": 20,
+      "reflectivity": 0.1,
+      "roughness": 0.07
     },
     {
       "type": "sphere",
@@ -52,7 +56,9 @@
       "ambient": 0.1,
       "diffuse": 0.7,
       "specular": 0.2,
-      "specularExponent": 20
+      "specularExponent": 20,
+      "reflectivity": 0,
+      "roughness": 0
     },
     {
       "type": "plane",
@@ -65,7 +71,9 @@
       "ambient": 0,
       "diffuse": 0.5,
       "specular": 0.2,
-      "specularExponent": 20
+      "specularExponent": 20,
+      "reflectivity": 0,
+      "roughness": 0
     }
   ],
   "Light": [
