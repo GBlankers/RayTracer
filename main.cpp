@@ -1,5 +1,7 @@
 #include <iostream>
 #include <chrono>
+#include <thread>
+#include <pthread.h>
 
 #include "src/Ray.h"
 #include "src/Collision.h"
@@ -17,6 +19,7 @@ void renderer();
 
 Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene);
 Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
+void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
 
 int main(int argc, char** argv) {
 
@@ -45,10 +48,7 @@ void drawDot(GLint x, GLint y){
     glEnd();
 }
 
-Vec4 lighting(const std::shared_ptr<Shape>& shape,
-              Collision c,
-              Ray incoming,
-              const Scene& scene){
+Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene){
     double diffuse, specular;
     Vec4 totalLight(0, 0, 0, 0), tempColor(0, 0, 0, 0);
     bool clearPathToLight;
@@ -108,18 +108,15 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     }
 
     if(previousHit == MAXFLOAT){
-        return {0, 0, 0, 0};
+        return scene.getSkyColor(rayDirection);
     }
 
     // Return color of the current hit + further reflections
     return lighting(lastObjectHit, closestC, reflectedRay, scene) + reflect(reflectedRay, closestC, reflectionsToGo-1, scene)*lastObjectHit->getReflectivity();
 }
 
-void renderer(){
-    // Define a scene
-    Scene world;
-    world.fillScene("include/general.json");
-    auto camera(world.getCamera());
+void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end){
+    auto camera(s.getCamera());
 
     // Pre defined variables
     Collision c, lastCollision;
@@ -128,14 +125,8 @@ void renderer(){
     Vec4 color{}, reflectedColor{}, lightColor{};
     std::shared_ptr<Shape> lastObjectHit;
 
-    // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Timing
-    auto start = std::chrono::high_resolution_clock::now();
-
     // Go over all the pixels in the near screen
-    for(int i = -W; i<W; i++){
+    for(int i = begin; i<end; i++){
         for(int j = -H; j<H; j++){
             // Reset the color for each pixel then we can average for the anti-aliasing
             color.reset();
@@ -144,7 +135,7 @@ void renderer(){
                 previousHit = MAXFLOAT;
                 shotRay = camera.getRayFromPixel(i+randomDouble(), j+randomDouble());
                 // Go over all the objects
-                for(auto & worldObject : world.getObjectVector()){
+                for(auto & worldObject : s.getObjectVector()){
                     // For every object, check if the ray hits
                     c = worldObject->checkCollision(shotRay);
                     // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
@@ -158,16 +149,75 @@ void renderer(){
 
                 if(previousHit != MAXFLOAT){
                     // LIGHTING
-                    lightColor = lighting(lastObjectHit, lastCollision, shotRay, world);
+                    lightColor = lighting(lastObjectHit, lastCollision, shotRay, s);
                     // REFLECTIONS
-                    reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, world);
+                    reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, s);
                     // Cumulate color -> anti alias;
                     color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
+                } else {
+                    color = color + s.getSkyColor(shotRay.getDirectionVector());
                 }
             }
             color = color*(1.0/ANTI_ALIAS_SAMPLING);
+
+            pixelList.push_back(color);
+        }
+    }
+}
+
+void renderer(){
+    // Define a scene
+    Scene world;
+    world.fillScene("include/general.json");
+
+    // Clear the screen
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    std::vector<Vec4> pixelList1;
+    std::vector<Vec4> pixelList2;
+    std::vector<Vec4> pixelList3;
+    std::vector<Vec4> pixelList4;
+
+    std::thread firstQuarter(goOverPixels, world, std::ref(pixelList1), -W, -W/2);
+    std::thread secondQuarter(goOverPixels, world, std::ref(pixelList2), -W/2, 0);
+    std::thread thirdQuarter(goOverPixels, world, std::ref(pixelList3), 0, W/2);
+    std::thread finalQuarter(goOverPixels, world,std::ref(pixelList4), W/2, W);
+
+    firstQuarter.join();
+    for(int i = 0; i<W/2; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = pixelList1.at(j+i*(2*H));
             glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot(i, j);
+            drawDot(-W+i, -H+j);
+        }
+        glFlush();
+    }
+    secondQuarter.join();
+    for(int i = 0; i<W/2; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = pixelList2.at(j+i*(2*H));
+            glColor3d(color.getX(), color.getY(), color.getZ());
+            drawDot((-W/2)+i, -H+j);
+        }
+        glFlush();
+    }
+    thirdQuarter.join();
+    for(int i = 0; i<W/2; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = pixelList3.at(j+i*(2*H));
+            glColor3d(color.getX(), color.getY(), color.getZ());
+            drawDot(i, -H+j);
+        }
+        glFlush();
+    }
+    finalQuarter.join();
+    for(int i = 0; i<W/2; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = pixelList4.at(j+i*(2*H));
+            glColor3d(color.getX(), color.getY(), color.getZ());
+            drawDot((W/2)+i, -H+j);
         }
         glFlush();
     }

@@ -7,7 +7,7 @@ double randomDouble(){
 }
 
 double randomDouble(double min, double max){
-    static std::uniform_real_distribution<double> distribution(min, max);
-    static std::mt19937 generator;
-    return distribution(generator);
+    double f = (double)rand() / RAND_MAX;
+    return min + f * (max - min);
+
 }

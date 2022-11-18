@@ -8,7 +8,7 @@ Collision Sphere::checkCollision(Ray r) {
     double t;
 
     if (checkHit(r, t)){
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness())};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-1, 1)*getRoughness())};
     }
 
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
@@ -58,5 +58,7 @@ bool Sphere::checkHit(Ray r) {
 Vec4 Sphere::calculateNormal(Vec4 hitPoint) {
     Vec4 normal(getT().getInverse()*hitPoint);
     normal.setHomogeneous(0);
+    // manipulate normal so randomness is less random
+    //normal = manipulator.getnormal(normal);
     return Vec4::normalize(getT().getForward()*normal);
 }
