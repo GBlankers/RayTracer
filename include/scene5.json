@@ -16,12 +16,12 @@
           "translation": [2300, 0, 0]
         }
       ],
-      "color": [1, 0, 0],
+      "color": [1, 1, 1],
       "ambient": 0.1,
       "diffuse": 0.6,
       "specular": 0.3,
       "specularExponent": 10,
-      "reflectivity": 0.1,
+      "reflectivity": 0.3,
       "roughness": 0
     },
     {
@@ -43,7 +43,7 @@
   ],
   "Light": [
     {
-      "position": [1500, 5000, 0],
+      "position": [1500, 2000, 0],
       "pointsAt": [2500, 0, 0],
       "color": [1, 1, 1]
     }

@@ -15,8 +15,8 @@ void openGLInit();
 void drawDot(GLint x, GLint y);
 void renderer();
 
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const std::vector<std::shared_ptr<Shape>>& world, const std::vector<std::shared_ptr<LightSource>>& lightVector);
-Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const std::vector<std::shared_ptr<Shape>>& world, const std::vector<std::shared_ptr<LightSource>>& lightVector);
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene);
+Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
 
 int main(int argc, char** argv) {
 
@@ -48,8 +48,7 @@ void drawDot(GLint x, GLint y){
 Vec4 lighting(const std::shared_ptr<Shape>& shape,
               Collision c,
               Ray incoming,
-              const std::vector<std::shared_ptr<Shape>>& world,
-              const std::vector<std::shared_ptr<LightSource>>& lightVector){
+              const Scene& scene){
     double diffuse, specular;
     Vec4 totalLight(0, 0, 0, 0), tempColor(0, 0, 0, 0);
     bool clearPathToLight;
@@ -57,16 +56,19 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape,
     // Get the ambient intensity
     double ambient = shape->getAmbient();
     // Check if in shadow, otherwise do not calculate the diffuse and specular components
-    for(const auto& l: lightVector){
+    for(const auto& l: scene.getLightVector()){
         // Assume there is a clear path to the light source
         clearPathToLight = true;
         // Calculate the ray between the hit point and the light source
         Ray r(c.getCollisionPoint(), l->getPosition()-c.getCollisionPoint());
         // Check all the objects in the world
-        for(const auto & obj: world){
+        for(const auto & obj: scene.getObjectVector()){
             // If the object is not the current object and the ray hits than there is not clear path
-            if(obj != shape and obj->checkHit(r)){
-                clearPathToLight = false;
+            double t;
+            if(obj != shape and obj->checkHit(r, t)){
+                // Only a hit when there is an object between a light source and another object
+                if(t<=1 and t>=0)
+                    clearPathToLight = false;
             }
         }
         // Calculate diffuse and spectral components if there is a clear path to the light source
@@ -80,7 +82,7 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape,
     return totalLight;
 }
 
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const std::vector<std::shared_ptr<Shape>>& world, const std::vector<std::shared_ptr<LightSource>>& lightVector){
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene){
     // Max number of reflections reached
     if(reflectionsToGo == 0){
         return {0, 0, 0, 0};
@@ -96,7 +98,7 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     Collision c, closestC;
     std::shared_ptr<Shape> lastObjectHit;
     double previousHit = MAXFLOAT;
-    for(auto & object : world) {
+    for(auto & object : scene.getObjectVector()) {
         c = object->checkCollision(reflectedRay);
         if (previousHit > c.getT() && c.getT() > 0) {
             previousHit = (float) c.getT();
@@ -110,15 +112,13 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     }
 
     // Return color of the current hit + further reflections
-    return lighting(lastObjectHit, closestC, reflectedRay, world, lightVector) + reflect(reflectedRay, closestC, reflectionsToGo-1, world, lightVector)*lastObjectHit->getReflectivity();
+    return lighting(lastObjectHit, closestC, reflectedRay, scene) + reflect(reflectedRay, closestC, reflectionsToGo-1, scene)*lastObjectHit->getReflectivity();
 }
 
 void renderer(){
     // Define a scene
     Scene world;
     world.fillScene("include/general.json");
-    auto worldObjects(world.getObjectVector());
-    auto worldLighting(world.getLightVector());
     auto camera(world.getCamera());
 
     // Pre defined variables
@@ -144,7 +144,7 @@ void renderer(){
                 previousHit = MAXFLOAT;
                 shotRay = camera.getRayFromPixel(i+randomDouble(), j+randomDouble());
                 // Go over all the objects
-                for(auto & worldObject : worldObjects){
+                for(auto & worldObject : world.getObjectVector()){
                     // For every object, check if the ray hits
                     c = worldObject->checkCollision(shotRay);
                     // the t (used in the ray equation y = a + x*t) must be larger than 0. Otherwise, the ray shoots
@@ -158,9 +158,9 @@ void renderer(){
 
                 if(previousHit != MAXFLOAT){
                     // LIGHTING
-                    lightColor = lighting(lastObjectHit, lastCollision, shotRay, worldObjects, worldLighting);
+                    lightColor = lighting(lastObjectHit, lastCollision, shotRay, world);
                     // REFLECTIONS
-                    reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, worldObjects, worldLighting);
+                    reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, world);
                     // Cumulate color -> anti alias;
                     color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
                 }

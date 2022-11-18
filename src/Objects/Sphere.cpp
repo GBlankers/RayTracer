@@ -25,7 +25,16 @@ bool Sphere::checkHit(Ray r, double &t) {
     double C = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint()) - 1;
     double D = pow(B, 2) - (A * C);
 
-    t = (-B - sqrt(D))/A;
+    double t1 = (-B-sqrt(D))/A;
+    double t2 = (-B+sqrt(D))/A;
+
+    if((t1<t2 and t1>0) or (t1 > 0 and t2 < 0)){
+        t = t1;
+    } else if((t2<t1 and t2>0) or (t2 > 0 and t1 < 0)){
+        t = t2;
+    } else {
+        t = -1;
+    }
 
     // Discriminant >= 0 -> hit
     return t>0;
