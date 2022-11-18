@@ -14,6 +14,10 @@ const Camera &Scene::getCamera() const {
     return camera;
 }
 
+Vec4 Scene::getSkyColor(Vec4 direction) const{
+    return sky.getColor(direction);
+}
+
 void Scene::fillScene() {
 //    Transformation tSphere1;
 //    tSphere1.addScaling(400, 400, 400);
@@ -326,21 +330,30 @@ void Scene::fillScene(const std::string& filename) {
     }
 
     // Add the lightSources
-    assert(s.HasMember("Light"));
-    for(auto& v : s["Light"].GetArray()){
-        assert(v.HasMember("position"));
-        valueArray = v["position"];
-        assert(valueArray.IsArray());
-        position = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
-        assert(v.HasMember("pointsAt"));
-        valueArray = v["pointsAt"];
-        assert(valueArray.IsArray());
-        pointsAt = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
-        assert(v.HasMember("color"));
-        valueArray = v["color"];
-        assert(valueArray.IsArray());
-        color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+    if(s.HasMember("Light")){
+        for(auto& v : s["Light"].GetArray()){
+            assert(v.HasMember("position"));
+            valueArray = v["position"];
+            assert(valueArray.IsArray());
+            position = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
+            assert(v.HasMember("pointsAt"));
+            valueArray = v["pointsAt"];
+            assert(valueArray.IsArray());
+            pointsAt = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1};
+            assert(v.HasMember("color"));
+            valueArray = v["color"];
+            assert(valueArray.IsArray());
+            color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
 
-        lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color}));
+            lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color}));
+        }
+    }
+
+    if(s.HasMember("SkyBox")){
+        value = s["SkyBox"];
+        valueArray = value["color"].GetArray();
+        sky = SkyBox({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1});
+    } else {
+        sky = SkyBox();
     }
 }
