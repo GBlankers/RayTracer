@@ -5,11 +5,15 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 // Virtual screen coordinates
-#define W (int)((double)WINDOW_WIDTH/1)
-#define H (int)((double)WINDOW_HEIGHT/1)
+#define W (double)WINDOW_WIDTH
+#define H (double)WINDOW_HEIGHT
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 5
+#define ANTI_ALIAS_SAMPLING 10
 // Number of max reflections
-#define REFLECTIONS 2
+#define REFLECTIONS 4
+// Computer error
+#define EPSILON 0.000000001
+// Number of threads
+#define THREADS 8
 
 #endif //RAYTRACER_SETTINGS_H

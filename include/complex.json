@@ -1,7 +1,7 @@
 {
   "Scene": true,
   "Camera": {
-    "fov": 10,
+    "fov": 100,
     "pointsAt": [1500, 100, 0],
     "location": [0, 120, 0]
   },
@@ -21,8 +21,62 @@
       "diffuse": 0.6,
       "specular": 0.3,
       "specularExponent": 10,
-      "reflectivity": 0.3,
-      "roughness": 0.9
+      "reflectivity": 0.7,
+      "roughness": 0.1
+    },
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [250, 250, 250]
+        },
+        {
+          "translation": [4000, -250, 600]
+        }
+      ],
+      "color": [0, 1, 1],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0.2,
+      "roughness": 0
+    },
+    {
+      "type": "cube",
+      "transformations": [
+        {
+          "scaling": [200, 150, 600]
+        },
+        {
+          "translation": [6000, 200, 3000]
+        }
+      ],
+      "color": [1, 0, 1],
+      "ambient": 0.1,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0
+    },
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [350, 350, 350]
+        },
+        {
+          "translation": [1100, -150, 1700]
+        }
+      ],
+      "color": [0.83, 0.686, 0.216],
+      "ambient": 0.4,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0.1,
+      "roughness": 0.1
     },
     {
       "type": "cube",
@@ -53,6 +107,62 @@
       "roughness": 0
     },
     {
+      "type": "cube",
+      "transformations": [
+        {
+          "scaling": [250, 250, 250]
+        },
+        {
+          "rotation": [
+            {
+              "y": 60
+            },
+            {
+              "z": 30
+            }
+          ]
+        },
+        {
+          "translation": [2000, -100, -1600]
+        }
+      ],
+      "color": [1, 1, 1],
+      "ambient": 0.1,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 1,
+      "roughness": 0
+    },
+    {
+      "type": "cube",
+      "transformations": [
+        {
+          "scaling": [150, 100, 450]
+        },
+        {
+          "rotation": [
+            {
+              "y": 30
+            },
+            {
+              "z": -40
+            }
+          ]
+        },
+        {
+          "translation": [2300, 600, 1000]
+        }
+      ],
+      "color": [1, 1, 0],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0.05
+    },
+    {
       "type": "cone",
       "transformations": [
         {
@@ -78,6 +188,34 @@
       "specular": 0.3,
       "specularExponent": 10,
       "reflectivity": 0.3,
+      "roughness": 0
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [800, 800, 800]
+        },
+        {
+          "rotation": [
+            {
+              "x": 13
+            },
+            {
+              "z": -87
+            }
+          ]
+        },
+        {
+          "translation": [14000, 1100, -2700]
+        }
+      ],
+      "color": [0, 0.39, 0],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0.6,
       "roughness": 0
     },
     {

@@ -8,7 +8,7 @@ Collision Sphere::checkCollision(Ray r) {
     double t;
 
     if (checkHit(r, t)){
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-1, 1)*getRoughness())};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.3, 0.3)*getRoughness())};
     }
 
     return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};

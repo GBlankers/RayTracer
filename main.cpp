@@ -111,8 +111,23 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
         return scene.getSkyColor(rayDirection);
     }
 
+    if(lastObjectHit->getReflectivity() <= EPSILON){
+        return lighting(lastObjectHit, closestC, reflectedRay, scene);
+    }
+
     // Return color of the current hit + further reflections
     return lighting(lastObjectHit, closestC, reflectedRay, scene) + reflect(reflectedRay, closestC, reflectionsToGo-1, scene)*lastObjectHit->getReflectivity();
+}
+
+void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length){
+    for(int i = 0; i<length; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = vector.at(j+i*(2*H));
+            glColor3d(color.getX(), color.getY(), color.getZ());
+            drawDot(begin+i, -H+j);
+        }
+        glFlush();
+    }
 }
 
 void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end){
@@ -165,16 +180,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
     }
 }
 
-void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length){
-    for(int i = 0; i<length; i++){
-        for(int j = 0; j<2*H; j++){
-            Vec4 color = vector.at(j+i*(2*H));
-            glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot(begin+i, -H+j);
-        }
-        glFlush();
-    }
-}
+
 
 void renderer(){
     // Define a scene
@@ -186,24 +192,23 @@ void renderer(){
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::vector<Vec4> pixelList1;
-    std::vector<Vec4> pixelList2;
-    std::vector<Vec4> pixelList3;
-    std::vector<Vec4> pixelList4;
+    // Create pixel vectors -> threads fill these up
+    std::vector<std::vector<Vec4>> pixelLists;
+    for(int i = 0; i<THREADS; i++){
+        pixelLists.emplace_back(std::vector<Vec4>());
+    }
 
-    std::thread firstQuarter(goOverPixels, world, std::ref(pixelList1), -W, -W/2);
-    std::thread secondQuarter(goOverPixels, world, std::ref(pixelList2), -W/2, 0);
-    std::thread thirdQuarter(goOverPixels, world, std::ref(pixelList3), 0, W/2);
-    std::thread finalQuarter(goOverPixels, world,std::ref(pixelList4), W/2, W);
+    // Create and start the different threads
+    std::thread threads[THREADS];
+    for(int i = 0; i<THREADS; i++){
+     threads[i] = std::thread(goOverPixels, world, std::ref(pixelLists.at(i)), -W+(i*(2*W/THREADS)), -W+(i+1)*(2*W/THREADS));
+    }
 
-    firstQuarter.join();
-    drawPixelsFromVector(pixelList1, -W, W/2);
-    secondQuarter.join();
-    drawPixelsFromVector(pixelList2, -W/2, W/2);
-    thirdQuarter.join();
-    drawPixelsFromVector(pixelList3, 0, W/2);
-    finalQuarter.join();
-    drawPixelsFromVector(pixelList4, W/2, W/2);
+    // Join and draw pixels
+    for(int i = 0; i<THREADS; i++){
+        threads[i].join();
+        drawPixelsFromVector(pixelLists.at(i), (int)(-W+i*(2*W/THREADS)), 2*W/THREADS);
+    }
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);

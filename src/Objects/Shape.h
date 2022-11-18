@@ -12,8 +12,7 @@
 #include "../Ray.h"
 #include "../Transformation.h"
 #include "LightSource.h"
-
-#define EPSILON 0.000000001
+#include "../settings.h"
 
 class Shape {
 private:
