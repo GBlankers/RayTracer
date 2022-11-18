@@ -165,6 +165,17 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
     }
 }
 
+void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length){
+    for(int i = 0; i<length; i++){
+        for(int j = 0; j<2*H; j++){
+            Vec4 color = vector.at(j+i*(2*H));
+            glColor3d(color.getX(), color.getY(), color.getZ());
+            drawDot(begin+i, -H+j);
+        }
+        glFlush();
+    }
+}
+
 void renderer(){
     // Define a scene
     Scene world;
@@ -186,41 +197,13 @@ void renderer(){
     std::thread finalQuarter(goOverPixels, world,std::ref(pixelList4), W/2, W);
 
     firstQuarter.join();
-    for(int i = 0; i<W/2; i++){
-        for(int j = 0; j<2*H; j++){
-            Vec4 color = pixelList1.at(j+i*(2*H));
-            glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot(-W+i, -H+j);
-        }
-        glFlush();
-    }
+    drawPixelsFromVector(pixelList1, -W, W/2);
     secondQuarter.join();
-    for(int i = 0; i<W/2; i++){
-        for(int j = 0; j<2*H; j++){
-            Vec4 color = pixelList2.at(j+i*(2*H));
-            glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot((-W/2)+i, -H+j);
-        }
-        glFlush();
-    }
+    drawPixelsFromVector(pixelList2, -W/2, W/2);
     thirdQuarter.join();
-    for(int i = 0; i<W/2; i++){
-        for(int j = 0; j<2*H; j++){
-            Vec4 color = pixelList3.at(j+i*(2*H));
-            glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot(i, -H+j);
-        }
-        glFlush();
-    }
+    drawPixelsFromVector(pixelList3, 0, W/2);
     finalQuarter.join();
-    for(int i = 0; i<W/2; i++){
-        for(int j = 0; j<2*H; j++){
-            Vec4 color = pixelList4.at(j+i*(2*H));
-            glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot((W/2)+i, -H+j);
-        }
-        glFlush();
-    }
+    drawPixelsFromVector(pixelList4, W/2, W/2);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
