@@ -9,9 +9,9 @@ Collision Cone::checkCollision(Ray r) {
     double t;
 
     if(checkHit(r, t)){
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness())};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness()), getReflectivity()};
     }
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}, getReflectivity()};
 }
 
 bool Cone::checkHit(Ray r, double &t) {

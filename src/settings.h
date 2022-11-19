@@ -8,12 +8,12 @@
 #define W (double)WINDOW_WIDTH
 #define H (double)WINDOW_HEIGHT
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 10
+#define ANTI_ALIAS_SAMPLING 3
 // Number of max reflections
-#define REFLECTIONS 4
+#define REFLECTIONS 3
 // Computer error
 #define EPSILON 0.000000001
 // Number of threads
-#define THREADS 8
+#define THREADS 6
 
 #endif //RAYTRACER_SETTINGS_H

@@ -26,13 +26,13 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {r.at(t), t, {0, 0, 0, 0}, Vec4()};
+                return {r.at(t), t, {0, 0, 0, 0}, Vec4(), getReflectivity()};
             }
         }
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness())};
+        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness()), getReflectivity()};
     }
 
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}, 0};
 }
 
 bool Plane::checkHit(Ray r, double &t) {

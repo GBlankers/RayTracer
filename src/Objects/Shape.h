@@ -18,11 +18,10 @@ class Shape {
 private:
     Transformation t;
     Vec4 color;
-    double ambient, diffuse, specular, specularExponent, reflectivity, roughness;
+    double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency;
 public:
     explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular,
-                   double specularComponent,
-                   double reflectivity, double roughness);
+                   double specularComponent, double reflectivity, double roughness);
 
     virtual Collision checkCollision(Ray r) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;

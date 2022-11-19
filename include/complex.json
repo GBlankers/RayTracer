@@ -19,7 +19,7 @@
       "color": [1, 1, 1],
       "ambient": 0.1,
       "diffuse": 0.6,
-      "specular": 0.3,
+      "specular": 0,
       "specularExponent": 10,
       "reflectivity": 0.7,
       "roughness": 0.1

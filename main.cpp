@@ -1,7 +1,6 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <pthread.h>
 
 #include "src/Ray.h"
 #include "src/Collision.h"
@@ -84,7 +83,7 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
 
 Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene){
     // Max number of reflections reached
-    if(reflectionsToGo == 0){
+    if(reflectionsToGo == 0 or collisionPoint.getReflectivity() <= EPSILON){
         return {0, 0, 0, 0};
     }
 
@@ -108,23 +107,20 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     }
 
     if(previousHit == MAXFLOAT){
-        return scene.getSkyColor(rayDirection);
-    }
-
-    if(lastObjectHit->getReflectivity() <= EPSILON){
-        return lighting(lastObjectHit, closestC, reflectedRay, scene);
+        return scene.getSkyColor(rayDirection)*collisionPoint.getReflectivity();
     }
 
     // Return color of the current hit + further reflections
-    return lighting(lastObjectHit, closestC, reflectedRay, scene) + reflect(reflectedRay, closestC, reflectionsToGo-1, scene)*lastObjectHit->getReflectivity();
+    return (lighting(lastObjectHit, closestC, reflectedRay, scene) +
+    reflect(reflectedRay, closestC, reflectionsToGo-1, scene))*collisionPoint.getReflectivity();
 }
 
 void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length){
     for(int i = 0; i<length; i++){
         for(int j = 0; j<2*H; j++){
-            Vec4 color = vector.at(j+i*(2*H));
+            Vec4 color = vector.at((int)(j+i*(2*H)));
             glColor3d(color.getX(), color.getY(), color.getZ());
-            drawDot(begin+i, -H+j);
+            drawDot(begin+i, (int)(-H+j));
         }
         glFlush();
     }
@@ -168,7 +164,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
                     // REFLECTIONS
                     reflectedColor = reflect(shotRay, lastCollision, REFLECTIONS, s);
                     // Cumulate color -> anti alias;
-                    color = color + Vec4::clamp(lightColor + reflectedColor * lastObjectHit->getReflectivity());
+                    color = color + Vec4::clamp(lightColor + reflectedColor);
                 } else {
                     color = color + s.getSkyColor(shotRay.getDirectionVector());
                 }
@@ -207,7 +203,7 @@ void renderer(){
     // Join and draw pixels
     for(int i = 0; i<THREADS; i++){
         threads[i].join();
-        drawPixelsFromVector(pixelLists.at(i), (int)(-W+i*(2*W/THREADS)), 2*W/THREADS);
+        drawPixelsFromVector(pixelLists.at(i), (int)(-W+i*(2*W/THREADS)), (int)(2*W/THREADS));
     }
 
     auto stop = std::chrono::high_resolution_clock::now();
@@ -215,7 +211,6 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: reflection
 // TODO: refraction
 // TODO: materials
 // TODO: uv-mapping
