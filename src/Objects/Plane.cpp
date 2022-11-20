@@ -1,14 +1,15 @@
 #include "Plane.h"
 
 Plane::Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-             double specularComponent, double reflectivity, double roughness) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness) {}
+             double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
+        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
     double t;
+    bool inside;
 
-    if(checkHit(r, t)){
+    if(checkHit(r, t, inside)){
         if(checkerBoard){
             bool check;
             Vec4 localHit = getT().getInverse()*r.at(t);
@@ -26,13 +27,22 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {r.at(t), t, {0, 0, 0, 0}, Vec4(), getReflectivity()};
+                return {r.at(t), t, {0, 0, 0, 0}, Vec4(), inside,
+                        getReflectivity(), getTransparency(), getRefractiveIndex()};
             }
         }
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t))+Vec4::random(-0.5, 0.5)*getRoughness()), getReflectivity()};
+        return {r.at(t), t, getColor(), Vec4::normalize(
+                calculateNormal(r.at(t), inside) + Vec4::random(-0.5, 0.5) * getRoughness()),
+                inside, getReflectivity(), getTransparency(), getRefractiveIndex()};
     }
 
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}, 0};
+    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0},false, 0, 0, 0};
+}
+
+bool Plane::checkHit(Ray r, double &t, bool &inside) {
+    // assume the plane is infinitely thin
+    inside = false;
+    return checkHit(r, t);
 }
 
 bool Plane::checkHit(Ray r, double &t) {
@@ -58,7 +68,9 @@ bool Plane::checkHit(Ray r) {
     return false;
 }
 
-Vec4 Plane::calculateNormal(Vec4 hitPoint) {
+Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
+    if(inside)
+        return Vec4::normalize(getT().getForward()*Vec4({0, 1, 0, 0}))*-1;
     return Vec4::normalize(getT().getForward()*Vec4({0, 1, 0, 0}));
 }
 

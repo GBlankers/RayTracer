@@ -8,9 +8,9 @@
  * @param B blue color component, needs to be 0<=B<=1.0
  */
 Shape::Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
-             double reflectivity, double roughness)
+             double reflectivity, double roughness, double transparency, double refractiveIndex)
     : t(t), color(color), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
-    reflectivity(reflectivity), roughness(roughness){
+    reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex){
     assert(this->color.getX()>=0 && this->color.getX()<=1.0);
     assert(this->color.getY()>=0 && this->color.getY()<=1.0);
     assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
@@ -43,4 +43,12 @@ Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specul
 
 double Shape::getRoughness() const {
     return roughness;
+}
+
+double Shape::getTransparency() const {
+    return transparency;
+}
+
+double Shape::getRefractiveIndex() const {
+    return refractiveIndex;
 }

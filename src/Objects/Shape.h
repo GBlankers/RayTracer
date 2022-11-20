@@ -18,21 +18,24 @@ class Shape {
 private:
     Transformation t;
     Vec4 color;
-    double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency;
+    double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency, refractiveIndex;
 public:
-    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular,
-                   double specularComponent, double reflectivity, double roughness);
+    explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
+                   double reflectivity, double roughness, double transparency, double refractiveIndex);
 
     virtual Collision checkCollision(Ray r) = 0;
+    virtual bool checkHit(Ray r, double &t, bool &inside) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;
     virtual bool checkHit(Ray r) = 0;
-    virtual Vec4 calculateNormal(Vec4 hitPoint) = 0;
+    virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
 
     void setColor(const Vec4 &colorArg);
     const Vec4 &getColor() const;
     double getReflectivity() const;
     double getAmbient() const;
     double getRoughness() const;
+    double getTransparency() const;
+    double getRefractiveIndex() const;
 
     Vec4 calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const;
 
