@@ -364,7 +364,11 @@ void Scene::fillScene(const std::string& filename) {
             assert(valueArray.IsArray());
             color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
 
-            lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color}));
+            if(v.HasMember("intensity")){
+                lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color, v["intensity"].GetDouble()}));
+            } else {
+                lightVector.push_back(std::make_shared<LightSource>(LightSource{position, pointsAt, color, 1}));
+            }
         }
     }
 

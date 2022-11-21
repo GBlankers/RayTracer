@@ -1,6 +1,7 @@
 #include "LightSource.h"
 
-LightSource::LightSource(const Vec4 &position, const Vec4 &pointsAt, Vec4 color) : position(position), color(color){}
+LightSource::LightSource(const Vec4 &position, const Vec4 &pointsAt, Vec4 color, double intensity)
+        : position(position), color(color), intensity(intensity){}
 
 double LightSource::calculateDiffuse(Vec4 normal, Vec4 hitPoint) {
     Vec4 normalizedDirection = Vec4::normalize(this->position-hitPoint);
@@ -26,4 +27,8 @@ const Vec4 &LightSource::getPosition() const {
 
 const Vec4 &LightSource::getColor() const {
     return color;
+}
+
+double LightSource::getIntensity() const {
+    return intensity;
 }

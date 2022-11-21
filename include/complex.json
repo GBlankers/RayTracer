@@ -21,8 +21,8 @@
       "diffuse": 0.6,
       "specular": 0,
       "specularExponent": 10,
-      "reflectivity": 0.7,
-      "roughness": 0.1
+      "reflectivity": 0.8,
+      "roughness": 0
     },
     {
       "type": "sphere",
@@ -219,6 +219,33 @@
       "roughness": 0
     },
     {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [200, 400, 200]
+        },
+        {
+          "rotation": [
+            {
+              "x": -30
+            }
+          ]
+        },
+        {
+          "translation": [2300, 1500, -2500]
+        }
+      ],
+      "color": [0.3, 0.39, 0.8],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0.2,
+      "refractiveIndex": 1.4
+    },
+    {
       "type": "sphere",
       "transformations": [
         {
@@ -258,6 +285,12 @@
   "Light": [
     {
       "position": [1500, 2000, 0],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1],
+      "intensity": 0.4
+    },
+    {
+      "position": [1500, 2000, 1500],
       "pointsAt": [2500, 0, 0],
       "color": [1, 1, 1]
     }

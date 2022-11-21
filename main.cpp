@@ -53,14 +53,14 @@ void drawDot(GLint x, GLint y){
 Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene){
     double diffuse, specular, t;
     Vec4 totalLight(0, 0, 0, 0), tempColor(0, 0, 0, 0), startPoint{};
-    bool clearPathToLight;
+    double pathToLight;
     Ray r{};
     // Get the ambient intensity
     double ambient = shape->getAmbient();
     // Check if in shadow, otherwise do not calculate the diffuse and specular components
     for(const auto& l: scene.getLightVector()){
         // Assume there is a clear path to the light source
-        clearPathToLight = true;
+        pathToLight = 1;
         // Calculate the start point a little in front of the object that was hit in order to not collide with itself
         startPoint = c.getCollisionPoint()+Vec4::normalize(l->getPosition()-c.getCollisionPoint())*0.1;
         // Calculate the ray between the hit point and the light source
@@ -71,17 +71,20 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
             if(obj->checkHit(r, t)){
                 // Only a hit when there is an object between a light source and another object
                 if(t<=1 and t>=0)
-                    clearPathToLight = false;
+                    pathToLight *= obj->getTransparency();
             }
         }
         // Calculate diffuse and spectral components if there is a clear path to the light source
-        if(clearPathToLight){
+        if(pathToLight>0){
             diffuse = l->calculateDiffuse(c.getNormal(), c.getCollisionPoint());
             specular = l->calculateSpecular(c.getNormal(), incoming.getDirectionVector(), c.getCollisionPoint());
             tempColor = shape->calculateDiffuseSpecularColor(diffuse, specular, l->getColor(), c);
         }
-        totalLight = totalLight + c.getColor() * ambient + tempColor;
+        // Transparent objects will pass a bit of light through
+        totalLight += tempColor*pathToLight*l->getIntensity();
     }
+
+    totalLight = totalLight/scene.getLightVector().size() + c.getColor() * ambient;
     return totalLight;
 }
 
