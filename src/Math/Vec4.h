@@ -26,6 +26,7 @@ public:
     Vec4 operator/(double t) const;
     bool operator==(const Vec4 &rhs) const;
     bool operator!=(const Vec4 &rhs) const;
+    Vec4& operator+=(const Vec4 &rhs);
     // math between 2 vec4's
     static double dot(Vec4 vector1, Vec4 vector2);
     static Vec4 cross(Vec4 vector1, Vec4 vector2);

@@ -13,7 +13,7 @@
           "scaling": [100, 100, 100]
         },
         {
-          "translation": [1000, 0, -700]
+          "translation": [2000, 0, 0]
         }
       ],
       "color": [1, 0, 1],
@@ -21,7 +21,7 @@
       "diffuse": 0.1,
       "specular": 0,
       "specularExponent": 0,
-      "reflectivity": 0,
+      "reflectivity": 1,
       "roughness": 0
     },
     {

@@ -43,6 +43,13 @@ bool Vec4::operator!=(const Vec4 &rhs) const {
     return !(rhs == *this);
 }
 
+Vec4 &Vec4::operator+=(const Vec4 &rhs){
+    this->x += rhs.getX();
+    this->y += rhs.getY();
+    this->z += rhs.getZ();
+    return *this;
+}
+
 double Vec4::dot(Vec4 vector1, Vec4 vector2) {
     return vector1.getX()*vector2.getX()+vector1.getY()*vector2.getY()+vector1.getZ()*vector2.getZ();
 }
