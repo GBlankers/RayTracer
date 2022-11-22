@@ -7,28 +7,10 @@
   },
   "Objects": [
     {
-      "type": "cube",
-      "transformations": [
-        {
-          "scaling": [100, 100, 100]
-        },
-        {
-          "translation": [2000, 0, 0]
-        }
-      ],
-      "color": [1, 0, 1],
-      "ambient": 0.2,
-      "diffuse": 0.1,
-      "specular": 0,
-      "specularExponent": 0,
-      "reflectivity": 1,
-      "roughness": 0
-    },
-    {
       "type": "sphere",
       "transformations": [
         {
-          "scaling": [500, 500, 500]
+          "scaling": [400, 400, 400]
         },
         {
           "translation": [1000, 0, 0]
@@ -39,10 +21,8 @@
       "diffuse": 0.6,
       "specular": 0,
       "specularExponent": 0,
-      "reflectivity": 0,
-      "roughness": 0,
-      "transparency": 0.9,
-      "refractiveIndex": 1.4
+      "reflectivity": 0.5,
+      "roughness": 0
     }
   ],
   "Light": [
@@ -51,5 +31,8 @@
       "pointsAt": [1000, 0, 0],
       "color": [1, 1, 1]
     }
-  ]
+  ],
+  "SkyBox": {
+    "path": "../assets/Rainbow_Flag.png"
+  }
 }

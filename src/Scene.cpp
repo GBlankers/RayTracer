@@ -228,7 +228,7 @@ void Scene::fillScene(const std::string& filename) {
     assert(generalDocument.HasMember("scene"));
     assert(generalDocument["scene"].IsString());
     std::string sceneFileName(generalDocument["scene"].GetString());
-    std::ifstream sceneFile("../include/"+sceneFileName);
+    std::ifstream sceneFile("../include/scenes/"+sceneFileName);
 
     // Save and convert the contents of the file to a const c-string
     std::stringstream buffer2;
@@ -380,6 +380,8 @@ void Scene::fillScene(const std::string& filename) {
             sky = SkyBox(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1});
         } else if(value.HasMember("path")){
             sky = SkyBox(std::string(value["path"].GetString()));
+        } else {
+            sky = SkyBox();
         }
     } else {
         sky = SkyBox();

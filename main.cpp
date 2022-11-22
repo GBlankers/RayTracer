@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <png.h>
 
 #include "src/Ray.h"
 #include "src/Collision.h"
@@ -84,7 +85,7 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
         totalLight += tempColor*pathToLight*l->getIntensity();
     }
 
-    totalLight = totalLight/scene.getLightVector().size() + c.getColor() * ambient;
+    totalLight = totalLight/(double)scene.getLightVector().size() + c.getColor() * ambient;
     return totalLight;
 }
 
@@ -269,7 +270,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene("include/general.json");
+    world.fillScene("include/scenes/general.json");
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -307,7 +308,6 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: refraction
 // TODO: materials
 // TODO: uv-mapping
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI
