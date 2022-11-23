@@ -17,7 +17,7 @@ Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
 
     // Up direction calculation
-    this->upDirection = Vec4(theta, phi);
+    this->upDirection = Vec4(theta*M_PI/180, phi*M_PI/180);
 
     // Calculation for the eye direction
     double stepPerT = Vec4::length(this->viewDirection);
@@ -37,11 +37,9 @@ Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : disp
     this->distanceEyeFromScreen = W/(tan(fov*M_PI/360));
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
 
-    double theta, phi;
-    theta = atan(-viewDirection.getY()/viewDirection.getX());
-    phi = M_PI_2-atan(-viewDirection.getZ()/viewDirection.getX());
     // Up direction calculation
-    this->upDirection = Vec4(theta, phi);
+    double phi = M_PI_2-atan(-viewDirection.getZ()/viewDirection.getX());
+    this->upDirection = Vec4(0, phi);
 
     // Calculation for the eye direction
     double stepPerT = Vec4::length(this->viewDirection);

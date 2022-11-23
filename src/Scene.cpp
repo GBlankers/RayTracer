@@ -259,7 +259,12 @@ void Scene::fillScene(const std::string& filename) {
     assert(value.HasMember("location"));
     valueArray = value["location"].GetArray();
     position = Vec4(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1);
-    camera = Camera(fov, pointsAt, position);
+    if(value.HasMember("angle")){
+        valueArray = value["angle"].GetArray();
+        camera = Camera(fov, pointsAt, position, valueArray[0].GetDouble(), valueArray[1].GetDouble());
+    } else {
+        camera = Camera(fov, pointsAt, position);
+    }
 
     // Add the objects
     assert(s.HasMember("Objects"));
