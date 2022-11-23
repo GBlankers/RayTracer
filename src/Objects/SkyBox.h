@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../Math/Vec4.h"
+#include "../../include/code/lodepng.h"
 
 class SkyBox {
 private:

@@ -1,8 +1,6 @@
 #include "SkyBox.h"
 
-#include "../../include/code/lodepng.h"
 
-#include <utility>
 
 SkyBox::SkyBox() = default;
 

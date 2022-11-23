@@ -4,6 +4,10 @@ Plane::Plane(const Transformation &t, Vec4 color, double ambient, double diffuse
              double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
         Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
 
+Plane::Plane(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
+             double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
+        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
     double t;
@@ -27,16 +31,15 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {r.at(t), t, {0, 0, 0, 0}, Vec4(), inside,
-                        getReflectivity(), getTransparency(), getRefractiveIndex()};
+                return {r.at(t), t, Vec4(), Vec4(), inside, reflectivity, transparency, refractiveIndex};
             }
         }
-        return {r.at(t), t, getColor(), Vec4::normalize(
-                calculateNormal(r.at(t), inside) + Vec4::random(-0.5, 0.5) * getRoughness()),
-                inside, getReflectivity(), getTransparency(), getRefractiveIndex()};
+        return {r.at(t), t, getColor(Vec4()), Vec4::normalize(
+                calculateNormal(r.at(t), inside) + Vec4::random(-0.5, 0.5) * roughness),
+                inside, reflectivity, transparency, refractiveIndex};
     }
 
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0},false, 0, 0, 0};
+    return {};
 }
 
 bool Plane::checkHit(Ray r, double &t, bool &inside) {

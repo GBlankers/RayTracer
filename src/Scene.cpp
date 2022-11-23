@@ -247,6 +247,8 @@ void Scene::fillScene(const std::string& filename) {
     Vec4 position{}, pointsAt{}, color{};
     Transformation temp;
     double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency, refractiveIndex, fov;
+    bool useColor = true;
+    std::string path;
 
     // Add the camera
     assert(s.HasMember("Camera"));
@@ -265,6 +267,7 @@ void Scene::fillScene(const std::string& filename) {
     assert(s.HasMember("Objects"));
     for(auto& v : s["Objects"].GetArray()){
         temp.clear();
+        useColor = true;
         // Check for transformations
         if(v.HasMember("transformations")){
             for(auto& i : v["transformations"].GetArray()){
@@ -293,10 +296,14 @@ void Scene::fillScene(const std::string& filename) {
             }
         }
         // Check color/material properties
-        assert(v.HasMember("color"));
-        valueArray = v["color"];
-        assert(valueArray.IsArray());
-        color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+        if(v.HasMember("color")){
+            valueArray = v["color"];
+            assert(valueArray.IsArray());
+            color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+        } else if(v.HasMember("path")){
+            useColor = false;
+            path = v["path"].GetString();
+        }
         assert(v.HasMember("ambient"));
         ambient = v["ambient"].GetDouble();
         assert(v.HasMember("diffuse"));
@@ -331,8 +338,13 @@ void Scene::fillScene(const std::string& filename) {
             objectVector.push_back(std::make_shared<Cube>(Cube(temp, color, ambient, diffuse, specular,
                                                                specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
-            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular,
-                                                                   specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+            if(useColor){
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular,
+                                                                       specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+            }else{
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, ambient, diffuse, specular,
+                                                                       specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+            }
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
             Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent, reflectivity,
                             roughness, transparency, refractiveIndex);

@@ -3,6 +3,17 @@
 // Constructor
 Vec4::Vec4(double x, double y, double z, int homogeneous) : x(x), y(y), z(z), homogeneous(homogeneous){}
 
+Vec4::Vec4(double theta, double phi) {
+    this->homogeneous = 0;
+    assert(theta>=-90 and theta <= 90);
+    assert(phi>=0 and phi <= 360);
+    this->x = 1*sin(theta)*sin(phi);
+    this->y = 1*cos(theta);
+    this->z = 1*sin(theta)*cos(phi);
+}
+
+Vec4::Vec4() : x(0), y(0), z(0), homogeneous(0) {}
+
 void Vec4::reset() {
     this->x = 0;
     this->y = 0;
@@ -97,13 +108,4 @@ int Vec4::getHomogeneous() const {
 
 void Vec4::setHomogeneous(int argHomogeneous) {
     Vec4::homogeneous = argHomogeneous;
-}
-
-Vec4::Vec4(double theta, double phi) {
-    this->homogeneous = 0;
-    assert(theta>=-90 and theta <= 90);
-    assert(phi>=0 and phi <= 360);
-    this->x = 1*sin(theta)*sin(phi);
-    this->y = 1*cos(theta);
-    this->z = 1*sin(theta)*cos(phi);
 }

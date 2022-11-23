@@ -13,14 +13,20 @@
 #include "../Transformation.h"
 #include "LightSource.h"
 #include "../settings.h"
+#include "../../include/code/lodepng.h"
 
 class Shape {
-private:
+protected:
     Transformation t;
-    Vec4 color;
+    Vec4 color{0, 0, 0, 0};
     double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency, refractiveIndex;
+    bool useColor = true;
+    std::vector<unsigned char> image;
+    unsigned width=0, height=0;
 public:
     explicit Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
+                   double reflectivity, double roughness, double transparency, double refractiveIndex);
+    explicit Shape(Transformation t, const std::string& path, double ambient, double diffuse, double specular, double specularComponent,
                    double reflectivity, double roughness, double transparency, double refractiveIndex);
 
     virtual Collision checkCollision(Ray r) = 0;
@@ -28,9 +34,9 @@ public:
     virtual bool checkHit(Ray r, double &t) = 0;
     virtual bool checkHit(Ray r) = 0;
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
+    virtual const Vec4 &getColor(Vec4 hitPoint) const;
 
     void setColor(const Vec4 &colorArg);
-    const Vec4 &getColor() const;
     double getReflectivity() const;
     double getAmbient() const;
     double getRoughness() const;

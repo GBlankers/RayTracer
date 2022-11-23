@@ -4,6 +4,10 @@ Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, 
            double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
         Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
 
+Cube::Cube(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
+           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
+        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
 
@@ -21,11 +25,12 @@ Collision Cube::checkCollision(Ray r) {
 
     // there is a hit -> calculate shading
     if(checkHit(r, t, inside)){
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t), inside) +
-        Vec4::random(-0.5, 0.5) * getRoughness()), inside, getReflectivity(), getTransparency(), getRefractiveIndex()};
+        Vec4 hit = r.at(t);
+        return {hit, t, getColor(hit), Vec4::normalize(calculateNormal(hit, inside) +
+        Vec4::random(-0.5, 0.5) * roughness), inside, reflectivity, transparency, refractiveIndex};
     }
 
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0},false, 0, 0, 0};
+    return {};
 }
 
 

@@ -10,10 +10,28 @@
 Shape::Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
              double reflectivity, double roughness, double transparency, double refractiveIndex)
     : t(t), color(color), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
-    reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex){
+    reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex), useColor(true){
     assert(this->color.getX()>=0 && this->color.getX()<=1.0);
     assert(this->color.getY()>=0 && this->color.getY()<=1.0);
     assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
+}
+
+Shape::Shape(Transformation t, const std::string& path, double ambient, double diffuse, double specular, double specularComponent,
+             double reflectivity, double roughness, double transparency, double refractiveIndex)
+        : t(t), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
+          reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex){
+    assert(this->color.getX()>=0 && this->color.getX()<=1.0);
+    assert(this->color.getY()>=0 && this->color.getY()<=1.0);
+    assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
+
+    this->useColor=false;
+    this->color={0, 0, 0, 0};
+
+    unsigned error = lodepng::decode(image, width, height, path, LCT_RGB);
+    if(error) {
+        printf("error %u: %s\nDefault color will be used", error, lodepng_error_text(error));
+        this->useColor = true;
+    }
 }
 
 const Transformation &Shape::getT() const {
@@ -24,7 +42,7 @@ void Shape::setColor(const Vec4 &colorArg) {
     Shape::color = colorArg;
 }
 
-const Vec4 &Shape::getColor() const {
+const Vec4 &Shape::getColor(Vec4 hitPoint) const {
     return color;
 }
 

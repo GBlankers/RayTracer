@@ -13,8 +13,7 @@ private:
     bool inside;
 public:
     Collision(Vec4 collisionPoint, double t, Vec4 color, Vec4 normal, bool inside, double reflectivity, double transparency, double refractiveIndex);
-
-    explicit Collision() = default;
+    Collision();
 
     double getT() const;
     const Vec4 &getColor() const;

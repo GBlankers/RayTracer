@@ -4,16 +4,21 @@ Sphere::Sphere(const Transformation &t, Vec4 color, double ambient, double diffu
                double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
         Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
 
+Sphere::Sphere(const Transformation &t, const std::string &path, double ambient, double diffuse, double specular,
+               double specularComponent, double reflectivity, double roughness, double transparency,
+               double refractiveIndex) :
+               Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex){}
+
 Collision Sphere::checkCollision(Ray r) {
     double t;
     bool inside;
 
     if (checkHit(r, t, inside)){
-        return {r.at(t), t, getColor(), Vec4::normalize(calculateNormal(r.at(t), inside) +
-        Vec4::random(-0.3, 0.3) * getRoughness()), inside, getReflectivity(), getTransparency(), getRefractiveIndex()};
+        return {r.at(t), t, Vec4(this->getColor(r.at(t))), Vec4::normalize(calculateNormal(r.at(t), inside) +
+        Vec4::random(-0.3, 0.3) * roughness), inside, reflectivity, transparency, refractiveIndex};
     }
 
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0}, {0, 0, 0, 0}, false, 0, 0, 1};
+    return {};
 }
 
 bool Sphere::checkHit(Ray r, double &t, bool &inside) {
@@ -100,4 +105,24 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
         return Vec4::normalize(getT().getForward()*normal)*-1;
 
     return Vec4::normalize(getT().getForward()*normal);
+}
+
+const Vec4 &Sphere::getColor(Vec4 hitPoint) const {
+    if(useColor)
+        return color;
+
+    Vec4 hit = t.getInverse()*hitPoint;
+    // uv-map
+    double u = 0.5 + (atan2(hit.getZ(), hit.getX())/(2*M_PI));
+    double v = 0.5 + asin(hit.getY())/M_PI;
+
+    int i = floor(u*width);
+    int j = floor(v*height);
+
+    int startPoint = i*3+j*3;
+
+    Vec4 imageColor((double)image[startPoint]/255, (double)image[startPoint+1]/255, (double)image[startPoint+2]/255, 0);
+
+    // get color at that point
+    return imageColor;
 }
