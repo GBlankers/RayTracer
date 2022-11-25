@@ -8,9 +8,9 @@
 #define W (double)WINDOW_WIDTH
 #define H (double)WINDOW_HEIGHT
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 1
+#define ANTI_ALIAS_SAMPLING 4
 // Number of max reflections/refractions
-#define REFLECTIONS 1
+#define BOUNCES 8
 // Computer error
 #define EPSILON 0.000000001
 // Number of threads

@@ -4,6 +4,11 @@ Collision::Collision(Vec4 collisionPoint, double t, Vec4 color, Vec4 normal, boo
                      double refractiveIndex): collisionPoint(collisionPoint), t(t), color(color), normal(normal), inside(inside),
                      reflectivity(reflectivity), transparency(transparency), refractiveIndex(refractiveIndex) {}
 
+
+Collision::Collision() : collisionPoint({0, 0, 0, 0}), t(-1), color({0, 0, 0, 0}),
+                        normal({0, 0, 0, 0}), inside(false), reflectivity(0), transparency(0),
+                        refractiveIndex(1){}
+
 double Collision::getT() const {
     return t;
 }

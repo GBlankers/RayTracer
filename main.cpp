@@ -17,9 +17,9 @@ void drawDot(GLint x, GLint y);
 void renderer();
 
 Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene);
-Vec4 refract(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
-Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int bouncesToDo, const Scene& scene);
+Vec4 refract(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene);
+Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene);
 
 void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
 
@@ -84,16 +84,11 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
         totalLight += tempColor*pathToLight*l->getIntensity();
     }
 
-    totalLight = totalLight/scene.getLightVector().size() + c.getColor() * ambient;
+    totalLight = totalLight/(double)scene.getLightVector().size() + c.getColor() * ambient;
     return totalLight;
 }
 
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, const Scene& scene){
-    // Max number of reflections reached
-    if(reflectionsToGo == 0){
-        return {0, 0, 0, 0};
-    }
-
+Vec4 reflect(Ray incomingRay, Collision collisionPoint, int bouncesToDo, const Scene& scene){
     // calculate the reflected ray direction
     Vec4 rayDirection = Vec4::normalize(incomingRay.getDirectionVector() + collisionPoint.getNormal() *
                             (-2)*Vec4::dot(collisionPoint.getNormal(), incomingRay.getDirectionVector()));
@@ -119,7 +114,7 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
     }
 
     // Return color of the current hit + further reflections/refractions
-    return objectColorHit(lastObjectHit, closestC, reflectedRay, scene);
+    return objectColorHit(lastObjectHit, closestC, reflectedRay, bouncesToDo-1, scene);
 }
 
 /**
@@ -130,7 +125,7 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int reflectionsToGo, con
  * @param scene the total scene used to further calculate collisions
  * @return refracted color, in a recursive way
  */
-Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray incoming, const Scene& scene){
+Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray incoming, int bouncesToDo, const Scene& scene){
     // Calculate the normalized direction
     Vec4 normDir = Vec4::normalize(incoming.getDirectionVector());
 
@@ -148,7 +143,7 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
     // total internal reflection
     if(std::isnan(theta)){
         collisionPoint.setReflectivity(shape->getTransparency());
-        return reflect(incoming, collisionPoint, REFLECTIONS, scene);
+        return reflect(incoming, collisionPoint, bouncesToDo, scene);
     }
 
     // Generate new refracted ray
@@ -177,7 +172,7 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
     }
 
     // return combination of light, reflection and refraction at new point
-    return objectColorHit(lastObjectHit, closestC, refractedRay, scene);
+    return objectColorHit(lastObjectHit, closestC, refractedRay, bouncesToDo, scene);
 }
 
 /**
@@ -188,21 +183,25 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
  * @param scene full scene, needed to check for further collisions
  * @return the color of the hit, an accumulation of the light, reflections and refractions
  */
-Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene){
+Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene){
     Vec4 color = {0, 0, 0, 0}, reflection{}, refraction{};
 
     // For every point calculate the lighting, always present
     color = lighting(shape, c, incoming, scene);
 
+    if(bouncesToDo == 0){
+        return color;
+    }
+
     // Object is reflective
     if(shape->getReflectivity()>EPSILON){
-        reflection = reflect(incoming, c, REFLECTIONS, scene)*shape->getReflectivity();
+        reflection = reflect(incoming, c, bouncesToDo-1, scene)*shape->getReflectivity();
         color += reflection;
     }
 
     // Object is transparent
     if(shape->getTransparency()>EPSILON){
-        refraction = refract(shape, c, incoming, scene)*shape->getTransparency();
+        refraction = refract(shape, c, incoming,bouncesToDo-1, scene)*shape->getTransparency();
         color += refraction;
     }
 
@@ -255,7 +254,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
                 // An object was hit
                 if(previousHit != MAXFLOAT){
                     // Cumulate color -> anti alias;
-                    color += Vec4::clamp(objectColorHit(lastObjectHit, lastCollision, shotRay, s));
+                    color += Vec4::clamp(objectColorHit(lastObjectHit, lastCollision, shotRay, BOUNCES, s));
                 } else { // skybox
                     color += s.getSkyColor(shotRay.getDirectionVector());
                 }
@@ -269,7 +268,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
 void renderer(){
     // Define a scene
     Scene world;
-    world.fillScene("include/general.json");
+    world.fillScene("include/scenes/general.json");
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -307,7 +306,6 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: refraction
 // TODO: materials
 // TODO: uv-mapping
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI

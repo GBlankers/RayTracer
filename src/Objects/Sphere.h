@@ -9,6 +9,8 @@ class Sphere: public Shape{
 public:
     explicit Sphere(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
                     double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
+    explicit Sphere(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
+                    double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
 
     Collision checkCollision(Ray r) override;
 
@@ -17,6 +19,8 @@ public:
     bool checkHit(Ray r) override;
 
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
+
+    void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
 };
 
 

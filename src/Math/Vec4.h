@@ -15,7 +15,7 @@ public:
     Vec4(double x, double y, double z, int homogeneous);
     // Constructor for a unit length vector using spherical coordinates
     Vec4(double theta, double phi);
-    explicit Vec4() = default;
+    Vec4();
 
     void reset();
     // Operator overloading

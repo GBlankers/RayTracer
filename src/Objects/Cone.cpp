@@ -4,17 +4,23 @@ Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, 
            double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
         Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
 
+Cone::Cone(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
+           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
+        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+
 Collision Cone::checkCollision(Ray r) {
     double t;
     bool inside;
 
     if(checkHit(r, t, inside)){
-        return {r.at(t), t, getColor(), Vec4::normalize(
-                calculateNormal(r.at(t), inside) + Vec4::random(-0.5, 0.5) * getRoughness()),
-                inside, getReflectivity(), getTransparency(), getRefractiveIndex()};
+        double red, green, blue;
+        Vec4 hit = r.at(t);
+        this->getColor(hit, red, green, blue);
+
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside)+Vec4::random(-0.5, 0.5) * roughness),
+                inside, reflectivity, transparency, refractiveIndex};
     }
-    return {{0, 0, 0, 0}, -1, {0, 0, 0, 0},
-            {0, 0, 0, 0},false, 0, 0, 0};
+    return {};
 }
 
 
