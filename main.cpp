@@ -52,7 +52,7 @@ void drawDot(GLint x, GLint y){
 
 Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene){
     double diffuse, specular, t;
-    Vec4 totalLight(0, 0, 0, 0), tempColor(0, 0, 0, 0), startPoint{};
+    Vec4 totalLight, tempColor, startPoint;
     double pathToLight;
     Ray r{};
     // Get the ambient intensity
@@ -184,7 +184,7 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
  * @return the color of the hit, an accumulation of the light, reflections and refractions
  */
 Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene){
-    Vec4 color = {0, 0, 0, 0}, reflection{}, refraction{};
+    Vec4 color, reflection, refraction;
 
     // For every point calculate the lighting, always present
     color = lighting(shape, c, incoming, scene);
@@ -226,7 +226,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
     Collision c, lastCollision;
     Ray shotRay{};
     float previousHit;
-    Vec4 color{};
+    Vec4 color;
     std::shared_ptr<Shape> lastObjectHit;
 
     // Go over all the pixels in the near screen
@@ -307,5 +307,5 @@ void renderer(){
 }
 
 // TODO: materials
-// TODO: uv-mapping
+// TODO: normal maps
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI
