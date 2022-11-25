@@ -13,9 +13,12 @@ Collision Cone::checkCollision(Ray r) {
     bool inside;
 
     if(checkHit(r, t, inside)){
+        double red, green, blue;
         Vec4 hit = r.at(t);
-        return {hit, t, getColor(hit), Vec4::normalize(calculateNormal(hit, inside) +
-        Vec4::random(-0.5, 0.5) * roughness), inside, reflectivity, transparency, refractiveIndex};
+        this->getColor(hit, red, green, blue);
+
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside)+Vec4::random(-0.5, 0.5) * roughness),
+                inside, reflectivity, transparency, refractiveIndex};
     }
     return {};
 }

@@ -34,7 +34,7 @@ public:
     virtual bool checkHit(Ray r, double &t) = 0;
     virtual bool checkHit(Ray r) = 0;
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
-    virtual const Vec4 &getColor(Vec4 hitPoint) const;
+    virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
 
     void setColor(const Vec4 &colorArg);
     double getReflectivity() const;

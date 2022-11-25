@@ -42,8 +42,10 @@ void Shape::setColor(const Vec4 &colorArg) {
     Shape::color = colorArg;
 }
 
-const Vec4 &Shape::getColor(Vec4 hitPoint) const {
-    return color;
+void Shape::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    r = color.getX();
+    g = color.getY();
+    b = color.getZ();
 }
 
 double Shape::getAmbient() const {

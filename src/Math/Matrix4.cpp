@@ -46,7 +46,7 @@ void Matrix4::addRotationZ(double thetaZ) {
 Vec4 Matrix4::operator*(Vec4 vectorToTransform) const {
     double vector[4] = {vectorToTransform.getX(), vectorToTransform.getY(), vectorToTransform.getZ(), (double)vectorToTransform.getHomogeneous()};
     double transformed[4] = {0.0,0.0,0.0,0.0};
-    double temp, v, m;
+    double temp;
     for(int i = 0; i<4; i++){
         temp = 0.0;
         for(int j = 0; j<4;j++){

@@ -14,7 +14,10 @@ Collision Sphere::checkCollision(Ray r) {
     bool inside;
 
     if (checkHit(r, t, inside)){
-        return {r.at(t), t, Vec4(this->getColor(r.at(t))), Vec4::normalize(calculateNormal(r.at(t), inside) +
+        double red, green, blue;
+        this->getColor(r.at(t), red, green, blue);
+
+        return {r.at(t), t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(r.at(t), inside) +
         Vec4::random(-0.3, 0.3) * roughness), inside, reflectivity, transparency, refractiveIndex};
     }
 
@@ -107,22 +110,24 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
     return Vec4::normalize(getT().getForward()*normal);
 }
 
-const Vec4 &Sphere::getColor(Vec4 hitPoint) const {
-    if(useColor)
-        return color;
+void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    if(useColor){
+        r = color.getX();
+        g = color.getY();
+        b = color.getZ();
+    } else {
+        Vec4 hit = t.getInverse()*hitPoint;
+        // uv-map
+        double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
+        double v = 0.5 + asin(hit.getY()*-1)/M_PI;
 
-    Vec4 hit = t.getInverse()*hitPoint;
-    // uv-map
-    double u = 0.5 + (atan2(hit.getZ(), hit.getX())/(2*M_PI));
-    double v = 0.5 + asin(hit.getY())/M_PI;
+        int i = floor(u*width);
+        int j = floor(v*height);
 
-    int i = floor(u*width);
-    int j = floor(v*height);
+        int startPoint = i*3+j*width*3;
 
-    int startPoint = i*3+j*3;
-
-    Vec4 imageColor((double)image[startPoint]/255, (double)image[startPoint+1]/255, (double)image[startPoint+2]/255, 0);
-
-    // get color at that point
-    return imageColor;
+        r = (double)image.at(startPoint)/255;
+        g = (double)image.at(startPoint+1)/255;
+        b = (double)image.at(startPoint+2)/255;
+    }
 }

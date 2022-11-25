@@ -14,9 +14,10 @@ Collision Plane::checkCollision(Ray r) {
     bool inside;
 
     if(checkHit(r, t, inside)){
+        Vec4 hit = r.at(t);
         if(checkerBoard){
             bool check;
-            Vec4 localHit = getT().getInverse()*r.at(t);
+            Vec4 localHit = getT().getInverse()*hit;
             if(localHit.getX()<0){
                 if(localHit.getZ()<0){
                     check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
@@ -31,11 +32,14 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {r.at(t), t, Vec4(), Vec4(), inside, reflectivity, transparency, refractiveIndex};
+                return {hit, t, Vec4(), Vec4(), inside, reflectivity, transparency, refractiveIndex};
             }
         }
-        return {r.at(t), t, getColor(Vec4()), Vec4::normalize(
-                calculateNormal(r.at(t), inside) + Vec4::random(-0.5, 0.5) * roughness),
+        double red, green, blue;
+
+        this->getColor(hit, red, green, blue);
+
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) + Vec4::random(-0.5, 0.5) * roughness),
                 inside, reflectivity, transparency, refractiveIndex};
     }
 
