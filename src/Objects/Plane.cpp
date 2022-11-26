@@ -59,6 +59,19 @@ bool Plane::checkHit(Ray r, double &t) {
     // Ray is not parallel to the plane
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
         t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
+
+        // Check if dimensions of plane are limited
+        Vec4 hit = transformedRay.at(t);
+        if(planeLength>0){
+            if(hit.getX()>planeLength/2 or hit.getX()<-planeLength/2){
+                t = -1;
+            }
+        }
+        if(planeWidth>0){
+            if(hit.getZ()>planeWidth/2 or hit.getZ()<-planeWidth/2){
+                t = -1;
+            }
+        }
         return t>0;
     }
     return false;
@@ -84,4 +97,26 @@ Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
 void Plane::setCheckerBoardPattern(bool b, int size) {
     this->checkerBoard = b;
     this->checkerBoardSize = size;
+}
+
+void Plane::setSize(double l, double w) {
+    this->planeLength = l;
+    this->planeWidth = w;
+}
+
+void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    if(useColor){
+        Shape::getColor(hitPoint, r, g, b);
+    } else {
+        Vec4 hit = t.getInverse()*hitPoint;
+
+        int i = floor(fmod((planeLength/2)+hit.getX(), height));
+        int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
+
+        int startPoint = i*3+j*width*3;
+
+        r = (double)image.at(startPoint)/255;
+        g = (double)image.at(startPoint+1)/255;
+        b = (double)image.at(startPoint+2)/255;
+    }
 }

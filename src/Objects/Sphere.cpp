@@ -112,9 +112,7 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     if(useColor){
-        r = color.getX();
-        g = color.getY();
-        b = color.getZ();
+        Shape::getColor(hitPoint, r, g, b);
     } else {
         Vec4 hit = t.getInverse()*hitPoint;
         // uv-map

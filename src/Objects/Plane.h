@@ -8,6 +8,7 @@ class Plane : public Shape{
 private:
     bool checkerBoard = false;
     int checkerBoardSize = 800;
+    double planeLength = -1, planeWidth = -1;
 public:
     explicit Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
                    double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
@@ -22,6 +23,9 @@ public:
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
 
     void setCheckerBoardPattern(bool b, int size);
+    void setSize(double l, double w);
+
+    void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
 };
 
 

@@ -292,6 +292,33 @@
       "specularExponent": 10,
       "reflectivity": 0,
       "roughness": 0
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "rotation": [
+            {
+              "z": 90
+            },
+            {
+              "x": -90
+            }
+          ]
+        },
+        {
+          "translation": [1300, 1000, 900]
+        }
+      ],
+      "path": "../assets/ricardo.png",
+      "ambient": 0.7,
+      "diffuse": 0.1,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0,
+      "checkerBoard": 130,
+      "size": [500, 500]
     }
   ],
   "Light": [

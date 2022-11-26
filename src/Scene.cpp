@@ -351,12 +351,26 @@ void Scene::fillScene(const std::string& filename) {
                                                                        specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
             }
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
-            Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent, reflectivity,
-                            roughness, transparency, refractiveIndex);
-            if(v.HasMember("checkerBoard")){
-                tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
+            if(useColor){
+                Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent, reflectivity,
+                                roughness, transparency, refractiveIndex);
+                if(v.HasMember("checkerBoard")){
+                    tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
+                }
+                if(v.HasMember("size")) {
+                    valueArray = v["size"].GetArray();
+                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
+                }
+                objectVector.push_back(std::make_shared<Plane>(tempPlane));
+            } else {
+                Plane tempPlane(temp, path, ambient, diffuse, specular, specularExponent, reflectivity,
+                                roughness, transparency, refractiveIndex);
+                if(v.HasMember("size")){
+                    valueArray = v["size"].GetArray();
+                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
+                }
+                objectVector.push_back(std::make_shared<Plane>(tempPlane));
             }
-            objectVector.push_back(std::make_shared<Plane>(tempPlane));
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
             objectVector.push_back(std::make_shared<Cone>(Cone(temp, color, ambient, diffuse, specular,
                                                                specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
