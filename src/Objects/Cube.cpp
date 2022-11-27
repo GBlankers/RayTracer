@@ -26,40 +26,15 @@ Collision Cube::checkCollision(Ray r) {
     // there is a hit -> calculate shading
     if(checkHit(r, t, inside)){
         double red, green, blue;
+        LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
+        l.color = {red, green, blue, 0};
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) +Vec4::random(-0.5, 0.5) * material.roughness),
-                inside, material.reflectivity, material.transparency, material.refractiveIndex};
+        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
 
     return {};
-}
-
-
-/**
- * Calculate the normal in world coordinates
- * @param hitPoint the hit point in world coordinates
- * @param inside if the hit is on the inside, we need to flip the normal
- * @return the normal direction at the hit point in world coordinates
- */
-Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 inverseHitPoint = getTransformation().getInverse() * hitPoint;
-    double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
-    double nx=0, ny=0, nz=0;
-    if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
-        nx = x;
-    }
-    if(y >= (1-EPSILON) || y <= (-1+EPSILON)){
-        ny = y;
-    }
-    if(z >= (1-EPSILON) || z <= (-1+EPSILON)){
-        nz = z;
-    }
-
-    if(inside)
-        return Vec4::normalize(getTransformation().getForward() * Vec4{nx, ny, nz, 0}) * -1;
-    return Vec4::normalize(getTransformation().getForward() * Vec4{nx, ny, nz, 0});
 }
 
 bool Cube::checkHit(Ray r, double &t, bool &inside) {
@@ -284,4 +259,29 @@ bool Cube::checkHit(Ray r){
         }
     }
     return false;
+}
+
+/**
+ * Calculate the normal in world coordinates
+ * @param hitPoint the hit point in world coordinates
+ * @param inside if the hit is on the inside, we need to flip the normal
+ * @return the normal direction at the hit point in world coordinates
+ */
+Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
+    Vec4 inverseHitPoint = getTransformation().getInverse() * hitPoint;
+    double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
+    double nx=0, ny=0, nz=0;
+    if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
+        nx = x;
+    }
+    if(y >= (1-EPSILON) || y <= (-1+EPSILON)){
+        ny = y;
+    }
+    if(z >= (1-EPSILON) || z <= (-1+EPSILON)){
+        nz = z;
+    }
+
+    if(inside)
+        return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
+    return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness);
 }

@@ -50,8 +50,3 @@ const LightComponents &Shape::getLightComponents() const {
 const Material &Shape::getMaterial() const {
     return material;
 }
-
-Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const {
-    return lightColor*c.getColor()*this->lightComponents.diffuse*diffuseComponent
-           +lightColor*c.getColor()*this->lightComponents.specular*pow(specularComponent, this->lightComponents.specularExponent);
-}

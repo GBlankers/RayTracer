@@ -1,24 +1,22 @@
 #include "Collision.h"
 
-Collision::Collision(Vec4 collisionPoint, double t, Vec4 color, Vec4 normal, bool inside, double reflectivity, double transparency,
-                     double refractiveIndex): collisionPoint(collisionPoint), t(t), color(color), normal(normal), inside(inside),
-                     reflectivity(reflectivity), transparency(transparency), refractiveIndex(refractiveIndex) {}
+Collision::Collision(Ray incoming, double t, Vec4 normal, bool inside, LightComponents lightComponents, Material material) :
+                incoming(incoming), t(t), normal(normal), inside(inside), lightComponents(std::move(lightComponents)),
+                material(std::move(material)), hitPoint(incoming.at(t)) {}
 
 
-Collision::Collision() : collisionPoint({0, 0, 0, 0}), t(-1), color({0, 0, 0, 0}),
-                        normal({0, 0, 0, 0}), inside(false), reflectivity(0), transparency(0),
-                        refractiveIndex(1){}
+Collision::Collision() = default;
 
 double Collision::getT() const {
     return t;
 }
 
 const Vec4 &Collision::getCollisionPoint() const {
-    return collisionPoint;
+    return hitPoint;
 }
 
 const Vec4 &Collision::getColor() const {
-    return color;
+    return lightComponents.color;
 }
 
 const Vec4 &Collision::getNormal() const {
@@ -26,15 +24,15 @@ const Vec4 &Collision::getNormal() const {
 }
 
 double Collision::getReflectivity() const {
-    return reflectivity;
+    return material.reflectivity;
 }
 
 double Collision::getTransparency() const {
-    return transparency;
+    return material.transparency;
 }
 
 double Collision::getRefractiveIndex() const {
-    return refractiveIndex;
+    return material.refractiveIndex;
 }
 
 /**
@@ -46,7 +44,23 @@ bool Collision::isInside() const {
     return inside;
 }
 
+const LightComponents &Collision::getLightComponents() const {
+    return lightComponents;
+}
+
+const Material &Collision::getMaterial() const {
+    return material;
+}
+
+/**
+     * Needed for total internal refraction
+     * @param reflectivity
+     */
 void Collision::setReflectivity(double reflectivity) {
-    Collision::reflectivity = reflectivity;
+    material.reflectivity = reflectivity;
+}
+
+const Ray &Collision::getIncoming() const {
+    return incoming;
 }
 

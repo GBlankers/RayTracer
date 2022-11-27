@@ -2,19 +2,23 @@
 #define RAYTRACER_COLLISION_H
 
 #include "Math/Vec4.h"
+#include "Objects/objectProperties.h"
+#include "Ray.h"
 
 class Collision {
 private:
-    Vec4 collisionPoint{}; // location of the collision
+    Ray incoming; // incoming ray
     double t = -1; // time of the collision to determine the place at the ray
-    Vec4 color{}; // color of the shape where this collision has happened
-    Vec4 normal{};
-    double reflectivity=0, transparency=0, refractiveIndex=1; // Material properties at the collision point
-    bool inside;
+    Vec4 hitPoint{};
+    Vec4 normal{}; // normal at the collision point
+    bool inside = false;
+    LightComponents lightComponents;
+    Material material;
 public:
-    Collision(Vec4 collisionPoint, double t, Vec4 color, Vec4 normal, bool inside, double reflectivity, double transparency, double refractiveIndex);
+    Collision(Ray incoming, double t, Vec4 normal, bool inside, LightComponents lightComponents, Material material);
     Collision();
 
+    // getters
     double getT() const;
     const Vec4 &getColor() const;
     const Vec4 &getCollisionPoint() const;
@@ -23,7 +27,12 @@ public:
     double getTransparency() const;
     bool isInside() const;
     double getRefractiveIndex() const;
+    const LightComponents &getLightComponents() const;
+    const Material &getMaterial() const;
 
+    const Ray &getIncoming() const;
+
+    // setter
     void setReflectivity(double reflectivity);
 };
 

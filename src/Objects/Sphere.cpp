@@ -16,8 +16,10 @@ Collision Sphere::checkCollision(Ray r) {
         double red, green, blue;
         this->getColor(r.at(t), red, green, blue);
 
-        return {r.at(t), t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(r.at(t), inside) +
-        Vec4::random(-0.3, 0.3) * material.roughness), inside, material.reflectivity, material.transparency, material.refractiveIndex};
+        LightComponents l = this->lightComponents;
+        l.color = {red, green, blue, 0};
+
+        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
 
     return {};
@@ -104,9 +106,9 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 
     // If the hit is on the inside of the object the normal needs to be flipped
     if(inside)
-        return Vec4::normalize(getTransformation().getForward() * normal) * -1;
+        return Vec4::normalize((getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness) * -1;
 
-    return Vec4::normalize(getTransformation().getForward() * normal);
+    return Vec4::normalize((getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness);
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {

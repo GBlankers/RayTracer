@@ -36,13 +36,9 @@ public:
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
     virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
 
-    const LightComponents &getLightComponents() const;
-
-    const Material &getMaterial() const;
-
-    Vec4 calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const;
-
     const Transformation &getTransformation() const;
+    const LightComponents &getLightComponents() const;
+    const Material &getMaterial() const;
 };
 
 

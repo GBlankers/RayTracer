@@ -16,10 +16,10 @@ void openGLInit();
 void drawDot(GLint x, GLint y);
 void renderer();
 
-Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene);
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int bouncesToDo, const Scene& scene);
-Vec4 refract(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene);
-Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene);
+Vec4 lighting(const Collision& c, const Scene& scene);
+Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene);
+Vec4 refract(Collision c, int bouncesToDo, const Scene& scene);
+Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene);
 
 void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
 
@@ -50,13 +50,15 @@ void drawDot(GLint x, GLint y){
     glEnd();
 }
 
-Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, const Scene& scene){
+Vec4 lighting(const Collision& c, const Scene& scene){
     double diffuse, specular, t;
     Vec4 totalLight, tempColor, startPoint;
     double pathToLight;
     Ray r{};
-    LightComponents lightComponents = shape->getLightComponents();
-    Material material = shape->getMaterial();
+
+    // Get light components and material at the collision point
+    LightComponents lightComponents = c.getLightComponents();
+    Material material = c.getMaterial();
     // Get the ambient intensity
     double ambient = lightComponents.ambient;
     // Check if in shadow, otherwise do not calculate the diffuse and specular components
@@ -79,8 +81,9 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
         // Calculate diffuse and spectral components if there is a clear path to the light source
         if(pathToLight>0){
             diffuse = l->calculateDiffuse(c.getNormal(), c.getCollisionPoint());
-            specular = l->calculateSpecular(c.getNormal(), incoming.getDirectionVector(), c.getCollisionPoint());
-            tempColor = shape->calculateDiffuseSpecularColor(diffuse, specular, l->getColor(), c);
+            specular = l->calculateSpecular(c.getNormal(), c.getIncoming().getDirectionVector(), c.getCollisionPoint());
+            tempColor = l->getColor()*c.getColor()*(lightComponents.diffuse*diffuse +
+                    lightComponents.specular*pow(specular, lightComponents.specularExponent));
         }
         // Transparent objects will pass a bit of light through
         totalLight += tempColor*pathToLight*l->getIntensity();
@@ -90,23 +93,21 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
     return totalLight;
 }
 
-Vec4 reflect(Ray incomingRay, Collision collisionPoint, int bouncesToDo, const Scene& scene){
+Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene){
     // calculate the reflected ray direction
-    Vec4 rayDirection = Vec4::normalize(incomingRay.getDirectionVector() + collisionPoint.getNormal() *
-                            (-2)*Vec4::dot(collisionPoint.getNormal(), incomingRay.getDirectionVector()));
+    Vec4 rayDirection = Vec4::normalize(c.getIncoming().getDirectionVector() +
+                                        c.getNormal() * (-2) * Vec4::dot(c.getNormal(), c.getIncoming().getDirectionVector()));
     // create the ray, starts at t=0.1 to stop reflections with the object itself
-    Ray reflectedRay(collisionPoint.getCollisionPoint()+ rayDirection*0.1,rayDirection);
+    Ray reflectedRay(c.getCollisionPoint() + rayDirection * 0.1, rayDirection);
 
     // Check all the world objects for a collision
-    Collision c, closestC;
-    std::shared_ptr<Shape> lastObjectHit;
+    Collision tempC, closestC;
     double previousHit = MAXFLOAT;
     for(auto & object : scene.getObjectVector()) {
-        c = object->checkCollision(reflectedRay);
-        if (previousHit > c.getT() && c.getT() > 0) {
-            previousHit = (float) c.getT();
-            closestC = c;
-            lastObjectHit = object;
+        tempC = object->checkCollision(reflectedRay);
+        if (previousHit > tempC.getT() && tempC.getT() > 0) {
+            previousHit = (float) tempC.getT();
+            closestC = tempC;
         }
     }
 
@@ -116,56 +117,54 @@ Vec4 reflect(Ray incomingRay, Collision collisionPoint, int bouncesToDo, const S
     }
 
     // Return color of the current hit + further reflections/refractions
-    return objectColorHit(lastObjectHit, closestC, reflectedRay, bouncesToDo-1, scene);
+    return objectColorHit(closestC, bouncesToDo-1, scene);
 }
 
 /**
  *  Assume there are no objects inside objects -> only refractions between material and air
  * @param shape the object that was hit
- * @param collisionPoint the collision point, for normal calculation
+ * @param c the collision point, for normal calculation
  * @param incoming incoming ray, used to calculate the refracted ray
  * @param scene the total scene used to further calculate collisions
  * @return refracted color, in a recursive way
  */
-Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray incoming, int bouncesToDo, const Scene& scene){
+Vec4 refract(Collision c, int bouncesToDo, const Scene& scene){
     // Calculate the normalized direction
-    Vec4 normDir = Vec4::normalize(incoming.getDirectionVector());
+    Vec4 normDir = Vec4::normalize(c.getIncoming().getDirectionVector());
 
     // Calculate index of refraction assuming there is air outside the objects
     double indexOfRefraction;
-    if(collisionPoint.isInside()){
-        indexOfRefraction = 1/collisionPoint.getRefractiveIndex();
+    if(c.isInside()){
+        indexOfRefraction = 1 / c.getRefractiveIndex();
     } else {
-        indexOfRefraction = collisionPoint.getRefractiveIndex();
+        indexOfRefraction = c.getRefractiveIndex();
     }
 
     // Calculate theta with Snell's law
-    double theta = sqrt(1-pow(indexOfRefraction, 2)*(1-pow(Vec4::dot(collisionPoint.getNormal(), normDir), 2)));
+    double theta = sqrt(1-pow(indexOfRefraction, 2)*(1-pow(Vec4::dot(c.getNormal(), normDir), 2)));
 
     // total internal reflection
     if(std::isnan(theta)){
-        Material m = shape->getMaterial();
-        collisionPoint.setReflectivity(m.transparency);
-        return reflect(incoming, collisionPoint, bouncesToDo, scene);
+        Material m = c.getMaterial();
+        c.setReflectivity(m.transparency);
+        return reflect(c, bouncesToDo, scene);
     }
 
     // Generate new refracted ray
-    Vec4 rayDirection = Vec4::normalize(normDir*indexOfRefraction + collisionPoint.getNormal()*
-            (indexOfRefraction*Vec4::dot(normDir, collisionPoint.getNormal())-theta));
+    Vec4 rayDirection = Vec4::normalize(normDir*indexOfRefraction + c.getNormal() *
+                                                                    (indexOfRefraction*Vec4::dot(normDir, c.getNormal()) - theta));
 
     // Start refracted ray little further to avoid self collision
-    Ray refractedRay{collisionPoint.getCollisionPoint()+rayDirection*0.1, rayDirection};
+    Ray refractedRay{c.getCollisionPoint() + rayDirection * 0.1, rayDirection};
 
     // Check for collisions
-    Collision c, closestC;
-    std::shared_ptr<Shape> lastObjectHit;
+    Collision tempC, closestC;
     double previousHit = MAXFLOAT;
     for(auto & object : scene.getObjectVector()) {
-        c = object->checkCollision(refractedRay);
-        if (previousHit > c.getT() && c.getT() > 0) {
+        tempC = object->checkCollision(refractedRay);
+        if (previousHit > tempC.getT() && tempC.getT() > 0) {
             previousHit = (float) c.getT();
-            closestC = c;
-            lastObjectHit = object;
+            closestC = tempC;
         }
     }
 
@@ -175,7 +174,7 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
     }
 
     // return combination of light, reflection and refraction at new point
-    return objectColorHit(lastObjectHit, closestC, refractedRay, bouncesToDo, scene);
+    return objectColorHit(closestC, bouncesToDo, scene);
 }
 
 /**
@@ -186,12 +185,12 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
  * @param scene full scene, needed to check for further collisions
  * @return the color of the hit, an accumulation of the light, reflections and refractions
  */
-Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene){
+Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene){
     Vec4 color, reflection, refraction;
 
-    Material m =shape->getMaterial();
+    Material m = c.getMaterial();
     // For every point calculate the lighting, always present
-    color = lighting(shape, c, incoming, scene);
+    color = lighting(c, scene);
 
     if(bouncesToDo == 0){
         return color;
@@ -199,13 +198,13 @@ Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incomi
 
     // Object is reflective
     if(m.reflectivity>EPSILON){
-        reflection = reflect(incoming, c, bouncesToDo-1, scene)*m.reflectivity;
+        reflection = reflect(c, bouncesToDo-1, scene)*m.reflectivity;
         color += reflection;
     }
 
     // Object is transparent
     if(m.transparency>EPSILON){
-        refraction = refract(shape, c, incoming,bouncesToDo-1, scene)*m.transparency;
+        refraction = refract(c, bouncesToDo-1, scene)*m.transparency;
         color += refraction;
     }
 
@@ -250,7 +249,6 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
                     // backwards. T must be smaller than the previous t to ensure that the closest object hits.
                     if(previousHit > c.getT() && c.getT() > 0){
                         previousHit = (float)c.getT();
-                        lastObjectHit = worldObject;
                         lastCollision = c;
                     }
                 }
@@ -258,7 +256,7 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
                 // An object was hit
                 if(previousHit != MAXFLOAT){
                     // Cumulate color -> anti alias;
-                    color += Vec4::clamp(objectColorHit(lastObjectHit, lastCollision, shotRay, BOUNCES, s));
+                    color += Vec4::clamp(objectColorHit(lastCollision, BOUNCES, s));
                 } else { // skybox
                     color += s.getSkyColor(shotRay.getDirectionVector());
                 }

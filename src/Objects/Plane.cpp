@@ -13,6 +13,7 @@ Collision Plane::checkCollision(Ray r) {
 
     if(checkHit(r, t, inside)){
         Vec4 hit = r.at(t);
+        LightComponents l = this->lightComponents;
         if(checkerBoard){
             bool check;
             Vec4 localHit = getTransformation().getInverse() * hit;
@@ -30,15 +31,15 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {hit, t, Vec4(), Vec4(), inside, material.reflectivity, material.transparency, material.refractiveIndex};
+                l.color = {};
+                return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
             }
         }
         double red, green, blue;
-
         this->getColor(hit, red, green, blue);
+        l.color = {red, green, blue, 0};
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) + Vec4::random(-0.5, 0.5) * material.roughness),
-                inside, material.reflectivity, material.transparency, material.refractiveIndex};
+        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
 
     return {};
@@ -88,8 +89,8 @@ bool Plane::checkHit(Ray r) {
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     if(inside)
-        return Vec4::normalize(getTransformation().getForward() * Vec4({0, 1, 0, 0})) * -1;
-    return Vec4::normalize(getTransformation().getForward() * Vec4({0, 1, 0, 0}));
+        return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
+    return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness);
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {

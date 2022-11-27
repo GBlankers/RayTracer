@@ -12,11 +12,12 @@ Collision Cone::checkCollision(Ray r) {
 
     if(checkHit(r, t, inside)){
         double red, green, blue;
+        LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
+        l.color = {red, green, blue, 0};
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside)+Vec4::random(-0.5, 0.5) * material.roughness),
-                inside, material.reflectivity, material.transparency, material.refractiveIndex};
+        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
     return {};
 }
@@ -153,10 +154,11 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
 
     Vec4 localHit = getTransformation().getInverse() * hitPoint;
     if(fabs(localHit.getY()) < EPSILON){
-        return Vec4::normalize(getTransformation().getForward() * Vec4{0, 1, 0, 0}) * in;
+        return Vec4::normalize((getTransformation().getForward() * Vec4{0, 1, 0, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * in;
     } else if (fabs(localHit.getY()+1) < EPSILON){
-        return Vec4::normalize(getTransformation().getForward() * Vec4{0, -1, 0, 0}) * in;
+        return Vec4::normalize((getTransformation().getForward() * Vec4{0, -1, 0, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * in;
     }
-    return Vec4::normalize(
-            getTransformation().getForward() * Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}) * in;
+    return Vec4::normalize((getTransformation().getForward() *
+                            Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}) +
+                            Vec4::random(-0.5, 0.5) * material.roughness) * in;
 }
