@@ -5,10 +5,8 @@
 
 class Cube : public Shape{
 public:
-    explicit Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
-                  double reflectivity, double roughness, double transparency, double refractiveIndex);
-    explicit Cube(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular, double specularComponent,
-                  double reflectivity, double roughness, double transparency, double refractiveIndex);
+    explicit Cube(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 

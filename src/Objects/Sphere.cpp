@@ -1,13 +1,12 @@
 #include "Sphere.h"
 
-Sphere::Sphere(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-               double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+#include <utility>
 
-Sphere::Sphere(const Transformation &t, const std::string &path, double ambient, double diffuse, double specular,
-               double specularComponent, double reflectivity, double roughness, double transparency,
-               double refractiveIndex) :
-               Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex){}
+Sphere::Sphere(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+
+Sphere::Sphere(const Transformation &t, const std::string &path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 Collision Sphere::checkCollision(Ray r) {
     double t;
@@ -18,7 +17,7 @@ Collision Sphere::checkCollision(Ray r) {
         this->getColor(r.at(t), red, green, blue);
 
         return {r.at(t), t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(r.at(t), inside) +
-        Vec4::random(-0.3, 0.3) * roughness), inside, reflectivity, transparency, refractiveIndex};
+        Vec4::random(-0.3, 0.3) * material.roughness), inside, material.reflectivity, material.transparency, material.refractiveIndex};
     }
 
     return {};
@@ -26,7 +25,7 @@ Collision Sphere::checkCollision(Ray r) {
 
 bool Sphere::checkHit(Ray r, double &t, bool &inside) {
     // Inverse transform the ray
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     if(sqrt(Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint())) <=1){
@@ -58,7 +57,7 @@ bool Sphere::checkHit(Ray r, double &t, bool &inside) {
 
 bool Sphere::checkHit(Ray r, double &t) {
     // Inverse transform the ray
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
@@ -84,7 +83,7 @@ bool Sphere::checkHit(Ray r, double &t) {
 
 bool Sphere::checkHit(Ray r) {
     // Inverse transform the ray
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
@@ -98,16 +97,16 @@ bool Sphere::checkHit(Ray r) {
 }
 
 Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 normal(getT().getInverse()*hitPoint);
+    Vec4 normal(getTransformation().getInverse() * hitPoint);
     normal.setHomogeneous(0);
     // manipulate normal so randomness is less random
     //normal = manipulator.getnormal(normal);
 
     // If the hit is on the inside of the object the normal needs to be flipped
     if(inside)
-        return Vec4::normalize(getT().getForward()*normal)*-1;
+        return Vec4::normalize(getTransformation().getForward() * normal) * -1;
 
-    return Vec4::normalize(getT().getForward()*normal);
+    return Vec4::normalize(getTransformation().getForward() * normal);
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {

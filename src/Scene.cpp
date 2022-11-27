@@ -246,9 +246,11 @@ void Scene::fillScene(const std::string& filename) {
     rapidjson::Value value, valueArray;
     Vec4 position{}, pointsAt{}, color{};
     Transformation temp;
-    double ambient, diffuse, specular, specularExponent, reflectivity, roughness, transparency, refractiveIndex, fov;
+    double fov;
     bool useColor = true;
     std::string path;
+    LightComponents lightComponents;
+    Material material;
 
     // Add the camera
     assert(s.HasMember("Camera"));
@@ -272,6 +274,8 @@ void Scene::fillScene(const std::string& filename) {
     assert(s.HasMember("Objects"));
     for(auto& v : s["Objects"].GetArray()){
         temp.clear();
+        lightComponents.reset();
+        material.reset();
         useColor = true;
         // Check for transformations
         if(v.HasMember("transformations")){
@@ -304,56 +308,52 @@ void Scene::fillScene(const std::string& filename) {
         if(v.HasMember("color")){
             valueArray = v["color"];
             assert(valueArray.IsArray());
-            color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            lightComponents.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
         } else if(v.HasMember("path")){
             useColor = false;
             path = v["path"].GetString();
         }
         assert(v.HasMember("ambient"));
-        ambient = v["ambient"].GetDouble();
+        lightComponents.ambient = v["ambient"].GetDouble();
         assert(v.HasMember("diffuse"));
-        diffuse = v["diffuse"].GetDouble();
+        lightComponents.diffuse = v["diffuse"].GetDouble();
         assert(v.HasMember("specular"));
-        specular = v["specular"].GetDouble();
+        lightComponents.specular = v["specular"].GetDouble();
         assert(v.HasMember("specularExponent"));
-        specularExponent = v["specularExponent"].GetDouble();
+        lightComponents.specularExponent = v["specularExponent"].GetDouble();
         if(v.HasMember("reflectivity")){
-            reflectivity = v["reflectivity"].GetDouble();
+            material.reflectivity = v["reflectivity"].GetDouble();
         } else {
-            reflectivity = 0;
+            material.reflectivity = 0;
         }
         if(v.HasMember("roughness")){
-            roughness = v["roughness"].GetDouble();
+            material.roughness = v["roughness"].GetDouble();
         } else {
-            roughness = 0;
+            material.roughness = 0;
         }
         if(v.HasMember("transparency")){
-            transparency = v["transparency"].GetDouble();
+            material.transparency = v["transparency"].GetDouble();
             assert(v.HasMember("refractiveIndex"));
-            refractiveIndex = v["refractiveIndex"].GetDouble();
+            material.refractiveIndex = v["refractiveIndex"].GetDouble();
         } else {
-            transparency = 0;
-            refractiveIndex = 1;
+            material.transparency = 0;
+            material.refractiveIndex = 1;
         }
 
 
         // Check object type
         assert(v.HasMember("type"));
         if(strcmp(v["type"].GetString(), "cube") == 0){
-            objectVector.push_back(std::make_shared<Cube>(Cube(temp, color, ambient, diffuse, specular,
-                                                               specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+            objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
             if(useColor){
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, color, ambient, diffuse, specular,
-                                                                       specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
             }else{
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, ambient, diffuse, specular,
-                                                                       specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, lightComponents, material)));
             }
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
             if(useColor){
-                Plane tempPlane(temp, color, ambient, diffuse, specular, specularExponent, reflectivity,
-                                roughness, transparency, refractiveIndex);
+                Plane tempPlane(temp, lightComponents, material);
                 if(v.HasMember("checkerBoard")){
                     tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
                 }
@@ -363,8 +363,7 @@ void Scene::fillScene(const std::string& filename) {
                 }
                 objectVector.push_back(std::make_shared<Plane>(tempPlane));
             } else {
-                Plane tempPlane(temp, path, ambient, diffuse, specular, specularExponent, reflectivity,
-                                roughness, transparency, refractiveIndex);
+                Plane tempPlane(temp, path, lightComponents, material);
                 if(v.HasMember("size")){
                     valueArray = v["size"].GetArray();
                     tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
@@ -372,8 +371,7 @@ void Scene::fillScene(const std::string& filename) {
                 objectVector.push_back(std::make_shared<Plane>(tempPlane));
             }
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
-            objectVector.push_back(std::make_shared<Cone>(Cone(temp, color, ambient, diffuse, specular,
-                                                               specularExponent, reflectivity, roughness, transparency, refractiveIndex)));
+            objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material)));
         } else {
             perror("Unknown object type in json file");
         }

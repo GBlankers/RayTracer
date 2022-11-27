@@ -1,12 +1,10 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cone::Cone(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
-           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 Collision Cone::checkCollision(Ray r) {
     double t;
@@ -17,8 +15,8 @@ Collision Cone::checkCollision(Ray r) {
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside)+Vec4::random(-0.5, 0.5) * roughness),
-                inside, reflectivity, transparency, refractiveIndex};
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside)+Vec4::random(-0.5, 0.5) * material.roughness),
+                inside, material.reflectivity, material.transparency, material.refractiveIndex};
     }
     return {};
 }
@@ -26,7 +24,7 @@ Collision Cone::checkCollision(Ray r) {
 
 bool Cone::checkHit(Ray r, double &t, bool &inside) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Check if ray inside the cone
@@ -73,7 +71,7 @@ bool Cone::checkHit(Ray r, double &t, bool &inside) {
 
 bool Cone::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Check for hit with cone
@@ -112,7 +110,7 @@ bool Cone::checkHit(Ray r, double &t) {
 
 bool Cone::checkHit(Ray r) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     // Check for hit with cone
@@ -153,11 +151,12 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
     if(inside)
         in = -1;
 
-    Vec4 localHit = getT().getInverse()*hitPoint;
+    Vec4 localHit = getTransformation().getInverse() * hitPoint;
     if(fabs(localHit.getY()) < EPSILON){
-        return Vec4::normalize(getT().getForward()*Vec4{0, 1, 0, 0})*in;
+        return Vec4::normalize(getTransformation().getForward() * Vec4{0, 1, 0, 0}) * in;
     } else if (fabs(localHit.getY()+1) < EPSILON){
-        return Vec4::normalize(getT().getForward()*Vec4{0, -1, 0, 0})*in;
+        return Vec4::normalize(getTransformation().getForward() * Vec4{0, -1, 0, 0}) * in;
     }
-    return Vec4::normalize(getT().getForward()*Vec4{2*localHit.getX(), -2*localHit.getY(), 2*localHit.getZ(), 0})*in;
+    return Vec4::normalize(
+            getTransformation().getForward() * Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}) * in;
 }

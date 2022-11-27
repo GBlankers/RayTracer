@@ -1,5 +1,7 @@
 #include "Shape.h"
 
+#include <utility>
+
 /**
  * abstract shape class used to contain the general functions
  * @param t transformation to place the shape in the world space
@@ -7,25 +9,22 @@
  * @param G green color component, needs to be 0<=G<=1.0
  * @param B blue color component, needs to be 0<=B<=1.0
  */
-Shape::Shape(Transformation t, Vec4 color, double ambient, double diffuse, double specular, double specularComponent,
-             double reflectivity, double roughness, double transparency, double refractiveIndex)
-    : t(t), color(color), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
-    reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex), useColor(true){
-    assert(this->color.getX()>=0 && this->color.getX()<=1.0);
-    assert(this->color.getY()>=0 && this->color.getY()<=1.0);
-    assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
+Shape::Shape(Transformation t, LightComponents lightComponents, Material material)
+    : t(t), lightComponents(std::move(lightComponents)), material(std::move(material)), useColor(true){
+
+    assert(this.lightComponents.color.getX()>=0 && this.lightComponents.color.getX()<=1.0);
+    assert(this.lightComponents.color.getY()>=0 && this.lightComponents.color.getY()<=1.0);
+    assert(this.lightComponents.color.getZ()>=0 && this.lightComponents.color.getZ()<=1.0);
 }
 
-Shape::Shape(Transformation t, const std::string& path, double ambient, double diffuse, double specular, double specularComponent,
-             double reflectivity, double roughness, double transparency, double refractiveIndex)
-        : t(t), ambient(ambient), diffuse(diffuse), specular(specular), specularExponent(specularComponent),
-          reflectivity(reflectivity), roughness(roughness), transparency(transparency), refractiveIndex(refractiveIndex){
-    assert(this->color.getX()>=0 && this->color.getX()<=1.0);
-    assert(this->color.getY()>=0 && this->color.getY()<=1.0);
-    assert(this->color.getZ()>=0 && this->color.getZ()<=1.0);
+Shape::Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material)
+        : t(t), lightComponents(std::move(lightComponents)), material(std::move(material)){
+    assert(this.lightComponents.color.getX()>=0 && this.lightComponents.color.getX()<=1.0);
+    assert(this.lightComponents.color.getY()>=0 && this.lightComponents.color.getY()<=1.0);
+    assert(this.lightComponents.color.getZ()>=0 && this.lightComponents.color.getZ()<=1.0);
 
     this->useColor=false;
-    this->color={0, 0, 0, 0};
+    this->lightComponents.color={0, 0, 0, 0};
 
     unsigned error = lodepng::decode(image, width, height, path, LCT_RGB);
     if(error) {
@@ -34,41 +33,25 @@ Shape::Shape(Transformation t, const std::string& path, double ambient, double d
     }
 }
 
-const Transformation &Shape::getT() const {
+const Transformation &Shape::getTransformation() const {
     return t;
 }
 
-void Shape::setColor(const Vec4 &colorArg) {
-    Shape::color = colorArg;
-}
-
 void Shape::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    r = color.getX();
-    g = color.getY();
-    b = color.getZ();
+    r = lightComponents.color.getX();
+    g = lightComponents.color.getY();
+    b = lightComponents.color.getZ();
 }
 
-double Shape::getAmbient() const {
-    return ambient;
+const LightComponents &Shape::getLightComponents() const {
+    return lightComponents;
 }
 
-double Shape::getReflectivity() const {
-    return reflectivity;
+const Material &Shape::getMaterial() const {
+    return material;
 }
 
 Vec4 Shape::calculateDiffuseSpecularColor(double diffuseComponent, double specularComponent, Vec4 lightColor, Collision c) const {
-    return lightColor*c.getColor()*this->diffuse*diffuseComponent
-            +lightColor*c.getColor()*this->specular*pow(specularComponent, this->specularExponent);
-}
-
-double Shape::getRoughness() const {
-    return roughness;
-}
-
-double Shape::getTransparency() const {
-    return transparency;
-}
-
-double Shape::getRefractiveIndex() const {
-    return refractiveIndex;
+    return lightColor*c.getColor()*this->lightComponents.diffuse*diffuseComponent
+           +lightColor*c.getColor()*this->lightComponents.specular*pow(specularComponent, this->lightComponents.specularExponent);
 }

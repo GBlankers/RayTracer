@@ -55,8 +55,10 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
     Vec4 totalLight, tempColor, startPoint;
     double pathToLight;
     Ray r{};
+    LightComponents lightComponents = shape->getLightComponents();
+    Material material = shape->getMaterial();
     // Get the ambient intensity
-    double ambient = shape->getAmbient();
+    double ambient = lightComponents.ambient;
     // Check if in shadow, otherwise do not calculate the diffuse and specular components
     for(const auto& l: scene.getLightVector()){
         // Assume there is a clear path to the light source
@@ -71,7 +73,7 @@ Vec4 lighting(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, co
             if(obj->checkHit(r, t)){
                 // Only a hit when there is an object between a light source and another object
                 if(t<=1 and t>=0)
-                    pathToLight *= obj->getTransparency();
+                    pathToLight *= material.transparency;
             }
         }
         // Calculate diffuse and spectral components if there is a clear path to the light source
@@ -142,7 +144,8 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
 
     // total internal reflection
     if(std::isnan(theta)){
-        collisionPoint.setReflectivity(shape->getTransparency());
+        Material m = shape->getMaterial();
+        collisionPoint.setReflectivity(m.transparency);
         return reflect(incoming, collisionPoint, bouncesToDo, scene);
     }
 
@@ -186,6 +189,7 @@ Vec4 refract(const std::shared_ptr<Shape>& shape, Collision collisionPoint, Ray 
 Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incoming, int bouncesToDo, const Scene& scene){
     Vec4 color, reflection, refraction;
 
+    Material m =shape->getMaterial();
     // For every point calculate the lighting, always present
     color = lighting(shape, c, incoming, scene);
 
@@ -194,14 +198,14 @@ Vec4 objectColorHit(const std::shared_ptr<Shape>& shape, Collision c, Ray incomi
     }
 
     // Object is reflective
-    if(shape->getReflectivity()>EPSILON){
-        reflection = reflect(incoming, c, bouncesToDo-1, scene)*shape->getReflectivity();
+    if(m.reflectivity>EPSILON){
+        reflection = reflect(incoming, c, bouncesToDo-1, scene)*m.reflectivity;
         color += reflection;
     }
 
     // Object is transparent
-    if(shape->getTransparency()>EPSILON){
-        refraction = refract(shape, c, incoming,bouncesToDo-1, scene)*shape->getTransparency();
+    if(m.transparency>EPSILON){
+        refraction = refract(shape, c, incoming,bouncesToDo-1, scene)*m.transparency;
         color += refraction;
     }
 

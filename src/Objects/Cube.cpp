@@ -1,12 +1,12 @@
 #include "Cube.h"
 
-Cube::Cube(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+#include <utility>
 
-Cube::Cube(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
-           double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+
+Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
@@ -29,8 +29,8 @@ Collision Cube::checkCollision(Ray r) {
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) +Vec4::random(-0.5, 0.5) * roughness),
-                inside, reflectivity, transparency, refractiveIndex};
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) +Vec4::random(-0.5, 0.5) * material.roughness),
+                inside, material.reflectivity, material.transparency, material.refractiveIndex};
     }
 
     return {};
@@ -44,7 +44,7 @@ Collision Cube::checkCollision(Ray r) {
  * @return the normal direction at the hit point in world coordinates
  */
 Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 inverseHitPoint = getT().getInverse()*hitPoint;
+    Vec4 inverseHitPoint = getTransformation().getInverse() * hitPoint;
     double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
     double nx=0, ny=0, nz=0;
     if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
@@ -58,13 +58,13 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
     }
 
     if(inside)
-        return Vec4::normalize(getT().getForward()*Vec4{nx, ny, nz, 0})*-1;
-    return Vec4::normalize(getT().getForward()*Vec4{nx, ny, nz, 0});
+        return Vec4::normalize(getTransformation().getForward() * Vec4{nx, ny, nz, 0}) * -1;
+    return Vec4::normalize(getTransformation().getForward() * Vec4{nx, ny, nz, 0});
 }
 
 bool Cube::checkHit(Ray r, double &t, bool &inside) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     if(checkInCube(transformedRay, 0)){
@@ -145,7 +145,7 @@ bool Cube::checkHit(Ray r, double &t, bool &inside) {
 
 bool Cube::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     double tempT0, tempT1;
@@ -220,7 +220,7 @@ bool Cube::checkHit(Ray r, double &t) {
 
 bool Cube::checkHit(Ray r){
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
     double tempT0, tempT1;

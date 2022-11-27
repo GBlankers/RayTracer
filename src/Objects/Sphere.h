@@ -1,16 +1,16 @@
 #ifndef RAYTRACER_SPHERE_H
 #define RAYTRACER_SPHERE_H
 
-#include "Shape.h"
-#include "../Math/Vec4.h"
 #include <cmath>
+
+#include "Shape.h"
+#include "objectProperties.h"
+#include "../Math/Vec4.h"
 
 class Sphere: public Shape{
 public:
-    explicit Sphere(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-                    double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
-    explicit Sphere(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
-                    double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
+    explicit Sphere(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Sphere(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 

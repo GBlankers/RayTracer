@@ -1,0 +1,21 @@
+{
+  "lightComponents": [
+    {
+      "name": "allZero",
+      "color": [0, 0, 0],
+      "ambient": 0,
+      "diffuse": 0,
+      "specular": 0,
+      "specularExponent": 0
+    }
+  ],
+  "materials": [
+    {
+      "name": "default",
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 0
+    }
+  ]
+}

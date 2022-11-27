@@ -10,10 +10,8 @@ private:
     int checkerBoardSize = 800;
     double planeLength = -1, planeWidth = -1;
 public:
-    explicit Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-                   double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
-    explicit Plane(const Transformation &t, const std::string& path , double ambient, double diffuse, double specular,
-                   double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex);
+    explicit Plane(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 

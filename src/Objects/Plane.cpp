@@ -1,12 +1,10 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, Vec4 color, double ambient, double diffuse, double specular,
-             double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, color, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Plane::Plane(const Transformation &t, const std::string& path, double ambient, double diffuse, double specular,
-             double specularComponent, double reflectivity, double roughness, double transparency, double refractiveIndex) :
-        Shape(t, path, ambient, diffuse, specular, specularComponent, reflectivity, roughness, transparency, refractiveIndex) {}
+Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
@@ -17,7 +15,7 @@ Collision Plane::checkCollision(Ray r) {
         Vec4 hit = r.at(t);
         if(checkerBoard){
             bool check;
-            Vec4 localHit = getT().getInverse()*hit;
+            Vec4 localHit = getTransformation().getInverse() * hit;
             if(localHit.getX()<0){
                 if(localHit.getZ()<0){
                     check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
@@ -32,15 +30,15 @@ Collision Plane::checkCollision(Ray r) {
                 }
             }
             if(check){
-                return {hit, t, Vec4(), Vec4(), inside, reflectivity, transparency, refractiveIndex};
+                return {hit, t, Vec4(), Vec4(), inside, material.reflectivity, material.transparency, material.refractiveIndex};
             }
         }
         double red, green, blue;
 
         this->getColor(hit, red, green, blue);
 
-        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) + Vec4::random(-0.5, 0.5) * roughness),
-                inside, reflectivity, transparency, refractiveIndex};
+        return {hit, t, {red, green, blue, 0}, Vec4::normalize(calculateNormal(hit, inside) + Vec4::random(-0.5, 0.5) * material.roughness),
+                inside, material.reflectivity, material.transparency, material.refractiveIndex};
     }
 
     return {};
@@ -54,7 +52,7 @@ bool Plane::checkHit(Ray r, double &t, bool &inside) {
 
 bool Plane::checkHit(Ray r, double &t) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
     // Ray is not parallel to the plane
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
@@ -79,7 +77,7 @@ bool Plane::checkHit(Ray r, double &t) {
 
 bool Plane::checkHit(Ray r) {
     // Inverse transform the ray and the light source
-    Matrix4 inverse = getT().getInverse();
+    Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
     // Ray is not parallel to the plane
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
@@ -90,8 +88,8 @@ bool Plane::checkHit(Ray r) {
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     if(inside)
-        return Vec4::normalize(getT().getForward()*Vec4({0, 1, 0, 0}))*-1;
-    return Vec4::normalize(getT().getForward()*Vec4({0, 1, 0, 0}));
+        return Vec4::normalize(getTransformation().getForward() * Vec4({0, 1, 0, 0})) * -1;
+    return Vec4::normalize(getTransformation().getForward() * Vec4({0, 1, 0, 0}));
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {
