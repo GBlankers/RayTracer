@@ -76,17 +76,6 @@ bool Plane::checkHit(Ray r, double &t) {
     return false;
 }
 
-bool Plane::checkHit(Ray r) {
-    // Inverse transform the ray and the light source
-    Matrix4 inverse = getTransformation().getInverse();
-    Ray transformedRay = r.transform(inverse);
-    // Ray is not parallel to the plane
-    if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
-        return -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY()>0;
-    }
-    return false;
-}
-
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     if(inside)
         return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
@@ -104,7 +93,7 @@ void Plane::setSize(double l, double w) {
 }
 
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(useColor){
+    if(image.empty()){
         Shape::getColor(hitPoint, r, g, b);
     } else {
         Vec4 hit = t.getInverse()*hitPoint;

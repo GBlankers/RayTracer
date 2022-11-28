@@ -83,21 +83,6 @@ bool Sphere::checkHit(Ray r, double &t) {
     return t>0;
 }
 
-bool Sphere::checkHit(Ray r) {
-    // Inverse transform the ray
-    Matrix4 inverse = getTransformation().getInverse();
-    Ray transformedRay = r.transform(inverse);
-
-    // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
-    double A = Vec4::dot(transformedRay.getDirectionVector(), transformedRay.getDirectionVector());
-    double B = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getDirectionVector());
-    double C = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint()) - 1;
-    double D = pow(B, 2) - (A * C);
-
-    // t >= 0 -> hit
-    return (-B-sqrt(D))/A > 0 or (-B+sqrt(D))/A > 0;
-}
-
 Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
     Vec4 normal(getTransformation().getInverse() * hitPoint);
     normal.setHomogeneous(0);
@@ -112,7 +97,7 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(useColor){
+    if(image.empty()){
         Shape::getColor(hitPoint, r, g, b);
     } else {
         Vec4 hit = t.getInverse()*hitPoint;

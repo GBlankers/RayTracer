@@ -22,9 +22,8 @@ protected:
     Transformation t;
     LightComponents lightComponents;
     Material material;
-    bool useColor = true;
     std::vector<unsigned char> image;
-    unsigned width=0, height=0;
+    unsigned width = 0, height = 0;
 public:
     explicit Shape(Transformation t, LightComponents lightComponents, Material material);
     explicit Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material);
@@ -32,14 +31,11 @@ public:
     virtual Collision checkCollision(Ray r) = 0;
     virtual bool checkHit(Ray r, double &t, bool &inside) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;
-    virtual bool checkHit(Ray r) = 0;
+
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
     virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
 
     const Transformation &getTransformation() const;
-    const LightComponents &getLightComponents() const;
-    const Material &getMaterial() const;
 };
-
 
 #endif //RAYTRACER_SHAPE_H
