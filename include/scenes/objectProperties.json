@@ -7,12 +7,35 @@
       "diffuse": 0,
       "specular": 0,
       "specularExponent": 0
+    },
+    {
+      "name": "aluminium",
+      "color": [0.68, 0.7, 0.74],
+      "ambient": 0.4,
+      "diffuse": 0.4,
+      "specular": 0.6,
+      "specularExponent": 10
+    },
+    {
+      "name": "gold",
+      "color": [1, 0.843, 0],
+      "ambient": 0.4,
+      "diffuse": 0.4,
+      "specular": 0.2,
+      "specularExponent": 10
     }
   ],
   "materials": [
     {
       "name": "default",
       "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 0
+    },
+    {
+      "name": "aluminium",
+      "reflectivity": 0.7,
       "roughness": 0,
       "transparency": 0,
       "refractiveIndex": 0

@@ -106,9 +106,9 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 
     // If the hit is on the inside of the object the normal needs to be flipped
     if(inside)
-        return Vec4::normalize((getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness) * -1;
+        return Vec4::normalize(Vec4::normalize(getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness) * -1;
 
-    return Vec4::normalize((getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness);
+    return Vec4::normalize(Vec4::normalize(getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness);
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {

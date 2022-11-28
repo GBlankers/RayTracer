@@ -23,14 +23,6 @@ const Vec4 &Collision::getNormal() const {
     return normal;
 }
 
-double Collision::getReflectivity() const {
-    return material.reflectivity;
-}
-
-double Collision::getTransparency() const {
-    return material.transparency;
-}
-
 double Collision::getRefractiveIndex() const {
     return material.refractiveIndex;
 }

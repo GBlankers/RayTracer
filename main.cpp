@@ -230,7 +230,6 @@ void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int e
     Ray shotRay{};
     float previousHit;
     Vec4 color;
-    std::shared_ptr<Shape> lastObjectHit;
 
     // Go over all the pixels in the near screen
     for(int i = begin; i<end; i++){

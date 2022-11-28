@@ -23,13 +23,10 @@ public:
     const Vec4 &getColor() const;
     const Vec4 &getCollisionPoint() const;
     const Vec4 &getNormal() const;
-    double getReflectivity() const;
-    double getTransparency() const;
     bool isInside() const;
     double getRefractiveIndex() const;
     const LightComponents &getLightComponents() const;
     const Material &getMaterial() const;
-
     const Ray &getIncoming() const;
 
     // setter

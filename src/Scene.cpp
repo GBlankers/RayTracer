@@ -242,15 +242,54 @@ void Scene::fillScene(const std::string& filename) {
     assert(s.IsObject());
     assert(s["Scene"].GetBool());
 
+    // Object property file
+    std::ifstream propertiesFile("../include/scenes/objectProperties.json");
+    std::stringstream buffer3;
+    buffer3 << propertiesFile.rdbuf();
+    std::string tempString3 = buffer3.str();
+    const char* jsonPropertiesString = tempString3.c_str();
+    rapidjson::Document p;
+    p.Parse(jsonPropertiesString);
+    assert(p.IsObject());
+
     // Temporary Variables
     rapidjson::Value value, valueArray;
     Vec4 position{}, pointsAt{}, color{};
     Transformation temp;
     double fov;
-    bool useColor = true;
+    bool useColor;
     std::string path;
     LightComponents lightComponents;
     Material material;
+
+    // Material and color components
+    std::unordered_map<std::string, Material> materialMap;
+    std::unordered_map<std::string, LightComponents> colorMap;
+    // Fill up the maps using the objectProperties file
+    if(p.HasMember("lightComponents")){
+        for(auto& v : p["lightComponents"].GetArray()){
+            LightComponents tempLightComponent;
+            tempLightComponent.name = v["name"].GetString();
+            valueArray = v["color"].GetArray();
+            tempLightComponent.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            tempLightComponent.ambient = v["ambient"].GetDouble();
+            tempLightComponent.diffuse = v["diffuse"].GetDouble();
+            tempLightComponent.specular = v["specular"].GetDouble();
+            tempLightComponent.specularExponent = v["specularExponent"].GetDouble();
+            colorMap[v["name"].GetString()] = tempLightComponent;
+        }
+    }
+    if(p.HasMember("materials")){
+        for(auto& v : p["materials"].GetArray()){
+            Material tempMaterial;
+            tempMaterial.name = v["name"].GetString();
+            tempMaterial.reflectivity = v["reflectivity"].GetDouble();
+            tempMaterial.roughness = v["roughness"].GetDouble();
+            tempMaterial.transparency = v["transparency"].GetDouble();
+            tempMaterial.refractiveIndex = v["refractiveIndex"].GetDouble();
+            materialMap[v["name"].GetString()] = tempMaterial;
+        }
+    }
 
     // Add the camera
     assert(s.HasMember("Camera"));
@@ -304,7 +343,22 @@ void Scene::fillScene(const std::string& filename) {
                 }
             }
         }
-        // Check color/material properties
+
+        // Check if a default color is used and if this is present in the color map
+        if(v.HasMember("colorName") and colorMap.count(v["colorName"].GetString())>0){
+            lightComponents = colorMap[v["colorName"].GetString()];
+        } else {
+            assert(v.HasMember("ambient"));
+            lightComponents.ambient = v["ambient"].GetDouble();
+            assert(v.HasMember("diffuse"));
+            lightComponents.diffuse = v["diffuse"].GetDouble();
+            assert(v.HasMember("specular"));
+            lightComponents.specular = v["specular"].GetDouble();
+            assert(v.HasMember("specularExponent"));
+            lightComponents.specularExponent = v["specularExponent"].GetDouble();
+        }
+
+        // Check color/path to png file
         if(v.HasMember("color")){
             valueArray = v["color"];
             assert(valueArray.IsArray());
@@ -313,33 +367,30 @@ void Scene::fillScene(const std::string& filename) {
             useColor = false;
             path = v["path"].GetString();
         }
-        assert(v.HasMember("ambient"));
-        lightComponents.ambient = v["ambient"].GetDouble();
-        assert(v.HasMember("diffuse"));
-        lightComponents.diffuse = v["diffuse"].GetDouble();
-        assert(v.HasMember("specular"));
-        lightComponents.specular = v["specular"].GetDouble();
-        assert(v.HasMember("specularExponent"));
-        lightComponents.specularExponent = v["specularExponent"].GetDouble();
-        if(v.HasMember("reflectivity")){
-            material.reflectivity = v["reflectivity"].GetDouble();
-        } else {
-            material.reflectivity = 0;
-        }
-        if(v.HasMember("roughness")){
-            material.roughness = v["roughness"].GetDouble();
-        } else {
-            material.roughness = 0;
-        }
-        if(v.HasMember("transparency")){
-            material.transparency = v["transparency"].GetDouble();
-            assert(v.HasMember("refractiveIndex"));
-            material.refractiveIndex = v["refractiveIndex"].GetDouble();
-        } else {
-            material.transparency = 0;
-            material.refractiveIndex = 1;
-        }
 
+        // Check if a default material is used and if this material is present in the material map
+        if(v.HasMember("materialName") and materialMap.count(v["materialName"].GetString())>0){
+            material = materialMap[v["materialName"].GetString()];
+        } else {
+            if(v.HasMember("reflectivity")){
+                material.reflectivity = v["reflectivity"].GetDouble();
+            } else {
+                material.reflectivity = 0;
+            }
+            if(v.HasMember("roughness")){
+                material.roughness = v["roughness"].GetDouble();
+            } else {
+                material.roughness = 0;
+            }
+            if(v.HasMember("transparency")){
+                material.transparency = v["transparency"].GetDouble();
+                assert(v.HasMember("refractiveIndex"));
+                material.refractiveIndex = v["refractiveIndex"].GetDouble();
+            } else {
+                material.transparency = 0;
+                material.refractiveIndex = 1;
+            }
+        }
 
         // Check object type
         assert(v.HasMember("type"));
