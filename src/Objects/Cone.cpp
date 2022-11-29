@@ -1,10 +1,10 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
-Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
 Collision Cone::checkCollision(Ray r) {
     double t;

@@ -5,8 +5,8 @@
 
 class Cone : public Shape{
 public:
-    explicit Cone(const Transformation &t, LightComponents lightComponents, Material material);
-    explicit Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
+    explicit Cone(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
+    explicit Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
 
     Collision checkCollision(Ray r) override;
 

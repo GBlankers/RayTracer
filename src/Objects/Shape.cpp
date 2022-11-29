@@ -1,7 +1,5 @@
 #include "Shape.h"
 
-#include <utility>
-
 /**
  * abstract shape class used to contain the general functions
  * @param t transformation to place the shape in the world space
@@ -9,15 +7,22 @@
  * @param G green color component, needs to be 0<=G<=1.0
  * @param B blue color component, needs to be 0<=B<=1.0
  */
-Shape::Shape(Transformation t, LightComponents lightComponents, Material material)
+Shape::Shape(Transformation t, LightComponents lightComponents, Material material, const std::string &normalMapPath)
     : t(t), lightComponents(std::move(lightComponents)), material(std::move(material)){
-
     assert(this->lightComponents.color.getX()>=0 && this->lightComponents.color.getX()<=1.0);
     assert(this->lightComponents.color.getY()>=0 && this->lightComponents.color.getY()<=1.0);
     assert(this->lightComponents.color.getZ()>=0 && this->lightComponents.color.getZ()<=1.0);
+
+    if(!normalMapPath.empty()){
+        unsigned error = lodepng::decode(normalMap, normalMapWidth, normalMapHeight, normalMapPath, LCT_RGB);
+        if(error) {
+            printf("error %u: %s\nNo normal map will be used", error, lodepng_error_text(error));
+        }
+    }
+
 }
 
-Shape::Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material)
+Shape::Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material, const std::string &normalMapPath)
         : t(t), lightComponents(std::move(lightComponents)), material(std::move(material)){
     assert(this->lightComponents.color.getX()>=0 && this->lightComponents.color.getX()<=1.0);
     assert(this->lightComponents.color.getY()>=0 && this->lightComponents.color.getY()<=1.0);
@@ -29,6 +34,13 @@ Shape::Shape(Transformation t, const std::string &path, LightComponents lightCom
     if(error) {
         printf("error %u: %s\nDefault color will be used", error, lodepng_error_text(error));
     }
+
+    if(!normalMapPath.empty()){
+        unsigned error2 = lodepng::decode(normalMap, normalMapWidth, normalMapHeight, normalMapPath, LCT_RGB);
+        if(error2) {
+            printf("error %u: %s\nNo normal map will be used", error2, lodepng_error_text(error));
+        }
+    }
 }
 
 const Transformation &Shape::getTransformation() const {
@@ -39,4 +51,35 @@ void Shape::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     r = lightComponents.color.getX();
     g = lightComponents.color.getY();
     b = lightComponents.color.getZ();
+}
+
+// With both the normal and hitPoint in local coordinates
+Vec4 Shape::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
+    double dx, dy, dz;
+    if(normalMap.empty()){
+        // Default random noise using hashes and the roughness param
+        // dividing the hash though UNSIGNED_LONG_MAX gives a value between 0 and 2 -> -1 -> between -1 and 1;
+        // divide by 4 -> between -0.25 and 0.25
+        dx = (fmod((double)doubleHash(hitPoint.getX()+hitPoint.getY()+hitPoint.getZ()), 2.0)-1)/4;
+        dy = (fmod((double)doubleHash(hitPoint.getX()*hitPoint.getY()+hitPoint.getZ()), 2.0)-1)/4;
+        dz = (fmod((double)doubleHash(hitPoint.getX()+hitPoint.getY()*hitPoint.getZ()), 2.0)-1)/4;
+        Vec4 displacement = {dx, dy, dz, 0};
+
+        return normal + displacement*material.roughness;
+    }
+
+    // uv-map
+    double u = 0.5 + (atan2(hitPoint.getX(), hitPoint.getZ())/(2*M_PI));
+    double v = 0.5 + asin(hitPoint.getY()*-1)/M_PI;
+
+    int i = floor(u*width);
+    int j = floor(v*height);
+
+    int startPoint = i*3+j*width*3;
+
+    dx = ((double)image.at(startPoint)/128)-1;
+    dz = ((double)image.at(startPoint+1)/128)-1;
+    dy = ((double)image.at(startPoint+2)/255);
+
+    return normal + Vec4{dx, dy, dz, 0};
 }

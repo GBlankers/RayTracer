@@ -2,11 +2,11 @@
 
 #include <utility>
 
-Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
-Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);

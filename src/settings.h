@@ -13,7 +13,9 @@
 #define BOUNCES 8
 // Computer error
 #define EPSILON 0.000000001
+// Unsigned Long size
+#define UNSIGNED_LONG_MAX 4294967295
 // Number of threads
-#define THREADS 6
+#define THREADS 1
 
 #endif //RAYTRACER_SETTINGS_H

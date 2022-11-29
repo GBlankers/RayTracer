@@ -30,11 +30,6 @@ private:
 public:
     explicit Scene();
     void fillScene(const std::string& filename);
-//    void fillScene();
-//    void fillScene2();
-//    void fillScene3();
-//    void fillScene4();
-//    void fillScene5();
 
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
     const std::vector<std::shared_ptr<LightSource>> &getLightVector() const;

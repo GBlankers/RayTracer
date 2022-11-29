@@ -1,10 +1,10 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
-Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
+Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
@@ -77,9 +77,10 @@ bool Plane::checkHit(Ray r, double &t) {
 }
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
+    Vec4 manipulatedNormal = Shape::manipulateNormal({0, 1, 0, 0}, t.getInverse()*hitPoint);
     if(inside)
-        return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
-    return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness);
+        return Vec4::normalize(manipulatedNormal) * -1;
+    return Vec4::normalize(manipulatedNormal);
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {
