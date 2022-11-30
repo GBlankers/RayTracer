@@ -88,13 +88,13 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
     Vec4 normal(getTransformation().getInverse() * hitPoint);
     normal.setHomogeneous(0);
     // manipulate normal so randomness is less random
-    //normal = manipulator.getnormal(normal);
+    normal = Shape::manipulateNormal(normal, t.getInverse()*hitPoint);
 
     // If the hit is on the inside of the object the normal needs to be flipped
     if(inside)
-        return Vec4::normalize(Vec4::normalize(getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness) * -1;
+        return Vec4::normalize(t.getForward()*normal) * -1;
 
-    return Vec4::normalize(Vec4::normalize(getTransformation().getForward() * normal) + Vec4::random(-0.3, 0.3) * material.roughness);
+    return Vec4::normalize(t.getForward()*normal);
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {

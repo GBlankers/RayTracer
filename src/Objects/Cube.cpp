@@ -200,7 +200,7 @@ bool Cube::checkHit(Ray r, double &t) {
  * @return the normal direction at the hit point in world coordinates
  */
 Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 inverseHitPoint = getTransformation().getInverse() * hitPoint;
+    Vec4 inverseHitPoint = t.getInverse() * hitPoint;
     double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
     double nx=0, ny=0, nz=0;
     if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
@@ -213,7 +213,9 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
         nz = z;
     }
 
+    Vec4 manipulatedNormal = Shape::manipulateNormal(Vec4{nx, ny, nz, 0}, inverseHitPoint);
+
     if(inside)
-        return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
-    return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness);
+        return Vec4::normalize(t.getForward() * manipulatedNormal) * -1;
+    return Vec4::normalize(t.getForward() * manipulatedNormal);
 }

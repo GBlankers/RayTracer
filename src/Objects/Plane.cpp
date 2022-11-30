@@ -79,8 +79,8 @@ bool Plane::checkHit(Ray r, double &t) {
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     Vec4 manipulatedNormal = Shape::manipulateNormal({0, 1, 0, 0}, t.getInverse()*hitPoint);
     if(inside)
-        return Vec4::normalize(manipulatedNormal) * -1;
-    return Vec4::normalize(manipulatedNormal);
+        return Vec4::normalize(t.getForward()*manipulatedNormal) * -1;
+    return Vec4::normalize(t.getForward()*manipulatedNormal);
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {

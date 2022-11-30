@@ -84,7 +84,7 @@
         }
       ],
       "colorName": "gold",
-      "reflectivity": 0.1,
+      "reflectivity": 0.2,
       "roughness": 1
     },
     {
@@ -325,7 +325,7 @@
       "specular": 0,
       "specularExponent": 0,
       "reflectivity": 0,
-      "roughness": 0.1,
+      "roughness": 0,
       "transparency": 0.8,
       "refractiveIndex": 1.1,
       "size": [500, 500]

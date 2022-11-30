@@ -110,17 +110,17 @@ bool Cone::checkHit(Ray r, double &t) {
 }
 
 Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
-    int in = 1;
-    if(inside)
-        in = -1;
+    int in = inside ? -1 : 1;
 
-    Vec4 localHit = getTransformation().getInverse() * hitPoint;
+    Vec4 localHit = t.getInverse() * hitPoint;
+    Vec4 normal;
     if(fabs(localHit.getY()) < EPSILON){
-        return Vec4::normalize((getTransformation().getForward() * Vec4{0, 1, 0, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * in;
+        normal = Shape::manipulateNormal(Vec4{0, 1, 0, 0}, localHit);
+        return Vec4::normalize(getTransformation().getForward() * normal) * in;
     } else if (fabs(localHit.getY()+1) < EPSILON){
-        return Vec4::normalize((getTransformation().getForward() * Vec4{0, -1, 0, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * in;
+        normal = Shape::manipulateNormal(Vec4{0, -1, 0, 0}, localHit);
+        return Vec4::normalize(getTransformation().getForward() * normal) * in;
     }
-    return Vec4::normalize((getTransformation().getForward() *
-                            Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}) +
-                            Vec4::random(-0.5, 0.5) * material.roughness) * in;
+    normal = Shape::manipulateNormal(Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}, localHit);
+    return Vec4::normalize(getTransformation().getForward() * normal) * in;
 }

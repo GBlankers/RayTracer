@@ -57,14 +57,15 @@ void Shape::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
 Vec4 Shape::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
     double dx, dy, dz;
     if(normalMap.empty()){
+        Vec4 hitWorld = t.getForward()*hitPoint;
         // Default random noise using hashes and the roughness param
-        // dividing the hash though UNSIGNED_LONG_MAX gives a value between 0 and 2 -> -1 -> between -1 and 1;
-        // divide by 4 -> between -0.25 and 0.25
-        dx = (fmod((double)doubleHash(hitPoint.getX()+hitPoint.getY()+hitPoint.getZ()), 2.0)-1)/4;
-        dy = (fmod((double)doubleHash(hitPoint.getX()*hitPoint.getY()+hitPoint.getZ()), 2.0)-1)/4;
-        dz = (fmod((double)doubleHash(hitPoint.getX()+hitPoint.getY()*hitPoint.getZ()), 2.0)-1)/4;
-        Vec4 displacement = {dx, dy, dz, 0};
+        // dividing the hash by the max value gives a return between 0 and 2 -> -1 -> between -1 and 1;
+        // divide by x to give a smaller range and make the displacement of the vector smaller
+        dx = (((double)doubleHash(hitWorld.getX()+hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
+        dy = (((double)doubleHash(hitWorld.getX()-hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
+        dz = (((double)doubleHash(hitWorld.getX()+hitWorld.getZ()-hitWorld.getX())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
 
+        Vec4 displacement = {dx, dy, dz, 0};
         return normal + displacement*material.roughness;
     }
 
