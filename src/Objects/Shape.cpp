@@ -56,31 +56,14 @@ void Shape::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
 // With both the normal and hitPoint in local coordinates
 Vec4 Shape::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
     double dx, dy, dz;
-    if(normalMap.empty()){
-        Vec4 hitWorld = t.getForward()*hitPoint;
-        // Default random noise using hashes and the roughness param
-        // dividing the hash by the max value gives a return between 0 and 2 -> -1 -> between -1 and 1;
-        // divide by x to give a smaller range and make the displacement of the vector smaller
-        dx = (((double)doubleHash(hitWorld.getX()+hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
-        dy = (((double)doubleHash(hitWorld.getX()-hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
-        dz = (((double)doubleHash(hitWorld.getX()+hitWorld.getZ()-hitWorld.getX())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
+    Vec4 hitWorld = t.getForward()*hitPoint;
+    // Default random noise using hashes and the roughness param
+    // dividing the hash by the max value gives a return between 0 and 2 -> -1 -> between -1 and 1;
+    // divide by x to give a smaller range and make the displacement of the vector smaller
+    dx = (((double)doubleHash(hitWorld.getX()+hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
+    dy = (((double)doubleHash(hitWorld.getX()-hitWorld.getY()+hitWorld.getZ())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
+    dz = (((double)doubleHash(hitWorld.getX()+hitWorld.getZ()-hitWorld.getX())/((double)std::numeric_limits<size_t>::max()/2.0))-1)/5;
 
-        Vec4 displacement = {dx, dy, dz, 0};
-        return normal + displacement*material.roughness;
-    }
-
-    // uv-map
-    double u = 0.5 + (atan2(hitPoint.getX(), hitPoint.getZ())/(2*M_PI));
-    double v = 0.5 + asin(hitPoint.getY()*-1)/M_PI;
-
-    int i = fmod(floor(u*width), normalMapWidth);
-    int j = fmod(floor(v*height), normalMapHeight);
-
-    int startPoint = i*3+j*width*3;
-
-    dx = ((double)image.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
-    dz = ((double)image.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
-    dy = ((double)image.at(startPoint+2)/255); // y-displacement is mapped to the blue color
-
-    return normal + Vec4{dx, dy, dz, 0};
+    Vec4 displacement = {dx, dy, dz, 0};
+    return normal + displacement*material.roughness;
 }
