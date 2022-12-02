@@ -124,6 +124,7 @@ void Scene::fillScene(const std::string& filename) {
         lightComponents.reset();
         material.reset();
         useColor = true;
+        normalMapPath = "";
         // Check for transformations
         if(v.HasMember("transformations")){
             for(auto& i : v["transformations"].GetArray()){

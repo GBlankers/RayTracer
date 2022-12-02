@@ -30,6 +30,7 @@ protected:
     unsigned width = 0, height = 0;
     std::vector<unsigned char> normalMap;
     unsigned normalMapWidth = 0, normalMapHeight = 0;
+    bool useNormal = false;
 public:
     explicit Shape(Transformation t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
     explicit Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
@@ -39,7 +40,8 @@ public:
     virtual bool checkHit(Ray r, double &t) = 0;
 
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
-    Vec4 manipulateNormal(Vec4 normal, Vec4 hitPoint);
+
+    virtual Vec4 manipulateNormal(Vec4 normal, Vec4 hitPoint);
 
     virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
 

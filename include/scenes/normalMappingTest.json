@@ -3,7 +3,7 @@
   "Camera": {
     "fov": 10,
     "pointsAt": [1000, 0, 0],
-    "location": [900, 100, 0]
+    "location": [800, 200, 0]
   },
   "Objects": [
     {
@@ -18,7 +18,7 @@
       "diffuse": 0.6,
       "specular": 0,
       "specularExponent": 0,
-      "reflectivity": 0,
+      "reflectivity": 0.3,
       "roughness": 0,
       "size": [512,512],
       "normalMap": "../assets/WaterNormal.png"
@@ -35,9 +35,32 @@
       "diffuse": 0.6,
       "specular": 0,
       "specularExponent": 0,
-      "reflectivity": 0,
+      "reflectivity": 0.3,
       "roughness": 0,
       "size": [512,512]
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "rotation": [
+            {
+              "z": 90
+            }
+          ]
+        },
+        {
+          "translation": [2000, 0, 0]
+        }
+      ],
+      "color": [1, 1, 1],
+      "ambient": 0.8,
+      "diffuse": 0,
+      "specular": 0,
+      "specularExponent": 0,
+      "checkerBoard": 150,
+      "reflectivity": 0,
+      "roughness": 0
     }
   ],
   "Light": [

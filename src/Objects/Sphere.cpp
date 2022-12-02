@@ -98,21 +98,28 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(image.empty()){
-        Shape::getColor(hitPoint, r, g, b);
+    if(useNormal){
+        Vec4 normal = calculateNormal(hitPoint, false);
+        r = normal.getX();
+        b = normal.getY();
+        g = normal.getZ();
     } else {
-        Vec4 hit = t.getInverse()*hitPoint;
-        // uv-map
-        double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
-        double v = 0.5 + asin(hit.getY()*-1)/M_PI;
+        if(image.empty()){
+            Shape::getColor(hitPoint, r, g, b);
+        } else {
+            Vec4 hit = t.getInverse()*hitPoint;
+            // uv-map
+            double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
+            double v = 0.5 + asin(hit.getY()*-1)/M_PI;
 
-        int i = floor(u*width);
-        int j = floor(v*height);
+            int i = floor(u*width);
+            int j = floor(v*height);
 
-        int startPoint = i*3+j*width*3;
+            int startPoint = i*3+j*width*3;
 
-        r = (double)image.at(startPoint)/255;
-        g = (double)image.at(startPoint+1)/255;
-        b = (double)image.at(startPoint+2)/255;
+            r = (double)image.at(startPoint)/255;
+            g = (double)image.at(startPoint+1)/255;
+            b = (double)image.at(startPoint+2)/255;
+        }
     }
 }

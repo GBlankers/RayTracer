@@ -73,14 +73,14 @@ Vec4 Shape::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
     double u = 0.5 + (atan2(hitPoint.getX(), hitPoint.getZ())/(2*M_PI));
     double v = 0.5 + asin(hitPoint.getY()*-1)/M_PI;
 
-    int i = floor(u*width);
-    int j = floor(v*height);
+    int i = fmod(floor(u*width), normalMapWidth);
+    int j = fmod(floor(v*height), normalMapHeight);
 
     int startPoint = i*3+j*width*3;
 
-    dx = ((double)image.at(startPoint)/128)-1;
-    dz = ((double)image.at(startPoint+1)/128)-1;
-    dy = ((double)image.at(startPoint+2)/255);
+    dx = ((double)image.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
+    dz = ((double)image.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
+    dy = ((double)image.at(startPoint+2)/255); // y-displacement is mapped to the blue color
 
     return normal + Vec4{dx, dy, dz, 0};
 }

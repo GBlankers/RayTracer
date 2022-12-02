@@ -23,6 +23,8 @@ public:
     void setSize(double l, double w);
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
+
+    Vec4 manipulateNormal(Vec4 normal, Vec4 hitPoint) override;
 };
 
 

@@ -77,7 +77,7 @@ bool Plane::checkHit(Ray r, double &t) {
 }
 
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 manipulatedNormal = Shape::manipulateNormal({0, 1, 0, 0}, t.getInverse()*hitPoint);
+    Vec4 manipulatedNormal = manipulateNormal({0, 1, 0, 0}, t.getInverse()*hitPoint);
     if(inside)
         return Vec4::normalize(t.getForward()*manipulatedNormal) * -1;
     return Vec4::normalize(t.getForward()*manipulatedNormal);
@@ -94,18 +94,43 @@ void Plane::setSize(double l, double w) {
 }
 
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(image.empty()){
-        Shape::getColor(hitPoint, r, g, b);
+    if(useNormal){
+        Vec4 normal = calculateNormal(hitPoint, false);
+        r = normal.getX();
+        b = normal.getY();
+        g = normal.getZ();
     } else {
-        Vec4 hit = t.getInverse()*hitPoint;
+        if(image.empty()){
+            Shape::getColor(hitPoint, r, g, b);
+        } else {
+            Vec4 hit = t.getInverse()*hitPoint;
 
-        int i = floor(fmod((planeLength/2)+hit.getX(), height));
-        int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
+            int i = floor(fmod((planeLength/2)+hit.getX(), height));
+            int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
 
-        int startPoint = i*3+j*width*3;
+            int startPoint = i*3+j*width*3;
 
-        r = (double)image.at(startPoint)/255;
-        g = (double)image.at(startPoint+1)/255;
-        b = (double)image.at(startPoint+2)/255;
+            r = (double)image.at(startPoint)/255;
+            g = (double)image.at(startPoint+1)/255;
+            b = (double)image.at(startPoint+2)/255;
+        }
     }
+}
+
+Vec4 Plane::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
+    double dx, dy, dz;
+    if(normalMap.empty()){
+        return Shape::manipulateNormal(normal, hitPoint);
+    }
+
+    int i = floor(fmod((planeLength/2)+hitPoint.getX(), normalMapHeight));
+    int j = floor(fmod((planeWidth/2)+hitPoint.getZ(), normalMapWidth));
+
+    int startPoint = i*3+j*normalMapWidth*3;
+
+    dx = ((double)image.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
+    dz = ((double)image.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
+    dy = ((double)image.at(startPoint+2)/255); // y-displacement is mapped to the blue color
+
+    return Vec4::normalize(Vec4{dx, dy, dz, 0});
 }

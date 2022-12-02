@@ -39,7 +39,11 @@ Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : disp
 
     // Up direction calculation
     double phi = M_PI_2-atan(-viewDirection.getZ()/viewDirection.getX());
-    this->upDirection = Vec4(0, phi);
+    if(std::isnan(phi)){
+        this->upDirection = Vec4(1, 0, 0, 0);
+    } else {
+        this->upDirection = Vec4(0, phi);
+    }
 
     // Calculation for the eye direction
     double stepPerT = Vec4::length(this->viewDirection);
