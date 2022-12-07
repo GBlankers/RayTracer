@@ -128,9 +128,9 @@ Vec4 Plane::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
 
     int startPoint = i*3+j*normalMapWidth*3;
 
-    dx = ((double)image.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
-    dz = ((double)image.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
-    dy = ((double)image.at(startPoint+2)/255); // y-displacement is mapped to the blue color
+    dx = ((double)normalMap.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
+    dz = ((double)normalMap.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
+    dy = ((double)normalMap.at(startPoint+2)/255); // y-displacement is mapped to the blue color
 
     return Vec4::normalize(Vec4{dx, dy, dz, 0});
 }

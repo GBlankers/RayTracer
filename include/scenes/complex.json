@@ -354,13 +354,10 @@
           "translation": [400, -300, 300]
         }
       ],
-      "path": "../assets/Water.png",
-      "ambient": 0.4,
-      "diffuse": 0.4,
-      "specular": 0,
-      "specularExponent": 0,
-      "reflectivity": 0.4,
+      "colorName": "aluminium",
+      "reflectivity": 0.1,
       "roughness": 0,
+      "normalMap": "../assets/metalNormal.png",
       "size": [512,512]
     }
   ],
