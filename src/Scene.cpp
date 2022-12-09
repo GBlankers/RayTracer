@@ -14,7 +14,7 @@ const Camera &Scene::getCamera() const {
     return camera;
 }
 
-Vec4 Scene::getSkyColor(Vec4 direction){
+Vec4 Scene::getSkyColor(Vec4 direction) const{
     return sky.getColor(direction);
 }
 
@@ -271,7 +271,7 @@ void Scene::fillScene(const std::string& filename) {
             LightComponents tempLightComponent;
             tempLightComponent.name = v["name"].GetString();
             valueArray = v["color"].GetArray();
-            tempLightComponent.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            tempLightComponent.color = new SingleColor({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
             tempLightComponent.ambient = v["ambient"].GetDouble();
             tempLightComponent.diffuse = v["diffuse"].GetDouble();
             tempLightComponent.specular = v["specular"].GetDouble();
@@ -362,10 +362,9 @@ void Scene::fillScene(const std::string& filename) {
         if(v.HasMember("color")){
             valueArray = v["color"];
             assert(valueArray.IsArray());
-            lightComponents.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
         } else if(v.HasMember("path")){
-            useColor = false;
-            path = v["path"].GetString();
+            lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
         }
 
         // Check if a default material is used and if this material is present in the material map
@@ -397,30 +396,17 @@ void Scene::fillScene(const std::string& filename) {
         if(strcmp(v["type"].GetString(), "cube") == 0){
             objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
-            if(useColor){
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
-            }else{
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, lightComponents, material)));
-            }
+            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
-            if(useColor){
-                Plane tempPlane(temp, lightComponents, material);
-                if(v.HasMember("checkerBoard")){
-                    tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
-                }
-                if(v.HasMember("size")) {
-                    valueArray = v["size"].GetArray();
-                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
-                }
-                objectVector.push_back(std::make_shared<Plane>(tempPlane));
-            } else {
-                Plane tempPlane(temp, path, lightComponents, material);
-                if(v.HasMember("size")){
-                    valueArray = v["size"].GetArray();
-                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
-                }
-                objectVector.push_back(std::make_shared<Plane>(tempPlane));
+            Plane tempPlane(temp, lightComponents, material);
+            if(v.HasMember("checkerBoard")){
+                tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
             }
+            if(v.HasMember("size")) {
+                valueArray = v["size"].GetArray();
+                tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
+            }
+            objectVector.push_back(std::make_shared<Plane>(tempPlane));
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
             objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material)));
         } else {

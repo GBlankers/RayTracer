@@ -3,9 +3,6 @@
 Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 Collision Cone::checkCollision(Ray r) {
     double t;
     bool inside;
@@ -15,7 +12,7 @@ Collision Cone::checkCollision(Ray r) {
         LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -123,4 +120,12 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
     return Vec4::normalize((getTransformation().getForward() *
                             Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}) +
                             Vec4::random(-0.5, 0.5) * material.roughness) * in;
+}
+
+void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    // Get color components -> no uv-map -> 0, 0
+    Vec4 c = lightComponents.color->getColor("sphere", 0, 0);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

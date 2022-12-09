@@ -11,7 +11,6 @@ private:
     double planeLength = -1, planeWidth = -1;
 public:
     explicit Plane(const Transformation &t, LightComponents lightComponents, Material material);
-    explicit Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
     bool checkHit(Ray r, double &t, bool &inside) override;

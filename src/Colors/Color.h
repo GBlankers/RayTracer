@@ -9,7 +9,8 @@
 class Color {
 public:
     explicit Color() = default;
-    virtual Vec4 getColor(const std::string &objectName, Vec4 direction) = 0;
+    virtual Vec4 getColor(const std::string &objectType, double u, double v) = 0;
+    virtual Vec4 getColor() = 0; // Only for collision object
 };
 
 

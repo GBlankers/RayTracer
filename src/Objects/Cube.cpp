@@ -5,9 +5,6 @@
 Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
 
@@ -29,7 +26,7 @@ Collision Cube::checkCollision(Ray r) {
         LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -216,4 +213,14 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
     if(inside)
         return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
     return Vec4::normalize((getTransformation().getForward() * Vec4{nx, ny, nz, 0}) + Vec4::random(-0.5, 0.5) * material.roughness);
+}
+
+void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    // uv-map
+    Vec4 hit = t.getInverse()*hitPoint;
+    // Get color components -> no uv-map -> 0, 0
+    Vec4 c = lightComponents.color->getColor("cube", 0, 0);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

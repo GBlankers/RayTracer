@@ -13,6 +13,7 @@ private:
     Vec4 normal{}; // normal at the collision point
     bool inside = false;
     LightComponents lightComponents;
+    Vec4 color; // cannot be in lightComponents because seg fault
     Material material;
 public:
     Collision(Ray incoming, double t, Vec4 normal, bool inside, LightComponents lightComponents, Material material);

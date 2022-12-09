@@ -5,8 +5,8 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 // Virtual screen coordinates
-const double W = (double)WINDOW_WIDTH;
-const double H = (double)WINDOW_HEIGHT;
+const int W = (int)WINDOW_WIDTH;
+const int H = (int)WINDOW_HEIGHT;
 // Anti alias samples
 #define ANTI_ALIAS_SAMPLING 2
 // Number of max reflections/refractions

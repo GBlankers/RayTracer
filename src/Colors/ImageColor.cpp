@@ -7,28 +7,30 @@ ImageColor::ImageColor(const std::string& path) {
     }
 }
 
-Vec4 ImageColor::getColor(const std::string &objectName, Vec4 direction) {
+Vec4 ImageColor::getColor(const std::string &objectType, double u, double v) {
     if(image.empty())
         return defaultColor;
 
-    if(objectName == "sphere"){
-        // uv-map
-        double u = 0.5 + (atan2(direction.getZ(), direction.getX())/(2*M_PI));
-        double v = 0.5 + asin(direction.getY()*-1)/M_PI;
+    int i = 0, j = 0;
 
-        int i = floor(u*width);
-        int j = floor(v*height);
-
-        int startPoint = i*3+j*width*3;
-
-        double r = (double)image[startPoint]/255;
-        double g = (double)image[startPoint+1]/255;
-        double b = (double)image[startPoint+2]/255;
-
-        // get color at that point
-        return {r, g, b, 0};
+    if(objectType == "sphere"){
+        i = floor(u * width);
+        j = floor(v * height);
+    } else if(objectType == "plane"){
+        i = floor(fmod(u, height));
+        j = floor(fmod(v, width));
     }
 
+    int startPoint = i * 3 + j * width * 3;
 
+    double r = (double)image[startPoint]/255;
+    double g = (double)image[startPoint+1]/255;
+    double b = (double)image[startPoint+2]/255;
+
+    // get color at that point
+    return {r, g, b, 0};
+}
+
+Vec4 ImageColor::getColor() {
     return defaultColor;
 }

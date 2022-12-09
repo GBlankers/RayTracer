@@ -17,11 +17,11 @@ void drawDot(GLint x, GLint y);
 void renderer();
 
 Vec4 lighting(const Collision& c, const Scene& scene);
-Vec4 reflect(const Collision& c, int bouncesToDo, Scene& scene);
-Vec4 refract(Collision c, int bouncesToDo, Scene& scene);
-Vec4 objectColorHit(Collision& c, int bouncesToDo, Scene& scene);
+Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene);
+Vec4 refract(Collision c, int bouncesToDo, const Scene& scene);
+Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene);
 
-void goOverPixels(Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
+void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
 
 int main(int argc, char** argv) {
 
@@ -93,7 +93,7 @@ Vec4 lighting(const Collision& c, const Scene& scene){
     return totalLight;
 }
 
-Vec4 reflect(const Collision& c, int bouncesToDo, Scene& scene){
+Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene){
     // calculate the reflected ray direction
     Vec4 rayDirection = Vec4::normalize(c.getIncoming().getDirectionVector() +
                                         c.getNormal() * (-2) * Vec4::dot(c.getNormal(), c.getIncoming().getDirectionVector()));
@@ -128,7 +128,7 @@ Vec4 reflect(const Collision& c, int bouncesToDo, Scene& scene){
  * @param scene the total scene used to further calculate collisions
  * @return refracted color, in a recursive way
  */
-Vec4 refract(Collision c, int bouncesToDo, Scene& scene){
+Vec4 refract(Collision c, int bouncesToDo, const Scene& scene){
     // Calculate the normalized direction
     Vec4 normDir = Vec4::normalize(c.getIncoming().getDirectionVector());
 
@@ -185,7 +185,7 @@ Vec4 refract(Collision c, int bouncesToDo, Scene& scene){
  * @param scene full scene, needed to check for further collisions
  * @return the color of the hit, an accumulation of the light, reflections and refractions
  */
-Vec4 objectColorHit(Collision& c, int bouncesToDo, Scene& scene){
+Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene){
     Vec4 color, reflection, refraction;
 
     Material m = c.getMaterial();
@@ -222,7 +222,7 @@ void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length){
     }
 }
 
-void goOverPixels(Scene& s, std::vector<Vec4>& pixelList, int begin, int end){
+void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end){
     auto camera(s.getCamera());
 
     // Pre defined variables
@@ -309,5 +309,4 @@ void renderer(){
 
 // TODO: normal maps
 // TODO: solid textures
-// TODO: make an abstract color class to simplify getting a color -> no booleans
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI

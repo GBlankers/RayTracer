@@ -3,9 +3,6 @@
 Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {
     double t;
@@ -37,7 +34,7 @@ Collision Plane::checkCollision(Ray r) {
         }
         double red, green, blue;
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -93,18 +90,14 @@ void Plane::setSize(double l, double w) {
 }
 
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(image.empty()){
-        Shape::getColor(hitPoint, r, g, b);
-    } else {
-        Vec4 hit = t.getInverse()*hitPoint;
+    // uv-map
+    Vec4 hit = t.getInverse()*hitPoint;
+    double u = (planeLength/2)+hit.getX();
+    double v = (planeWidth/2)+hit.getZ();
+    // Get color components
+    Vec4 c = lightComponents.color->getColor("plane", u, v);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 
-        int i = floor(fmod((planeLength/2)+hit.getX(), height));
-        int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
-
-        int startPoint = i*3+j*width*3;
-
-        r = (double)image.at(startPoint)/255;
-        g = (double)image.at(startPoint+1)/255;
-        b = (double)image.at(startPoint+2)/255;
-    }
 }

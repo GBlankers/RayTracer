@@ -13,7 +13,7 @@ public:
     explicit SkyBox();
     explicit SkyBox(Color* color);
 
-    Vec4 getColor(Vec4 direction);
+    Vec4 getColor(Vec4 direction) const;
 };
 
 
