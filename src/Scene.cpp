@@ -14,7 +14,7 @@ const Camera &Scene::getCamera() const {
     return camera;
 }
 
-Vec4 Scene::getSkyColor(Vec4 direction) const{
+Vec4 Scene::getSkyColor(Vec4 direction){
     return sky.getColor(direction);
 }
 
@@ -457,9 +457,9 @@ void Scene::fillScene(const std::string& filename) {
         value = s["SkyBox"];
         if(value.HasMember("color")){
             valueArray = value["color"].GetArray();
-            sky = SkyBox(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1});
+            sky = SkyBox(new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1}));
         } else if(value.HasMember("path")){
-            sky = SkyBox(std::string(value["path"].GetString()));
+            sky = SkyBox(new ImageColor(std::string(value["path"].GetString())));
         } else {
             sky = SkyBox();
         }

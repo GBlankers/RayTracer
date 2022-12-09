@@ -12,6 +12,9 @@
 
 #include "rapidjson/document.h"
 #include "Objects/SkyBox.h"
+#include "Colors/Color.h"
+#include "Colors/SingleColor.h"
+#include "Colors/ImageColor.h"
 
 #include <memory>
 #include <vector>
@@ -39,7 +42,7 @@ public:
     const std::vector<std::shared_ptr<Shape>> &getObjectVector() const;
     const std::vector<std::shared_ptr<LightSource>> &getLightVector() const;
     const Camera &getCamera() const;
-    Vec4 getSkyColor(Vec4 direction) const;
+    Vec4 getSkyColor(Vec4 direction);
 };
 
 
