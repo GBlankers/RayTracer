@@ -16,12 +16,8 @@ Vec4 CheckerBoard::getColor(const std::string &objectType, double u, double v, V
     int A = 100; // shift pattern to not get origin weirdness
     bool check = true;
 
-    // for every object the pattern need to be calculated differently to avoid strange patterns
-    if(objectType == "plane"){
-        check = ((int)(A+localHit.getX()/checkerBoardSize)+(int)(A+localHit.getZ()/checkerBoardSize))%2;
-    } else if(objectType == "sphere"){
-        check = ((int)(A+u/checkerBoardSize)+(int)(A+v/checkerBoardSize))%2;
-    } else if(objectType == "cube"){
+    // for the cube the pattern needs to be calculated differently
+    if(objectType == "cube"){
         if(localHit.getZ() <= (-1+EPSILON) or localHit.getZ() >= (1-EPSILON)){
             check = ((int)(A+localHit.getX()/checkerBoardSize)+(int)(A+localHit.getY()/checkerBoardSize))%2;
         } else if(localHit.getY() <= (-1+EPSILON) or localHit.getY() >= (1-EPSILON)){
@@ -29,6 +25,8 @@ Vec4 CheckerBoard::getColor(const std::string &objectType, double u, double v, V
         } else if(localHit.getX() <= (-1+EPSILON) or localHit.getX() >= (1-EPSILON)){
             check = ((int)(A+localHit.getY()/checkerBoardSize)+(int)(A+localHit.getZ()/checkerBoardSize))%2;
         }
+    } else {
+        check = ((int) (A + u / checkerBoardSize) + (int) (A + v / checkerBoardSize)) % 2;
     }
 
     if(check){

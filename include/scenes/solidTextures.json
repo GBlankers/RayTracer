@@ -13,7 +13,7 @@
           "scaling": [320, 320, 320]
         },
         {
-          "translation": [2300, -150, 700]
+          "translation": [2300, -150, 800]
         }
       ],
       "color": [1, 0, 0],
@@ -43,7 +43,7 @@
           ]
         },
         {
-          "translation": [2500, 0, -300]
+          "translation": [2500, 0, 200]
         }
       ],
       "color": [0.2, 0, 0.6],
@@ -54,6 +54,62 @@
       "reflectivity": 0,
       "roughness": 0,
       "checkerBoard": 0.2
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [200, 400, 200]
+        },
+        {
+          "rotation": [
+            {
+              "x": -30
+            }
+          ]
+        },
+        {
+          "translation": [2500, 0, -700]
+        }
+      ],
+      "color": [0.3, 0.39, 0.8],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1,
+      "checkerBoard": 0.1
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [200, 400, 200]
+        },
+        {
+          "rotation": [
+            {
+              "z": -60
+            }
+          ]
+        },
+        {
+          "translation": [2500, 0, -300]
+        }
+      ],
+      "color": [1, 0.39, 0.8],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1,
+      "checkerBoard": 0.1
     },
     {
       "type": "plane",
@@ -75,7 +131,7 @@
   ],
   "Light": [
     {
-      "position": [1000, 800, 0],
+      "position": [1000, 400, 0],
       "pointsAt": [2500, 0, 0],
       "color": [1, 1, 1]
     }
