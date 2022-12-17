@@ -14,22 +14,8 @@ CheckerBoard::CheckerBoard(Vec4 c1, Vec4 c2, double size) {
 
 Vec4 CheckerBoard::getColor(const std::string &objectType, double u, double v, Vec4 localHit, Vec4 worldHit) {
     int A = 100; // shift pattern to not get origin weirdness
-    bool check = true;
 
-    // for the cube the pattern needs to be calculated differently
-    if(objectType == "cube"){
-        if(localHit.getZ() <= (-1+EPSILON) or localHit.getZ() >= (1-EPSILON)){
-            check = ((int)(A+localHit.getX()/checkerBoardSize)+(int)(A+localHit.getY()/checkerBoardSize))%2;
-        } else if(localHit.getY() <= (-1+EPSILON) or localHit.getY() >= (1-EPSILON)){
-            check = ((int)(A+localHit.getX()/checkerBoardSize)+(int)(A+localHit.getZ()/checkerBoardSize))%2;
-        } else if(localHit.getX() <= (-1+EPSILON) or localHit.getX() >= (1-EPSILON)){
-            check = ((int)(A+localHit.getY()/checkerBoardSize)+(int)(A+localHit.getZ()/checkerBoardSize))%2;
-        }
-    } else {
-        check = ((int) (A + u / checkerBoardSize) + (int) (A + v / checkerBoardSize)) % 2;
-    }
-
-    if(check){
+    if(((int) (A + u / checkerBoardSize) + (int) (A + v / checkerBoardSize)) % 2){
         return color1;
     }
     return color2;

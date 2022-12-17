@@ -11,14 +11,24 @@ Vec4 ImageColor::getColor(const std::string &objectType, double u, double v, Vec
     if(image.empty())
         return defaultColor;
 
-    int i = 0, j = 0;
+    int i, j;
 
-    if(objectType == "sphere"){
+    if(objectType == "sphere" or objectType == "cube"){
         i = floor(u * width);
         j = floor(v * height);
-    } else if(objectType == "plane"){
+    } else if(objectType == "plane") {
         i = floor(fmod(u, height));
         j = floor(fmod(v, width));
+    } else if(objectType == "cone"){
+        if(localHit.getY() <= -1 + EPSILON){
+            i = floor(((1+u)/2)*width);
+            j = floor(((1+v)/2)*height);
+        } else {
+            i = floor(u * width);
+            j = floor(v * height);
+        }
+    } else {
+        return defaultColor;
     }
 
     int startPoint = i * 3 + j * width * 3;

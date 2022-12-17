@@ -2,6 +2,7 @@
 #define RAYTRACER_IMAGECOLOR_H
 
 #include "Color.h"
+#include "../settings.h"
 #include "../../include/code/lodepng.h"
 
 class ImageColor : public Color{

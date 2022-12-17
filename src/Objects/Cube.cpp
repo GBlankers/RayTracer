@@ -216,10 +216,21 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
 }
 
 void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    // uv-map
     Vec4 localHit = t.getInverse()*hitPoint;
-    // Get color components -> no uv-map -> 0, 0
-    Vec4 c = lightComponents.color->getColor("cube", 0, 0, localHit, hitPoint);
+    // uv-map
+    double u, v;
+    if(localHit.getZ() <= (-1+EPSILON) or localHit.getZ() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getY())/2;
+    } else if(localHit.getY() <= (-1+EPSILON) or localHit.getY() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
+    } else {
+        u = (1+localHit.getY())/2;
+        v = (1+localHit.getZ())/2;
+    }
+    // Get color components
+    Vec4 c = lightComponents.color->getColor("cube", u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();
