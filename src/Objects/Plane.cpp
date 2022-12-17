@@ -11,27 +11,6 @@ Collision Plane::checkCollision(Ray r) {
     if(checkHit(r, t, inside)){
         Vec4 hit = r.at(t);
         LightComponents l = this->lightComponents;
-        if(checkerBoard){
-            bool check;
-            Vec4 localHit = getTransformation().getInverse() * hit;
-            if(localHit.getX()<0){
-                if(localHit.getZ()<0){
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
-                } else {
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 1;
-                }
-            } else {
-                if(localHit.getZ()<0){
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 1;
-                } else {
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
-                }
-            }
-            if(check){
-                l.color = {};
-                return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
-            }
-        }
         double red, green, blue;
         this->getColor(hit, red, green, blue);
         l.color = new SingleColor(Vec4{red, green, blue, 0});
@@ -79,11 +58,6 @@ Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness);
 }
 
-void Plane::setCheckerBoardPattern(bool b, int size) {
-    this->checkerBoard = b;
-    this->checkerBoardSize = size;
-}
-
 void Plane::setSize(double l, double w) {
     this->planeLength = l;
     this->planeWidth = w;
@@ -91,13 +65,12 @@ void Plane::setSize(double l, double w) {
 
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     // uv-map
-    Vec4 hit = t.getInverse()*hitPoint;
-    double u = (planeLength/2)+hit.getX();
-    double v = (planeWidth/2)+hit.getZ();
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = (planeLength/2) + localHit.getX();
+    double v = (planeWidth/2) + localHit.getZ();
     // Get color components
-    Vec4 c = lightComponents.color->getColor("plane", u, v);
+    Vec4 c = lightComponents.color->getColor("plane", u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();
-
 }

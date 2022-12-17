@@ -95,11 +95,11 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     // uv-map
-    Vec4 hit = t.getInverse()*hitPoint;
-    double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
-    double v = 0.5 + asin(hit.getY()*-1)/M_PI;
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = 0.5 + (atan2(localHit.getX(), localHit.getZ()) / (2 * M_PI));
+    double v = 0.5 + asin(localHit.getY() * -1) / M_PI;
     // Get color components
-    Vec4 c = lightComponents.color->getColor("sphere", u, v);
+    Vec4 c = lightComponents.color->getColor("sphere", u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

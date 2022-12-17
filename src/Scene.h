@@ -15,6 +15,7 @@
 #include "Colors/Color.h"
 #include "Colors/SingleColor.h"
 #include "Colors/ImageColor.h"
+#include "Colors/CheckerBoard.h"
 
 #include <memory>
 #include <vector>

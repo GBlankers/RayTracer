@@ -217,9 +217,9 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
 
 void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     // uv-map
-    Vec4 hit = t.getInverse()*hitPoint;
+    Vec4 localHit = t.getInverse()*hitPoint;
     // Get color components -> no uv-map -> 0, 0
-    Vec4 c = lightComponents.color->getColor("cube", 0, 0);
+    Vec4 c = lightComponents.color->getColor("cube", 0, 0, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

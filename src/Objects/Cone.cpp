@@ -124,7 +124,7 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
 
 void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     // Get color components -> no uv-map -> 0, 0
-    Vec4 c = lightComponents.color->getColor("sphere", 0, 0);
+    Vec4 c = lightComponents.color->getColor("sphere", 0, 0, Vec4(), Vec4());
     r = c.getX();
     g = c.getY();
     b = c.getZ();

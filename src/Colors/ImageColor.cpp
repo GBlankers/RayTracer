@@ -7,7 +7,7 @@ ImageColor::ImageColor(const std::string& path) {
     }
 }
 
-Vec4 ImageColor::getColor(const std::string &objectType, double u, double v) {
+Vec4 ImageColor::getColor(const std::string &objectType, double u, double v, Vec4 localHit, Vec4 worldHit) {
     if(image.empty())
         return defaultColor;
 

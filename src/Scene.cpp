@@ -359,7 +359,18 @@ void Scene::fillScene(const std::string& filename) {
         }
 
         // Check color/path to png file
-        if(v.HasMember("color")){
+        if(v.HasMember("checkerBoard")){
+            Vec4 secondColor = {};
+            if(v.HasMember("color2")){
+                valueArray = v["color2"];
+                assert(valueArray.IsArray());
+                secondColor = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            }
+            valueArray = v["color"];
+            assert(valueArray.IsArray());
+            lightComponents.color = new CheckerBoard({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0},
+                                                     secondColor, v["checkerBoard"].GetDouble());
+        } else if(v.HasMember("color")){
             valueArray = v["color"];
             assert(valueArray.IsArray());
             lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
@@ -399,9 +410,6 @@ void Scene::fillScene(const std::string& filename) {
             objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
             Plane tempPlane(temp, lightComponents, material);
-            if(v.HasMember("checkerBoard")){
-                tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
-            }
             if(v.HasMember("size")) {
                 valueArray = v["size"].GetArray();
                 tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());

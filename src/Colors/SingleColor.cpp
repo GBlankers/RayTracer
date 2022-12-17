@@ -7,7 +7,7 @@ SingleColor::SingleColor(Vec4 c) {
     this->c = c;
 }
 
-Vec4 SingleColor::getColor(const std::string &objectType, double u, double v) {
+Vec4 SingleColor::getColor(const std::string &objectType, double u, double v, Vec4 localHit, Vec4 worldHit) {
     return c;
 }
 
