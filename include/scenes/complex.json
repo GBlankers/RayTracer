@@ -84,7 +84,7 @@
         }
       ],
       "colorName": "gold",
-      "reflectivity": 0.1,
+      "reflectivity": 0.2,
       "roughness": 1
     },
     {
@@ -306,6 +306,9 @@
       "type": "plane",
       "transformations": [
         {
+          "scaling": [250, 1, 250]
+        },
+        {
           "rotation": [
             {
               "z": 90
@@ -329,6 +332,41 @@
       "transparency": 0.8,
       "refractiveIndex": 1.1,
       "size": [500, 500]
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [400, -300, -300]
+        }
+      ],
+      "path": "../assets/Water.png",
+      "ambient": 0.4,
+      "diffuse": 0.4,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0.4,
+      "roughness": 0,
+      "size": [512,512],
+      "normalMap": "../assets/WaterNormal.png"
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [400, -300, 300]
+        }
+      ],
+      "colorName": "aluminium",
+      "reflectivity": 0.1,
+      "roughness": 0,
+      "normalMap": "../assets/metalNormal.png"
     }
   ],
   "Light": [

@@ -1,7 +1,5 @@
 #include "Shape.h"
 
-#include <utility>
-
 /**
  * abstract shape class used to contain the general functions
  * @param t transformation to place the shape in the world space
@@ -11,7 +9,6 @@
  */
 Shape::Shape(Transformation t, LightComponents lightComponents, Material material)
     : t(t), lightComponents(std::move(lightComponents)), material(std::move(material)){
-
     assert(this->lightComponents.color.getX()>=0 && this->lightComponents.color.getX()<=1.0);
     assert(this->lightComponents.color.getY()>=0 && this->lightComponents.color.getY()<=1.0);
     assert(this->lightComponents.color.getZ()>=0 && this->lightComponents.color.getZ()<=1.0);

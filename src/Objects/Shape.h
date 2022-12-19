@@ -17,6 +17,8 @@
 
 #include "../../include/code/lodepng.h"
 
+#include <utility>
+
 class Shape {
 protected:
     Transformation t;
@@ -33,6 +35,7 @@ public:
     virtual bool checkHit(Ray r, double &t) = 0;
 
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
+
     virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
 
     const Transformation &getTransformation() const;

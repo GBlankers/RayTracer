@@ -6,7 +6,7 @@ Plane::Plane(const Transformation &t, LightComponents lightComponents, Material 
 Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
         Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-// Default plane at y=0
+// Default plane at y=0 and limited between -1 and 1 for x and z
 Collision Plane::checkCollision(Ray r) {
     double t;
     bool inside;
@@ -39,7 +39,7 @@ Collision Plane::checkCollision(Ray r) {
         this->getColor(hit, red, green, blue);
         l.color = {red, green, blue, 0};
 
-        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
+        return {r, t, calculateNormal(hit, inside), inside, l, material};
     }
 
     return {};
@@ -58,28 +58,30 @@ bool Plane::checkHit(Ray r, double &t) {
     // Ray is not parallel to the plane
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
         t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
-
-        // Check if dimensions of plane are limited
-        Vec4 hit = transformedRay.at(t);
-        if(planeLength>0){
-            if(hit.getX()>planeLength/2 or hit.getX()<-planeLength/2){
-                t = -1;
-            }
+        // Check if -1<x<1 and -1<z<1
+        Vec4 localHit = transformedRay.at(t);
+        if(localHit.getX()>=-1 and localHit.getX()<=1 and localHit.getZ()>=-1 and localHit.getZ()<=1){
+            return t>0;
         }
-        if(planeWidth>0){
-            if(hit.getZ()>planeWidth/2 or hit.getZ()<-planeWidth/2){
-                t = -1;
-            }
-        }
-        return t>0;
     }
     return false;
 }
 
+/**
+ * Override the virtual calculate normal function to calculate the normal for the plane
+ * @param hitPoint hit point in world coordinates
+ * @param inside check if the hit is inside the object
+ * @return the normal in world coordinates
+ */
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
-    if(inside)
-        return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness) * -1;
-    return Vec4::normalize((getTransformation().getForward() * Vec4({0, 1, 0, 0})) + Vec4::random(-0.5, 0.5) * material.roughness);
+    // Calculate normal in local coordinates
+    Vec4 normal = inside ? Vec4{0, -1, 0, 0} : Vec4{0, 1, 0, 0};
+    // uv-mapping
+    Vec4 localHit = t.getInverse()*hitPoint;
+    double u = (localHit.getX()+1)/2;
+    double v = (localHit.getZ()+1)/2;
+    // Manipulate normal + transform to world coordinates + normalize
+    return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {
@@ -87,19 +89,17 @@ void Plane::setCheckerBoardPattern(bool b, int size) {
     this->checkerBoardSize = size;
 }
 
-void Plane::setSize(double l, double w) {
-    this->planeLength = l;
-    this->planeWidth = w;
-}
-
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     if(image.empty()){
         Shape::getColor(hitPoint, r, g, b);
     } else {
-        Vec4 hit = t.getInverse()*hitPoint;
+        Vec4 localHit = t.getInverse()*hitPoint;
 
-        int i = floor(fmod((planeLength/2)+hit.getX(), height));
-        int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
+        double u = (localHit.getX()+1)/2;
+        double v = (localHit.getZ()+1)/2;
+
+        int i = floor(u*height);
+        int j = floor(v*width);
 
         int startPoint = i*3+j*width*3;
 
@@ -107,4 +107,5 @@ void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
         g = (double)image.at(startPoint+1)/255;
         b = (double)image.at(startPoint+2)/255;
     }
+
 }
