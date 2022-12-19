@@ -235,7 +235,7 @@ void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
         v = (1+localHit.getZ())/2;
     }
     // Get color components
-    Vec4 c = lightComponents.color->getColor("cube", u, v, localHit, hitPoint);
+    Vec4 c = lightComponents.color->getColor(u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

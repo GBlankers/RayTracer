@@ -307,6 +307,4 @@ void renderer(){
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
 
-// TODO: normal maps
-// TODO: solid textures
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI

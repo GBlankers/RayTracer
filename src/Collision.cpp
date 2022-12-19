@@ -2,7 +2,7 @@
 
 Collision::Collision(Ray incoming, double t, Vec4 normal, bool inside, LightComponents lightComponents, Material material) :
                 incoming(incoming), t(t), normal(normal), inside(inside), lightComponents(std::move(lightComponents)),
-                material(std::move(material)), hitPoint(incoming.at(t)), color(lightComponents.color->getColor()) {}
+                material(std::move(material)), hitPoint(incoming.at(t)), color(lightComponents.color->getColor(0, 0, {}, {})) {}
 
 
 Collision::Collision() = default;

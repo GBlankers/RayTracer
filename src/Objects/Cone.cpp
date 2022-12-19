@@ -110,14 +110,14 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
     Vec4 localHit = t.getInverse() * hitPoint;
     // Calculate the normal in local coordinates + uv-mapping
     Vec4 normal;
-    double u = 0, v = 0;
+    double u, v;
     if(localHit.getY() <= -1+EPSILON){ // Hit the bottom plane
-        u = localHit.getX();
-        v = localHit.getZ();
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
         normal = inside ? Vec4{0, -1, 0, 0} : Vec4{0, 1, 0, 0};
     } else { // Hit the cone
-        u = 1+atan2(localHit.getX(), localHit.getZ())/M_PI;
-        v = localHit.getY();
+        u = (1+atan2(localHit.getX(), localHit.getZ())/M_PI)/2;
+        v = fabs(localHit.getY());
         normal = inside ? Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0} :
                  Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0} * -1;
     }
@@ -127,16 +127,17 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
 
 void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     Vec4 localHit = t.getInverse()*hitPoint;
+    // uv-mapping
     double u, v;
     if(localHit.getY() <= -1+EPSILON){
-        u = localHit.getX();
-        v = localHit.getZ();
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
     } else {
-        u = 1+atan2(localHit.getX(), localHit.getZ())/M_PI;
-        v = localHit.getY();
+        u = (1+atan2(localHit.getX(), localHit.getZ())/M_PI)/2;
+        v = fabs(localHit.getY());
     }
-
-    Vec4 c = lightComponents.color->getColor("cone", u, v, localHit, hitPoint);
+    // get color components
+    Vec4 c = lightComponents.color->getColor(u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

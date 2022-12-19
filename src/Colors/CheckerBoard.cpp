@@ -12,15 +12,11 @@ CheckerBoard::CheckerBoard(Vec4 c1, Vec4 c2, double size) {
     this->checkerBoardSize = size;
 }
 
-Vec4 CheckerBoard::getColor(const std::string &objectType, double u, double v, Vec4 localHit, Vec4 worldHit) {
+Vec4 CheckerBoard::getColor(double u, double v, Vec4 localHit, Vec4 worldHit) {
     int A = 100; // shift pattern to not get origin weirdness
 
     if(((int) (A + u / checkerBoardSize) + (int) (A + v / checkerBoardSize)) % 2){
         return color1;
     }
     return color2;
-}
-
-Vec4 CheckerBoard::getColor() {
-    return color1;
 }

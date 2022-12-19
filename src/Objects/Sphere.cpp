@@ -98,7 +98,7 @@ void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     double u = 0.5 + (atan2(localHit.getX(), localHit.getZ()) / (2 * M_PI));
     double v = 0.5 + asin(localHit.getY() * -1) / M_PI;
     // Get color components
-    Vec4 c = lightComponents.color->getColor("sphere", u, v, localHit, hitPoint);
+    Vec4 c = lightComponents.color->getColor(u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

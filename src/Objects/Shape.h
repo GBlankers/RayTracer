@@ -6,6 +6,7 @@
 #include <memory>
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 #include "LightSource.h"
 #include "objectProperties.h"
@@ -17,10 +18,6 @@
 #include "../Colors/Color.h"
 #include "../Colors/SingleColor.h"
 #include "../Colors/ImageColor.h"
-
-#include "../../include/code/lodepng.h"
-
-#include <utility>
 
 class Shape {
 protected:

@@ -7,29 +7,12 @@ ImageColor::ImageColor(const std::string& path) {
     }
 }
 
-Vec4 ImageColor::getColor(const std::string &objectType, double u, double v, Vec4 localHit, Vec4 worldHit) {
+Vec4 ImageColor::getColor(double u, double v, Vec4 localHit, Vec4 worldHit) {
     if(image.empty())
         return defaultColor;
 
-    int i, j;
-
-    if(objectType == "sphere" or objectType == "cube"){
-        i = floor(u * width);
-        j = floor(v * height);
-    } else if(objectType == "plane") {
-        i = floor(fmod(u, height));
-        j = floor(fmod(v, width));
-    } else if(objectType == "cone"){
-        if(localHit.getY() <= -1 + EPSILON){
-            i = floor(((1+u)/2)*width);
-            j = floor(((1+v)/2)*height);
-        } else {
-            i = floor(u * width);
-            j = floor(v * height);
-        }
-    } else {
-        return defaultColor;
-    }
+    int i = floor(u * width);
+    int j = floor(v * height);
 
     int startPoint = i * 3 + j * width * 3;
 
@@ -39,8 +22,4 @@ Vec4 ImageColor::getColor(const std::string &objectType, double u, double v, Vec
 
     // get color at that point
     return {r, g, b, 0};
-}
-
-Vec4 ImageColor::getColor() {
-    return defaultColor;
 }

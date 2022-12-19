@@ -66,7 +66,7 @@ void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     double u = (localHit.getX()+1)/2;
     double v = (localHit.getZ()+1)/2;
     // Get color components
-    Vec4 c = lightComponents.color->getColor("plane", u, v, localHit, hitPoint);
+    Vec4 c = lightComponents.color->getColor(u, v, localHit, hitPoint);
     r = c.getX();
     g = c.getY();
     b = c.getZ();

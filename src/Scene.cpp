@@ -52,7 +52,7 @@ void Scene::fillScene(const std::string& filename) {
     assert(s["Scene"].GetBool());
 
     // Object property file
-    std::ifstream propertiesFile("../include/scenes/objectProperties.json");
+    std::ifstream propertiesFile("../include/properties/objectProperties.json");
     std::stringstream buffer3;
     buffer3 << propertiesFile.rdbuf();
     std::string tempString3 = buffer3.str();
@@ -66,8 +66,6 @@ void Scene::fillScene(const std::string& filename) {
     Vec4 position{}, pointsAt{}, color{};
     Transformation temp;
     double fov;
-    bool useColor;
-    std::string path, normalMapPath;
     LightComponents lightComponents;
     Material material;
 
@@ -124,8 +122,6 @@ void Scene::fillScene(const std::string& filename) {
         temp.clear();
         lightComponents.reset();
         material.reset();
-        useColor = true;
-        normalMapPath = "";
         // Check for transformations
         if(v.HasMember("transformations")){
             for(auto& i : v["transformations"].GetArray()){
