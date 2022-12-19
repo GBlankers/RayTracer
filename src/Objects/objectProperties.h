@@ -2,12 +2,13 @@
 #define RAYTRACER_OBJECTPROPERTIES_H
 
 #include "../Math/Vec4.h"
+#include "../Colors/Color.h"
 #include "../Normal/normalManipulator.h"
 #include "../Normal/normalRoughness.h"
 
 struct LightComponents{
     std::string name;
-    Vec4 color{};
+    Color* color;
     double ambient = 0;
     double diffuse = 0;
     double specular = 0;

@@ -1,0 +1,143 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [2300, 100, 0],
+    "location": [500, 300, 0]
+  },
+  "Objects": [
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [320, 320, 320]
+        },
+        {
+          "translation": [2300, -150, 800]
+        }
+      ],
+      "color": [1, 0, 0],
+      "color2": [0, 0, 1],
+      "ambient": 0.1,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0,
+      "checkerBoard": 0.05
+    },
+    {
+      "type": "cube",
+      "transformations": [
+        {
+          "scaling": [150, 150, 150]
+        },
+        {
+          "rotation": [
+            {
+              "y": 30
+            },
+            {
+              "z": 30
+            }
+          ]
+        },
+        {
+          "translation": [2500, 0, 200]
+        }
+      ],
+      "path": "../assets/ricardo.png",
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [200, 400, 200]
+        },
+        {
+          "rotation": [
+            {
+              "x": -30
+            }
+          ]
+        },
+        {
+          "translation": [2500, 0, -700]
+        }
+      ],
+      "color": [0.3, 0.39, 0.8],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1,
+      "checkerBoard": 0.1
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [200, 400, 200]
+        },
+        {
+          "rotation": [
+            {
+              "z": -60
+            }
+          ]
+        },
+        {
+          "translation": [2500, 0, -300]
+        }
+      ],
+      "color": [1, 0.39, 0.8],
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1,
+      "checkerBoard": 0.1
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "translation": [0, -500, 0]
+        }
+      ],
+      "color": [1, 1, 1],
+      "color2": [0, 1, 0],
+      "ambient": 0.1,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0,
+      "checkerBoard": 130
+    }
+  ],
+  "Light": [
+    {
+      "position": [1000, 400, 0],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ],
+  "SkyBox": {
+    "color": [0.53, 0.81, 0.92]
+  }
+}

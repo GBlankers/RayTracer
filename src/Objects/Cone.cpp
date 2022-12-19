@@ -3,9 +3,6 @@
 Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 Collision Cone::checkCollision(Ray r) {
     double t;
     bool inside;
@@ -15,7 +12,7 @@ Collision Cone::checkCollision(Ray r) {
         LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -126,4 +123,21 @@ Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
     }
     // Manipulate normal + transform to world coordinates + normalize
     return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
+}
+
+void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    Vec4 localHit = t.getInverse()*hitPoint;
+    double u, v;
+    if(localHit.getY() <= -1+EPSILON){
+        u = localHit.getX();
+        v = localHit.getZ();
+    } else {
+        u = 1+atan2(localHit.getX(), localHit.getZ())/M_PI;
+        v = localHit.getY();
+    }
+
+    Vec4 c = lightComponents.color->getColor("cone", u, v, localHit, hitPoint);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

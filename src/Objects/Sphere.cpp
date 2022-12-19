@@ -5,9 +5,6 @@
 Sphere::Sphere(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Sphere::Sphere(const Transformation &t, const std::string &path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 Collision Sphere::checkCollision(Ray r) {
     double t;
     bool inside;
@@ -17,7 +14,7 @@ Collision Sphere::checkCollision(Ray r) {
         this->getColor(r.at(t), red, green, blue);
 
         LightComponents l = this->lightComponents;
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -96,21 +93,13 @@ Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(image.empty()){
-        Shape::getColor(hitPoint, r, g, b);
-    } else {
-        Vec4 hit = t.getInverse()*hitPoint;
-        // uv-map
-        double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
-        double v = 0.5 + asin(hit.getY()*-1)/M_PI;
-
-        int i = floor(u*width);
-        int j = floor(v*height);
-
-        int startPoint = i*3+j*width*3;
-
-        r = (double)image.at(startPoint)/255;
-        g = (double)image.at(startPoint+1)/255;
-        b = (double)image.at(startPoint+2)/255;
-    }
+    // uv-map
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = 0.5 + (atan2(localHit.getX(), localHit.getZ()) / (2 * M_PI));
+    double v = 0.5 + asin(localHit.getY() * -1) / M_PI;
+    // Get color components
+    Vec4 c = lightComponents.color->getColor("sphere", u, v, localHit, hitPoint);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

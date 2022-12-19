@@ -6,7 +6,6 @@
 class Cone : public Shape{
 public:
     explicit Cone(const Transformation &t, LightComponents lightComponents, Material material);
-    explicit Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 
@@ -14,6 +13,8 @@ public:
     bool checkHit(Ray r, double &t) override;
 
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
+
+    void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
 };
 
 

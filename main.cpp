@@ -309,5 +309,4 @@ void renderer(){
 
 // TODO: normal maps
 // TODO: solid textures
-// TODO: make an abstract color class to simplify getting a color -> no booleans
 // TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI

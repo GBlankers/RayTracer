@@ -52,13 +52,15 @@
           "translation": [2300, -150, 700]
         }
       ],
-      "color": [0.83, 0.686, 0.216],
-      "ambient": 0.4,
-      "diffuse": 0.3,
-      "specular": 0.3,
-      "specularExponent": 10,
-      "reflectivity": 0.1,
-      "roughness": 0.1
+      "color": [1, 1, 1],
+      "color2": [0, 1, 0],
+      "ambient": 0.1,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0,
+      "checkerBoard": 130
     },
     {
       "type": "sphere",
@@ -124,6 +126,7 @@
         }
       ],
       "color": [1, 1, 1],
+      "color2": [0, 1, 0],
       "ambient": 0.1,
       "diffuse": 0.5,
       "specular": 0,

@@ -5,9 +5,6 @@
 Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
 
@@ -29,7 +26,7 @@ Collision Cube::checkCollision(Ray r) {
         LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
     }
@@ -221,4 +218,25 @@ Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
     Vec4 normal = inside ? Vec4{nx, ny, nz, 0} * -1 : Vec4{nx, ny, nz, 0};
     // Manipulate normal + transform to world coordinates + normalize
     return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
+}
+
+void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
+    Vec4 localHit = t.getInverse()*hitPoint;
+    // uv-map
+    double u, v;
+    if(localHit.getZ() <= (-1+EPSILON) or localHit.getZ() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getY())/2;
+    } else if(localHit.getY() <= (-1+EPSILON) or localHit.getY() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
+    } else {
+        u = (1+localHit.getY())/2;
+        v = (1+localHit.getZ())/2;
+    }
+    // Get color components
+    Vec4 c = lightComponents.color->getColor("cube", u, v, localHit, hitPoint);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

@@ -14,6 +14,9 @@
 #include "../Ray.h"
 #include "../Transformation.h"
 #include "../settings.h"
+#include "../Colors/Color.h"
+#include "../Colors/SingleColor.h"
+#include "../Colors/ImageColor.h"
 
 #include "../../include/code/lodepng.h"
 
@@ -24,19 +27,15 @@ protected:
     Transformation t;
     LightComponents lightComponents;
     Material material;
-    std::vector<unsigned char> image;
-    unsigned width = 0, height = 0;
 public:
     explicit Shape(Transformation t, LightComponents lightComponents, Material material);
-    explicit Shape(Transformation t, const std::string &path, LightComponents lightComponents, Material material);
 
     virtual Collision checkCollision(Ray r) = 0;
     virtual bool checkHit(Ray r, double &t, bool &inside) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;
 
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
-
-    virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b);
+    virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b) = 0;
 
     const Transformation &getTransformation() const;
 };

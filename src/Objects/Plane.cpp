@@ -3,9 +3,6 @@
 Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
-
 // Default plane at y=0 and limited between -1 and 1 for x and z
 Collision Plane::checkCollision(Ray r) {
     double t;
@@ -14,30 +11,9 @@ Collision Plane::checkCollision(Ray r) {
     if(checkHit(r, t, inside)){
         Vec4 hit = r.at(t);
         LightComponents l = this->lightComponents;
-        if(checkerBoard){
-            bool check;
-            Vec4 localHit = getTransformation().getInverse() * hit;
-            if(localHit.getX()<0){
-                if(localHit.getZ()<0){
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
-                } else {
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 1;
-                }
-            } else {
-                if(localHit.getZ()<0){
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 1;
-                } else {
-                    check = (((int)fabs(localHit.getX())/checkerBoardSize) + ((int)fabs(localHit.getZ())/checkerBoardSize)) % 2 == 0;
-                }
-            }
-            if(check){
-                l.color = {};
-                return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
-            }
-        }
         double red, green, blue;
         this->getColor(hit, red, green, blue);
-        l.color = {red, green, blue, 0};
+        l.color = new SingleColor(Vec4{red, green, blue, 0});
 
         return {r, t, calculateNormal(hit, inside), inside, l, material};
     }
@@ -84,28 +60,14 @@ Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
     return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }
 
-void Plane::setCheckerBoardPattern(bool b, int size) {
-    this->checkerBoard = b;
-    this->checkerBoardSize = size;
-}
-
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(image.empty()){
-        Shape::getColor(hitPoint, r, g, b);
-    } else {
-        Vec4 localHit = t.getInverse()*hitPoint;
-
-        double u = (localHit.getX()+1)/2;
-        double v = (localHit.getZ()+1)/2;
-
-        int i = floor(u*height);
-        int j = floor(v*width);
-
-        int startPoint = i*3+j*width*3;
-
-        r = (double)image.at(startPoint)/255;
-        g = (double)image.at(startPoint+1)/255;
-        b = (double)image.at(startPoint+2)/255;
-    }
-
+    // uv-map
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = (localHit.getX()+1)/2;
+    double v = (localHit.getZ()+1)/2;
+    // Get color components
+    Vec4 c = lightComponents.color->getColor("plane", u, v, localHit, hitPoint);
+    r = c.getX();
+    g = c.getY();
+    b = c.getZ();
 }

@@ -80,7 +80,7 @@ void Scene::fillScene(const std::string& filename) {
             LightComponents tempLightComponent;
             tempLightComponent.name = v["name"].GetString();
             valueArray = v["color"].GetArray();
-            tempLightComponent.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            tempLightComponent.color = new SingleColor({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
             tempLightComponent.ambient = v["ambient"].GetDouble();
             tempLightComponent.diffuse = v["diffuse"].GetDouble();
             tempLightComponent.specular = v["specular"].GetDouble();
@@ -169,13 +169,23 @@ void Scene::fillScene(const std::string& filename) {
         }
 
         // Check color/path to png file
-        if(v.HasMember("color")){
+        if(v.HasMember("checkerBoard")){
+            Vec4 secondColor = {};
+            if(v.HasMember("color2")){
+                valueArray = v["color2"];
+                assert(valueArray.IsArray());
+                secondColor = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            }
             valueArray = v["color"];
             assert(valueArray.IsArray());
-            lightComponents.color = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+            lightComponents.color = new CheckerBoard({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0},
+                                                     secondColor, v["checkerBoard"].GetDouble());
+        } else if(v.HasMember("color")){
+            valueArray = v["color"];
+            assert(valueArray.IsArray());
+            lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
         } else if(v.HasMember("path")){
-            useColor = false;
-            path = v["path"].GetString();
+            lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
         }
 
         // Check if a default material is used and if this material is present in the material map
@@ -213,21 +223,9 @@ void Scene::fillScene(const std::string& filename) {
         if(strcmp(v["type"].GetString(), "cube") == 0){
             objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
-            if(useColor){
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
-            }else{
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, lightComponents, material)));
-            }
+            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
-            if(useColor){
-                Plane tempPlane(temp, lightComponents, material);
-                if(v.HasMember("checkerBoard")){
-                    tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
-                }
-                objectVector.push_back(std::make_shared<Plane>(tempPlane));
-            } else {
-                objectVector.push_back(std::make_shared<Plane>(Plane(temp, path, lightComponents, material)));
-            }
+            objectVector.push_back(std::make_shared<Plane>(Plane(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
             objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material)));
         } else {
@@ -264,9 +262,9 @@ void Scene::fillScene(const std::string& filename) {
         value = s["SkyBox"];
         if(value.HasMember("color")){
             valueArray = value["color"].GetArray();
-            sky = SkyBox(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1});
+            sky = SkyBox(new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 1}));
         } else if(value.HasMember("path")){
-            sky = SkyBox(std::string(value["path"].GetString()));
+            sky = SkyBox(new ImageColor(std::string(value["path"].GetString())));
         } else {
             sky = SkyBox();
         }
