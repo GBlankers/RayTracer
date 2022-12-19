@@ -24,15 +24,13 @@ struct LightComponents{
 
 struct Material{
     std::string name;
-    normalManipulator* manipulator = new normalRoughness();
+    normalManipulator* manipulator;
     double reflectivity = 0;
     double roughness = 0;
     double transparency = 0;
     double refractiveIndex = 1;
     void reset(){
         name = "";
-        free(manipulator);
-        manipulator = new normalRoughness();
         reflectivity = 0;
         roughness = 0;
         transparency = 0;

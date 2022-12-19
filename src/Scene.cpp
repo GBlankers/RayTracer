@@ -204,6 +204,8 @@ void Scene::fillScene(const std::string& filename) {
 
         if(v.HasMember("normalMap")){
             material.manipulator = new normalImage(v["normalMap"].GetString());
+        } else {
+            material.manipulator = new normalRoughness();
         }
 
         // Check object type

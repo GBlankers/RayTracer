@@ -306,6 +306,9 @@
       "type": "plane",
       "transformations": [
         {
+          "scaling": [250, 1, 250]
+        },
+        {
           "rotation": [
             {
               "z": 90
@@ -334,6 +337,9 @@
       "type": "plane",
       "transformations": [
         {
+          "scaling": [256, 1, 256]
+        },
+        {
           "translation": [400, -300, -300]
         }
       ],
@@ -351,14 +357,16 @@
       "type": "plane",
       "transformations": [
         {
+          "scaling": [256, 1, 256]
+        },
+        {
           "translation": [400, -300, 300]
         }
       ],
       "colorName": "aluminium",
       "reflectivity": 0.1,
       "roughness": 0,
-      "normalMap": "../assets/metalNormal.png",
-      "size": [512,512]
+      "normalMap": "../assets/metalNormal.png"
     }
   ],
   "Light": [

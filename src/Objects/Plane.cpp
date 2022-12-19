@@ -6,7 +6,7 @@ Plane::Plane(const Transformation &t, LightComponents lightComponents, Material 
 Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
         Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-// Default plane at y=0
+// Default plane at y=0 and limited between -1 and 1 for x and z
 Collision Plane::checkCollision(Ray r) {
     double t;
     bool inside;
@@ -59,8 +59,8 @@ bool Plane::checkHit(Ray r, double &t) {
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
         t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
         // Check if -1<x<1 and -1<z<1
-        Vec4 hit = transformedRay.at(t);
-        if(-1<hit.getX() and hit.getX()<1 and -1<hit.getX() and hit.getX()<1){
+        Vec4 localHit = transformedRay.at(t);
+        if(localHit.getX()>=-1 and localHit.getX()<=1 and localHit.getZ()>=-1 and localHit.getZ()<=1){
             return t>0;
         }
     }
