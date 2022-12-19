@@ -8,7 +8,6 @@ class Plane : public Shape{
 private:
     bool checkerBoard = false;
     int checkerBoardSize = 800;
-    double planeLength = -1, planeWidth = -1;
 public:
     explicit Plane(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
     explicit Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
@@ -20,11 +19,8 @@ public:
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
 
     void setCheckerBoardPattern(bool b, int size);
-    void setSize(double l, double w);
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
-
-    Vec4 manipulateNormal(Vec4 normal, Vec4 hitPoint) override;
 };
 
 

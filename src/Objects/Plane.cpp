@@ -39,7 +39,7 @@ Collision Plane::checkCollision(Ray r) {
         this->getColor(hit, red, green, blue);
         l.color = {red, green, blue, 0};
 
-        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
+        return {r, t, calculateNormal(hit, inside), inside, l, material};
     }
 
     return {};
@@ -58,29 +58,30 @@ bool Plane::checkHit(Ray r, double &t) {
     // Ray is not parallel to the plane
     if(fabs(transformedRay.getDirectionVector().getY()) > EPSILON){
         t = -transformedRay.getStartPoint().getY()/transformedRay.getDirectionVector().getY();
-
-        // Check if dimensions of plane are limited
+        // Check if -1<x<1 and -1<z<1
         Vec4 hit = transformedRay.at(t);
-        if(planeLength>0){
-            if(hit.getX()>planeLength/2 or hit.getX()<-planeLength/2){
-                t = -1;
-            }
+        if(-1<hit.getX() and hit.getX()<1 and -1<hit.getX() and hit.getX()<1){
+            return t>0;
         }
-        if(planeWidth>0){
-            if(hit.getZ()>planeWidth/2 or hit.getZ()<-planeWidth/2){
-                t = -1;
-            }
-        }
-        return t>0;
     }
     return false;
 }
 
+/**
+ * Override the virtual calculate normal function to calculate the normal for the plane
+ * @param hitPoint hit point in world coordinates
+ * @param inside check if the hit is inside the object
+ * @return the normal in world coordinates
+ */
 Vec4 Plane::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 manipulatedNormal = manipulateNormal({0, 1, 0, 0}, t.getInverse()*hitPoint);
-    if(inside)
-        return Vec4::normalize(t.getForward()*manipulatedNormal) * -1;
-    return Vec4::normalize(t.getForward()*manipulatedNormal);
+    // Calculate normal in local coordinates
+    Vec4 normal = inside ? Vec4{0, -1, 0, 0} : Vec4{0, 1, 0, 0};
+    // uv-mapping
+    Vec4 localHit = t.getInverse()*hitPoint;
+    double u = (localHit.getX()+1)/2;
+    double v = (localHit.getZ()+1)/2;
+    // Manipulate normal + transform to world coordinates + normalize
+    return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }
 
 void Plane::setCheckerBoardPattern(bool b, int size) {
@@ -88,49 +89,23 @@ void Plane::setCheckerBoardPattern(bool b, int size) {
     this->checkerBoardSize = size;
 }
 
-void Plane::setSize(double l, double w) {
-    this->planeLength = l;
-    this->planeWidth = w;
-}
-
 void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(useNormal){
-        Vec4 normal = calculateNormal(hitPoint, false);
-        r = normal.getX();
-        b = normal.getY();
-        g = normal.getZ();
+    if(image.empty()){
+        Shape::getColor(hitPoint, r, g, b);
     } else {
-        if(image.empty()){
-            Shape::getColor(hitPoint, r, g, b);
-        } else {
-            Vec4 hit = t.getInverse()*hitPoint;
+        Vec4 localHit = t.getInverse()*hitPoint;
 
-            int i = floor(fmod((planeLength/2)+hit.getX(), height));
-            int j = floor(fmod((planeWidth/2)+hit.getZ(), width));
+        double u = (localHit.getX()+1)/2;
+        double v = (localHit.getZ()+1)/2;
 
-            int startPoint = i*3+j*width*3;
+        int i = floor(u*height);
+        int j = floor(v*width);
 
-            r = (double)image.at(startPoint)/255;
-            g = (double)image.at(startPoint+1)/255;
-            b = (double)image.at(startPoint+2)/255;
-        }
-    }
-}
+        int startPoint = i*3+j*width*3;
 
-Vec4 Plane::manipulateNormal(Vec4 normal, Vec4 hitPoint) {
-    double dx, dy, dz;
-    if(normalMap.empty()){
-        return Shape::manipulateNormal(normal, hitPoint);
+        r = (double)image.at(startPoint)/255;
+        g = (double)image.at(startPoint+1)/255;
+        b = (double)image.at(startPoint+2)/255;
     }
 
-    int i = floor(fmod((planeLength/2)+hitPoint.getX(), normalMapHeight));
-    int j = floor(fmod((planeWidth/2)+hitPoint.getZ(), normalMapWidth));
-
-    int startPoint = i*3+j*normalMapWidth*3;
-
-    dx = ((double)normalMap.at(startPoint)*2/255)-1; // x-displacement is mapped to the red color
-    dz = ((double)normalMap.at(startPoint+1)*2/255)-1; // z-displacement is mapped to the green color
-    dy = ((double)normalMap.at(startPoint+2)/255); // y-displacement is mapped to the blue color
-
-    return Vec4::normalize(Vec4{dx, dy, dz, 0});
 }
