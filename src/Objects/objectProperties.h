@@ -2,6 +2,8 @@
 #define RAYTRACER_OBJECTPROPERTIES_H
 
 #include "../Math/Vec4.h"
+#include "../Normal/normalManipulator.h"
+#include "../Normal/normalRoughness.h"
 
 struct LightComponents{
     std::string name;
@@ -22,16 +24,22 @@ struct LightComponents{
 
 struct Material{
     std::string name;
+    normalManipulator* manipulator = new normalRoughness();
     double reflectivity = 0;
     double roughness = 0;
     double transparency = 0;
     double refractiveIndex = 1;
     void reset(){
         name = "";
+        free(manipulator);
+        manipulator = new normalRoughness();
         reflectivity = 0;
         roughness = 0;
         transparency = 0;
         refractiveIndex = 1;
+    }
+    Vec4 manipulateNormal(Vec4 normal, double u, double v, Vec4 worldHit) const{
+        return manipulator->manipulateNormal(normal, this->roughness, u, v, worldHit);
     }
 };
 

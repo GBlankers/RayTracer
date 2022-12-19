@@ -1,10 +1,10 @@
 #include "Plane.h"
 
-Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Plane::Plane(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Plane::Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 // Default plane at y=0
 Collision Plane::checkCollision(Ray r) {

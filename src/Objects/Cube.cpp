@@ -2,11 +2,11 @@
 
 #include <utility>
 
-Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Cube::Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 bool Cube::checkInCube(Ray r, double t){
     Vec4 collisionPoint = r.at(t);
@@ -200,22 +200,25 @@ bool Cube::checkHit(Ray r, double &t) {
  * @return the normal direction at the hit point in world coordinates
  */
 Vec4 Cube::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 inverseHitPoint = t.getInverse() * hitPoint;
-    double x = inverseHitPoint.getX(), y = inverseHitPoint.getY(), z = inverseHitPoint.getZ();
-    double nx=0, ny=0, nz=0;
-    if(x >= (1-EPSILON) || x <= (-1+EPSILON)){
-        nx = x;
+    Vec4 localHit = t.getInverse() * hitPoint;
+    // Calculate normal in local coordinates + uv-mapping
+    double nx=0, ny=0, nz=0, u = 0, v = 0;
+    if(localHit.getX() >= (1-EPSILON) or localHit.getX() <= (-1+EPSILON)){
+        nx = localHit.getX();
+        u = (1+localHit.getY())/2;
+        v = (1+localHit.getZ())/2;
     }
-    if(y >= (1-EPSILON) || y <= (-1+EPSILON)){
-        ny = y;
+    if(localHit.getY() >= (1-EPSILON) or localHit.getY() <= (-1+EPSILON)){
+        ny = localHit.getY();
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
     }
-    if(z >= (1-EPSILON) || z <= (-1+EPSILON)){
-        nz = z;
+    if(localHit.getZ() >= (1-EPSILON) or localHit.getZ() <= (-1+EPSILON)){
+        nz = localHit.getZ();
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getY())/2;
     }
-
-    Vec4 manipulatedNormal = Shape::manipulateNormal(Vec4{nx, ny, nz, 0}, inverseHitPoint);
-
-    if(inside)
-        return Vec4::normalize(t.getForward() * manipulatedNormal) * -1;
-    return Vec4::normalize(t.getForward() * manipulatedNormal);
+    Vec4 normal = inside ? Vec4{nx, ny, nz, 0} * -1 : Vec4{nx, ny, nz, 0};
+    // Manipulate normal + transform to world coordinates + normalize
+    return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }

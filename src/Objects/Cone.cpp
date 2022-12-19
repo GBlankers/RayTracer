@@ -1,10 +1,10 @@
 #include "Cone.h"
 
-Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Cone::Cone(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 Collision Cone::checkCollision(Ray r) {
     double t;
@@ -110,17 +110,20 @@ bool Cone::checkHit(Ray r, double &t) {
 }
 
 Vec4 Cone::calculateNormal(Vec4 hitPoint, bool inside) {
-    int in = inside ? -1 : 1;
-
     Vec4 localHit = t.getInverse() * hitPoint;
+    // Calculate the normal in local coordinates + uv-mapping
     Vec4 normal;
-    if(fabs(localHit.getY()) < EPSILON){
-        normal = Shape::manipulateNormal(Vec4{0, 1, 0, 0}, localHit);
-        return Vec4::normalize(getTransformation().getForward() * normal) * in;
-    } else if (fabs(localHit.getY()+1) < EPSILON){
-        normal = Shape::manipulateNormal(Vec4{0, -1, 0, 0}, localHit);
-        return Vec4::normalize(getTransformation().getForward() * normal) * in;
+    double u = 0, v = 0;
+    if(localHit.getY() <= -1+EPSILON){ // Hit the bottom plane
+        u = localHit.getX();
+        v = localHit.getZ();
+        normal = inside ? Vec4{0, -1, 0, 0} : Vec4{0, 1, 0, 0};
+    } else { // Hit the cone
+        u = 1+atan2(localHit.getX(), localHit.getZ())/M_PI;
+        v = localHit.getY();
+        normal = inside ? Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0} :
+                 Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0} * -1;
     }
-    normal = Shape::manipulateNormal(Vec4{2 * localHit.getX(), -2 * localHit.getY(), 2 * localHit.getZ(), 0}, localHit);
-    return Vec4::normalize(getTransformation().getForward() * normal) * in;
+    // Manipulate normal + transform to world coordinates + normalize
+    return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }

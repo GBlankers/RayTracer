@@ -5,8 +5,8 @@
 
 class Cube : public Shape{
 public:
-    explicit Cube(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
-    explicit Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
+    explicit Cube(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Cube(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Normal/normalImage.h"
 
 Scene::Scene() = default;
 
@@ -202,40 +203,31 @@ void Scene::fillScene(const std::string& filename) {
         }
 
         if(v.HasMember("normalMap")){
-            normalMapPath = v["normalMap"].GetString();
+            material.manipulator = new normalImage(v["normalMap"].GetString());
         }
 
         // Check object type
         assert(v.HasMember("type"));
         if(strcmp(v["type"].GetString(), "cube") == 0){
-            objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material, normalMapPath)));
+            objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material)));
         } else if(strcmp(v["type"].GetString(), "sphere") == 0){
             if(useColor){
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material, normalMapPath)));
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
             }else{
-                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, lightComponents, material, normalMapPath)));
+                objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, path, lightComponents, material)));
             }
         } else if(strcmp(v["type"].GetString(), "plane") == 0){
             if(useColor){
-                Plane tempPlane(temp, lightComponents, material, normalMapPath);
+                Plane tempPlane(temp, lightComponents, material);
                 if(v.HasMember("checkerBoard")){
                     tempPlane.setCheckerBoardPattern(true, v["checkerBoard"].GetInt());
                 }
-                if(v.HasMember("size")) {
-                    valueArray = v["size"].GetArray();
-                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
-                }
                 objectVector.push_back(std::make_shared<Plane>(tempPlane));
             } else {
-                Plane tempPlane(temp, path, lightComponents, material, normalMapPath);
-                if(v.HasMember("size")){
-                    valueArray = v["size"].GetArray();
-                    tempPlane.setSize(valueArray[0].GetDouble(), valueArray[1].GetDouble());
-                }
-                objectVector.push_back(std::make_shared<Plane>(tempPlane));
+                objectVector.push_back(std::make_shared<Plane>(Plane(temp, path, lightComponents, material)));
             }
         } else if(strcmp(v["type"].GetString(), "cone") == 0){
-            objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material, normalMapPath)));
+            objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material)));
         } else {
             perror("Unknown object type in json file");
         }

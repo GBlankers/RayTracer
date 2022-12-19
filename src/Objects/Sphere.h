@@ -9,9 +9,8 @@
 
 class Sphere: public Shape{
 public:
-    explicit Sphere(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
-    explicit Sphere(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material,
-                    const std::string &normalMapPath = "");
+    explicit Sphere(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Sphere(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
 

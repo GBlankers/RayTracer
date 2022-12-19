@@ -2,12 +2,11 @@
 
 #include <utility>
 
-Sphere::Sphere(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath) :
-        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Sphere::Sphere(const Transformation &t, LightComponents lightComponents, Material material) :
+        Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
-Sphere::Sphere(const Transformation &t, const std::string &path, LightComponents lightComponents, Material material,
-               const std::string &normalMapPath) :
-        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material)), normalMapPath) {}
+Sphere::Sphere(const Transformation &t, const std::string &path, LightComponents lightComponents, Material material) :
+        Shape(t, path, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 Collision Sphere::checkCollision(Ray r) {
     double t;
@@ -85,41 +84,33 @@ bool Sphere::checkHit(Ray r, double &t) {
 }
 
 Vec4 Sphere::calculateNormal(Vec4 hitPoint, bool inside) {
-    Vec4 normal(getTransformation().getInverse() * hitPoint);
+    Vec4 localHit = getTransformation().getInverse() * hitPoint;
+    // Calculate normal in local coordinates
+    Vec4 normal = inside ? localHit * -1 : localHit;
     normal.setHomogeneous(0);
-    // manipulate normal so randomness is less random
-    normal = Shape::manipulateNormal(normal, t.getInverse()*hitPoint);
-
-    // If the hit is on the inside of the object the normal needs to be flipped
-    if(inside)
-        return Vec4::normalize(t.getForward()*normal) * -1;
-
-    return Vec4::normalize(t.getForward()*normal);
+    // uv-mapping
+    double u = 0.5 + (atan2(localHit.getX(), localHit.getZ())/(2*M_PI));
+    double v = 0.5 + asin(localHit.getY()*-1)/M_PI;
+    // Manipulate normal + transform to world coordinates + normalize
+    return Vec4::normalize(t.getForward()*material.manipulateNormal(normal, u, v, hitPoint));
 }
 
 void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
-    if(useNormal){
-        Vec4 normal = calculateNormal(hitPoint, false);
-        r = normal.getX();
-        b = normal.getY();
-        g = normal.getZ();
+    if(image.empty()){
+        Shape::getColor(hitPoint, r, g, b);
     } else {
-        if(image.empty()){
-            Shape::getColor(hitPoint, r, g, b);
-        } else {
-            Vec4 hit = t.getInverse()*hitPoint;
-            // uv-map
-            double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
-            double v = 0.5 + asin(hit.getY()*-1)/M_PI;
+        Vec4 hit = t.getInverse()*hitPoint;
+        // uv-map
+        double u = 0.5 + (atan2(hit.getX(), hit.getZ())/(2*M_PI));
+        double v = 0.5 + asin(hit.getY()*-1)/M_PI;
 
-            int i = floor(u*width);
-            int j = floor(v*height);
+        int i = floor(u*width);
+        int j = floor(v*height);
 
-            int startPoint = i*3+j*width*3;
+        int startPoint = i*3+j*width*3;
 
-            r = (double)image.at(startPoint)/255;
-            g = (double)image.at(startPoint+1)/255;
-            b = (double)image.at(startPoint+2)/255;
-        }
+        r = (double)image.at(startPoint)/255;
+        g = (double)image.at(startPoint+1)/255;
+        b = (double)image.at(startPoint+2)/255;
     }
 }

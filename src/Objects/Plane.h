@@ -9,8 +9,8 @@ private:
     bool checkerBoard = false;
     int checkerBoardSize = 800;
 public:
-    explicit Plane(const Transformation &t, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
-    explicit Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material, const std::string &normalMapPath = "");
+    explicit Plane(const Transformation &t, LightComponents lightComponents, Material material);
+    explicit Plane(const Transformation &t, const std::string& path, LightComponents lightComponents, Material material);
 
     Collision checkCollision(Ray r) override;
     bool checkHit(Ray r, double &t, bool &inside) override;
