@@ -36,6 +36,26 @@ All the written code can be found in this folder. Under src, the main classes us
 - reflection and refraction up to custom depth with definable reflectivity, roughness, transparency and refractive index
 - anti-aliasing
 
+# Creating a New Scene
+## Structure of the scene files
+The scene files are json files which need to have certain keywords in order to be correctly interpreted:
+- `"Scene" : true`. Indicates that this file is a scene description.
+- `Camera` object, which is the 'eye', from where we will look at the scene. This object need to have the following properties:
+  - `fov`, indicating the field of view. **A value between 0 and 180**
+  - `"pointsAt": [x, y, z]`, give coordinates of a point where we will look at. This will be used to calculate the ray directions.
+  - `"location": [x, y, z]`, where is the camera located.
+  - **(Optional)**`"angle": [theta, phi]`, we can tilt the camera where theta will be the tilt of the up-vector and phi will be a rotation with respect to the look direction.
+- **(Optional)**`"Light"` which is a list of all the light Sources. Every light source is an object defined by:
+  - `"position": [x, y, z]`, where the light source is located
+  - `"pointsAt": [x, y, z]`, to give directivity to the light source.
+  - `"color": [r, g, b]`, color of the light source. **r, g, and b need to be between 0 and 1**
+  - **(Optional)**`"intensity": double`, we can dim the light source. **A value between 0 and 1.
+- **(Optional)**`"SkyBox"`, which gives the 'sky' a color when no other objects are hit. If this is not defined, a default color will be given to the sky. The skybox is an object with ***1*** of the following properties:
+  - `"color": [r, g, b]`, to give the sky a single color. **r, g, and b need to be between 0 and 1**
+  - `"path": string`, give the path to a **png** file from where the colors will be taken. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
+- `"Objects"`, which is a list of all the defined objects in the scene. Every object needs to have the following properties:
+  - `"type": "objecttype"`, where "objectType" can be sphere/plane/cube/cone.
+
 # Dependencies
 - rapidJSON
 - lodePNG

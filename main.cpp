@@ -278,8 +278,10 @@ void renderer(){
 
     // Create pixel vectors -> threads fill these up
     std::vector<std::vector<Vec4>> pixelLists;
+    std::vector<bool> drawn;
     for(int i = 0; i<THREADS; i++){
         pixelLists.emplace_back(std::vector<Vec4>());
+        drawn.emplace_back(false);
     }
 
     // Create and start the different threads
@@ -288,16 +290,23 @@ void renderer(){
      threads[i] = std::thread(goOverPixels, world, std::ref(pixelLists.at(i)), -W+(i*(2*W/THREADS)), -W+(i+1)*(2*W/THREADS));
     }
 
+    // This is not fully math proof -> when W/THREADS does not produce a double then the total number of pixels equals
+    // W*H*4/THREADS. But when it does produce a double, there are a little less pixels in every vector due to rounding
+    // So to be safe, and to make sure the vectors are drawn, make the number a bit smaller. This does not have a large
+    // impact on performance as we still are very close to calculating all the pixels.
+    int totalNumberPixels = 4*(W-3)*H/THREADS;
+
     int threadsJoined = 0;
     // Check all treads for completion and draw the pixels if completed
     while(threadsJoined != THREADS){
         // Check all threads
         for(int i = 0; i<THREADS; i++){
             // Check completion -> join + draw
-            if(threads[i].joinable()){
+            if(pixelLists.at(i).size()>= totalNumberPixels and !drawn.at(i)){
                 threads[i].join();
                 drawPixelsFromVector(pixelLists.at(i), (int)(-W+i*(2*W/THREADS)), (int)(2*W/THREADS));
                 threadsJoined ++;
+                drawn.at(i) = true;
             }
         }
     }
@@ -306,5 +315,3 @@ void renderer(){
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;
 }
-
-// TODO: EXTRA: progressive rendering, movable camera, dynamically change the scene using ImGUI
