@@ -53,8 +53,32 @@ The scene files are json files which need to have certain keywords in order to b
 - **(Optional)**`"SkyBox"`, which gives the 'sky' a color when no other objects are hit. If this is not defined, a default color will be given to the sky. The skybox is an object with ***1*** of the following properties:
   - `"color": [r, g, b]`, to give the sky a single color. **r, g, and b need to be between 0 and 1**
   - `"path": string`, give the path to a **png** file from where the colors will be taken. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
-- `"Objects"`, which is a list of all the defined objects in the scene. Every object needs to have the following properties:
+- `"Objects"`, which is a list of all the defined objects in the scene. Every object is defined as a unit object located in the origin and need to have the following properties:
   - `"type": "objecttype"`, where "objectType" can be sphere/plane/cube/cone.
+  - **(Optional)**`"transformations"`, a list consisting of transformations, the order of this is the order in which the transformations will be executed. Every transformation is an object with as keyword the transformation name and as argument the parameters. These can be:
+    - `"scaling": [x, y, z]`, scale the object in the defined directions.
+    - `"translation": [x, y, z]`, move the object.
+    - `"rotation"`, a list of the different rotations that need to happen. This need to be a list as the order of rotations is important. Every object in this list contains the axis of rotation as keyword **(x, y, or z)** and the amount of rotation in degrees.
+  - *Lighting*, there are 2 ways to define the phong lighting parameters:
+    - `"colorName"`, using a predefined color with lighting parameters defined in the `objectProperties.json` file.
+    - Defining every parameter independently:
+      - `"ambient": double`, ambient light reaching the object. **Needs to be between 0 and 1**
+      - `"diffuse": double`, used for shading. **Needs to be between 0 and 1**
+      - `"specular": double`, used for specular reflections. **Needs to be between 0 and 1**
+      - `"specularExponent": double`, used to refine the specular reflections
+  - *Color*, color can be defined in different ways:
+    - the color defined in the `"colorName"` object can be used.
+    - `"color": [r, g, b]`, define a single color for an object. 
+    - `"checkerboard": double`, makes a checkerboard pattern. The size of the tiles can be changed. The color of the checkerboard can be changed with the `"color": [r, g, b]` and the **(Optional)** `"color2": [r, g, b]` keywords. In both cases the **r, g, and b need to be between 0 and 1**.
+    - `"path": string`, a path to a **png** file in the assets' folder. Using uv mapping the image will be projected onto the object. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
+  - *Material*, material properties can be defined in 2 ways.
+    - `"materialName`, using predefined material properties defined in the `objectProperties.json` file.
+    - Defining every object independently:
+      - **(Optional)**`"reflectivity": double`, how reflective is the object. Default is 0. **Needs to be between 0 and 1**
+      - **(Optional)**`"roughness": double`, create a rough surface to have non-perfect reflections and refractions. Default is 0. **Needs to be between 0 and 1**
+      - **(Optional)**`"transparency": double`, is the object see through. Default is 0. **Needs to be between 0 and 1**
+        - `"refractiveIndex": double`, when the object is transparent, we also need to define a refractive index. Default is 1.
+  - **(Optional)**`"normalMap"`, use an image to construct the normals of the object. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
 
 # Dependencies
 - rapidJSON
