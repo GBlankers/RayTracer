@@ -2,7 +2,7 @@
 
 Vec4 normalRoughness::manipulateNormal(Vec4 normal, double roughness, double u, double v, Vec4 worldHit) {
     double dx, dy, dz;
-    double scale = 5;
+    double scale = 700;
     // Default random noise using hashes and the roughness param
     // dividing the hash by the max/2 value gives a return between 0 and 2 -> -1 -> between -1 and 1;
     // divide by 'scale' to get a smaller range and make the displacement of the vector smaller

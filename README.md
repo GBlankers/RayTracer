@@ -1,24 +1,24 @@
 # RayTracer
 Basic ray tracing engine for the I-Computer Graphics course
 
-# Project Structure
+## Project Structure
 `main.cpp` the main file where the opengl initialisation code is located as well as the logic for multithreading, the main loop to check for collisions, reflection, refractions and lighting.
 
 
-## Assets
+### Assets
 Folder with all the png file which can be used for textures, normal mapping and skybox.
 
-## Include
-### Code
+### Include
+#### Code
 In this folder the imported code to read png files can be found.
-### Properties
+#### Properties
 A folder with an objectProperties.json file. In this file different colors/materials can be defined. These can then be used in the scenes by using the `colorName` and `materialName` keywords.
-### Scenes
+#### Scenes
 This contains 2 types of files. 
 - A general.json file. In this file the selected scene can be defined with the `scene` keyword.
 - The scene files in json format
 
-## src
+### src
 All the written code can be found in this folder. Under src, the main classes used for a ray tracing engine can be found such as: camera, collision, ray, scene, general settings and transformation. Further there are sub-folders for:
 - Colors. Different possibilities to give a color to an object: using an image, a single color or using a checkerboard pattern. Other solid textures can be added here.
 - Math. Math related classes/functions for matrices, vectors and random number generators.
@@ -26,7 +26,7 @@ All the written code can be found in this folder. Under src, the main classes us
 - Objects. All the different shapes can be found here (plane, cube, sphere and cone) as well as light sources, a skybox(what if a ray does not hit anything? -> it gets the color of the skybox) and object properties structs to keep the object classes more clean.
 
 
-# Features
+## Features
 - Different objects: sphere, cube, plane, cone
 - Easily definable camera (position + looks at + up vector angle)
 - Light sources with custom intensity, color and location
@@ -35,9 +35,14 @@ All the written code can be found in this folder. Under src, the main classes us
 - phong lighting (ambient, diffuse, specular)
 - reflection and refraction up to custom depth with definable reflectivity, roughness, transparency and refractive index
 - anti-aliasing
+- roughness and normal mapping defined with a custom `png` file.
+- multi-threading to speed up the rendering.
 
-# Creating a New Scene
-## Structure of the scene files
+## Creating a New Scene
+### How to?
+Create a new json file and place it into the assets' folder. Structure the file as described in [Structure of the scene files](#structure-of-the-scene-files). In the `general.json` file, change the scene file to the newly created one.
+
+### Structure of the scene files
 The scene files are json files which need to have certain keywords in order to be correctly interpreted:
 - `"Scene" : true`. Indicates that this file is a scene description.
 - `Camera` object, which is the 'eye', from where we will look at the scene. This object need to have the following properties:
@@ -80,6 +85,6 @@ The scene files are json files which need to have certain keywords in order to b
         - `"refractiveIndex": double`, when the object is transparent, we also need to define a refractive index. Default is 1.
   - **(Optional)**`"normalMap"`, use an image to construct the normals of the object. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
 
-# Dependencies
+## Dependencies
 - rapidJSON
 - lodePNG

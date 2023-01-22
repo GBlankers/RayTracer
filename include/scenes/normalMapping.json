@@ -1,0 +1,77 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [1000, 0, 0],
+    "location": [800, 100, 0]
+  },
+  "Objects": [
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [800, 0, -300]
+        }
+      ],
+      "colorName": "water",
+      "reflectivity": 0.3,
+      "normalMap": "../assets/WaterNormal.png"
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [800, 0, 300]
+        }
+      ],
+      "colorName": "water",
+      "reflectivity": 0.3
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [1400, 0, -300]
+        }
+      ],
+      "colorName": "aluminium",
+      "reflectivity": 0.1,
+      "roughness": 0,
+      "normalMap": "../assets/metalNormal.png"
+    },
+
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [256, 1, 256]
+        },
+        {
+          "translation": [1400, 0, 300]
+        }
+      ],
+      "colorName": "aluminium",
+      "reflectivity": 0.1,
+      "roughness": 0
+    }
+  ],
+  "Light": [
+    {
+      "position": [1000, 100, 1000],
+      "pointsAt": [1000, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ],
+  "SkyBox": {
+    "color": [0, 0, 0]
+  }
+}

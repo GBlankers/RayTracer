@@ -23,6 +23,14 @@
       "diffuse": 0.4,
       "specular": 0.2,
       "specularExponent": 10
+    },
+    {
+      "name": "water",
+      "color": [0.059, 0.367, 0.609],
+      "ambient": 0.4,
+      "diffuse": 0.6,
+      "specular": 0.6,
+      "specularExponent": 20
     }
   ],
   "materials": [

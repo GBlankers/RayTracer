@@ -12,15 +12,79 @@
 
 #include "GL/glut.h"
 
+/**
+ * Initialize openGL variables
+ */
 void openGLInit();
+
+/**
+ * Simpler function to draw a pixel to an openGL window
+ * @param x x-coordinate
+ * @param y y-coordinate
+ */
 void drawDot(GLint x, GLint y);
+
+/**
+ * Code that will be run by openGL to draw pixels to the screen. In this function different threads and the
+ * drawing of the screen will be started
+ */
 void renderer();
 
+/**
+ * At a collision calculate the contribution of the light sources to the lighting of the hit.
+ * @param c collision point, used for color and material information as well as normal calculation
+ * @param scene the total scene.
+ * @return the color at the hit, taking into account the lighting components.
+ */
 Vec4 lighting(const Collision& c, const Scene& scene);
+
+/**
+ * Calculate the light and color contribution at a collision point in the scene for reflections.
+ * @param c collision point, for normal calculation, color and material of the hit and the incoming ray
+ * @param bouncesToDo number of bounces allowed to do, as this function is used in a recursive way we need a way to limit the amount of calls.
+ * @param scene the total scene used to further calculate collisions.
+ * @return the result of `objectColorHit` at the new collision point or the color of the object that was hit
+ */
 Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene);
+
+/**
+ * Calculate the light and color contribution at a collision point in the scene for refractions.
+ *  Assume there are no objects inside objects -> only refractions between material and air
+ * @param c collision point, for normal calculation, color and material of the hit and the incoming ray
+ * @param bouncesToDo number of bounces allowed to do, as this function is used in a recursive way we need a way to limit the amount of calls.
+ * @param scene the total scene used to further calculate collisions.
+ * @return the result of `objectColorHit` at the new collision point or the color of the object that was hit
+ */
 Vec4 refract(Collision c, int bouncesToDo, const Scene& scene);
+
+/**
+ * For every hit with an object we need to calculate the contributions of light, reflections and refractions
+ * @param c collision point, for normal calculation, color and material of the hit and the incoming ray
+ * @param bouncesToDo number of bounces allowed to do, as this function is used in a recursive way we need a way to limit the amount of calls.
+ * @param scene the total scene used to further calculate collisions.
+ * @return the color of the hit, an accumulation of the light, reflections and refractions
+ */
 Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene);
 
+/**
+ * Go over all the pixels in the vector and draw them to the screen using openGL. The screen is divided vertically. This way
+ * we only need to know the vertical coordinates between which we need to draw the pixels.
+ * @param vector the vector containing the pixel information
+ * @param begin the begin coordinates
+ * @param length the length of the divided parts.
+ */
+void drawPixelsFromVector(std::vector<Vec4>& vector, int begin, int length);
+
+/**
+ * Function that does the ray tracing (calculation of the rays, go over all point on the screen, check for collisions and
+ * calculate the color and lighting contributions at the collision points. + Anti-aliasing). This function will be multi-threaded
+ * so it can't contain any openGL code, purely math. Therefore we also need to give it a list which can be filled with the calculated pixel
+ * information
+ * @param s the total scene
+ * @param pixelList pixel list which will be filled with pixel information
+ * @param begin begin coordinates to calculate
+ * @param end end coordinates to calculate
+ */
 void goOverPixels(const Scene& s, std::vector<Vec4>& pixelList, int begin, int end);
 
 int main(int argc, char** argv) {
@@ -120,14 +184,6 @@ Vec4 reflect(const Collision& c, int bouncesToDo, const Scene& scene){
     return objectColorHit(closestC, bouncesToDo-1, scene);
 }
 
-/**
- *  Assume there are no objects inside objects -> only refractions between material and air
- * @param shape the object that was hit
- * @param c the collision point, for normal calculation
- * @param incoming incoming ray, used to calculate the refracted ray
- * @param scene the total scene used to further calculate collisions
- * @return refracted color, in a recursive way
- */
 Vec4 refract(Collision c, int bouncesToDo, const Scene& scene){
     // Calculate the normalized direction
     Vec4 normDir = Vec4::normalize(c.getIncoming().getDirectionVector());
@@ -177,14 +233,6 @@ Vec4 refract(Collision c, int bouncesToDo, const Scene& scene){
     return objectColorHit(closestC, bouncesToDo, scene);
 }
 
-/**
- * For every hit with an object we need to calculate the contributions of light, reflections and refractions
- * @param shape for material properties
- * @param c collision point, for normal calculation and color of the hit
- * @param incoming incoming ray, used to calculate the new reflected and refracted ray
- * @param scene full scene, needed to check for further collisions
- * @return the color of the hit, an accumulation of the light, reflections and refractions
- */
 Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene){
     Vec4 color, reflection, refraction;
 
@@ -274,10 +322,12 @@ void renderer(){
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // calculate the time for debugging
     auto start = std::chrono::high_resolution_clock::now();
 
     // Create pixel vectors -> threads fill these up
     std::vector<std::vector<Vec4>> pixelLists;
+    // boolean vector to check if a vector is already drawn to the screen
     std::vector<bool> drawn;
     for(int i = 0; i<THREADS; i++){
         pixelLists.emplace_back(std::vector<Vec4>());
@@ -287,7 +337,9 @@ void renderer(){
     // Create and start the different threads
     std::thread threads[THREADS];
     for(int i = 0; i<THREADS; i++){
-     threads[i] = std::thread(goOverPixels, world, std::ref(pixelLists.at(i)), -W+(i*(2*W/THREADS)), -W+(i+1)*(2*W/THREADS));
+        // -W+(i*(2*W/THREADS)) and -W+(i+1)*(2*W/THREADS) calculate the pixels that need to be calculated in the thread
+        // depending on the total amount of threads and the window width.
+        threads[i] = std::thread(goOverPixels, world, std::ref(pixelLists.at(i)), -W+(i*(2*W/THREADS)), -W+(i+1)*(2*W/THREADS));
     }
 
     // This is not fully math proof -> when W/THREADS does not produce a double then the total number of pixels equals
