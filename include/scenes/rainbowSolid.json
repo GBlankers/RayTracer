@@ -1,0 +1,64 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 10,
+    "pointsAt": [2000, 0, 0],
+    "location": [0, 0, 0]
+  },
+  "Objects": [
+    {
+    "type": "plane",
+    "transformations": [
+      {
+        "scaling": [250, 1, 250]
+      },
+      {
+        "rotation": [
+          {
+            "z": 90
+          }
+        ]
+      },
+      {
+        "translation": [2300, 0, 0]
+      }
+    ],
+      "rainbow": true,
+      "ambient": 0.8,
+      "diffuse": 0.2,
+      "specular": 0.2,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [10000, 1, 10000]
+        },
+        {
+          "translation": [0, -500, 0]
+        }
+      ],
+      "color": [1, 1, 1],
+      "ambient": 0.1,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 0,
+      "reflectivity": 0,
+      "roughness": 0,
+      "checkerBoard": 0.008
+    }
+  ],
+  "Light": [
+    {
+      "position": [1500, 2000, 0],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ],
+  "SkyBox": {
+    "color": [0.53, 0.81, 0.92]
+  }
+}

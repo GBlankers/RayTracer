@@ -6,6 +6,10 @@
 #include "../Normal/normalManipulator.h"
 #include "../Normal/normalRoughness.h"
 
+/**
+ * Container for all the properties related to light, this includes: the color, ambient, diffuse and specular components.
+ * A reset method is also implemented.
+ */
 struct LightComponents{
     std::string name;
     Color* color;
@@ -23,6 +27,11 @@ struct LightComponents{
     }
 };
 
+/**
+ * A container for all properties related to the material, this includes: a normal manipulator, reflectivity, roughness,
+ * transparency and refractive index.
+ * A reset method is also implemented as well as a manipulateNormal function to make function calls in objects cleaner.
+ */
 struct Material{
     std::string name;
     normalManipulator* manipulator;

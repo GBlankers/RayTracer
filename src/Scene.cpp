@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Normal/normalImage.h"
+#include "Colors/RainbowColor.h"
 
 Scene::Scene() = default;
 
@@ -19,6 +19,11 @@ Vec4 Scene::getSkyColor(Vec4 direction) const{
     return sky.getColor(direction);
 }
 
+/**
+ * Create a scene from a scene file (.json) located in the assets folder. This uses the rapidJson dependency to be able to
+ * easily parse json files. The structure of the scene files can be found in the readme of this project.
+ * @param filename the name of the scene file.
+ */
 void Scene::fillScene(const std::string& filename) {
     // Filename is defined in the main, this file is 1 directory deeper
     std::ifstream generalFile("../"+filename);
@@ -182,6 +187,8 @@ void Scene::fillScene(const std::string& filename) {
             lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
         } else if(v.HasMember("path")){
             lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
+        } else if(v.HasMember("rainbow")){
+            lightComponents.color = new RainbowColor();
         }
 
         // Check if a default material is used and if this material is present in the material map

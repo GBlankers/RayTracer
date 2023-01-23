@@ -7,7 +7,6 @@
 #include "src/Math/Vec4.h"
 #include "src/Scene.h"
 #include "src/settings.h"
-
 #include "src/Math/Utils.h"
 
 #include "GL/glut.h"
