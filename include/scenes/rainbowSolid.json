@@ -7,23 +7,16 @@
   },
   "Objects": [
     {
-    "type": "plane",
-    "transformations": [
-      {
-        "scaling": [250, 1, 250]
-      },
-      {
-        "rotation": [
-          {
-            "z": 90
-          }
-        ]
-      },
-      {
-        "translation": [2300, 0, 0]
-      }
-    ],
-      "rainbow": true,
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [350, 350, 350]
+        },
+        {
+          "translation": [2300, 0, 0]
+        }
+      ],
+      "woodGrain": true,
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
@@ -31,6 +24,7 @@
       "reflectivity": 0,
       "roughness": 0
     },
+
     {
       "type": "plane",
       "transformations": [

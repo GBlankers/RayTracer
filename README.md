@@ -77,6 +77,7 @@ The scene files are json files which need to have certain keywords in order to b
     - `"checkerboard": double`, makes a checkerboard pattern. The size of the tiles can be changed. The color of the checkerboard can be changed with the `"color": [r, g, b]` and the **(Optional)** `"color2": [r, g, b]` keywords. In both cases the **r, g, and b need to be between 0 and 1**.
     - `"path": string`, a path to a **png** file in the assets' folder. Using uv mapping the image will be projected onto the object. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
     - `"rainbow": true`, give the object a rainbow color depending on the coordinate of the hit.
+    - `"woodGrain": true`, give the object a wood like color with rings.
   - *Material*, material properties can be defined in 2 ways.
     - `"materialName`, using predefined material properties defined in the `objectProperties.json` file.
     - Defining every object independently:

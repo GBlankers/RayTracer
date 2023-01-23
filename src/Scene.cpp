@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Colors/RainbowColor.h"
+#include "Colors/WoodGrain.h"
 
 Scene::Scene() = default;
 
@@ -189,6 +190,8 @@ void Scene::fillScene(const std::string& filename) {
             lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
         } else if(v.HasMember("rainbow")){
             lightComponents.color = new RainbowColor();
+        } else if(v.HasMember("woodGrain")){
+            lightComponents.color = new WoodGrain();
         }
 
         // Check if a default material is used and if this material is present in the material map
