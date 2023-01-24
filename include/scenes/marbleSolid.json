@@ -16,7 +16,7 @@
           "translation": [2300, 0, 0]
         }
       ],
-      "rainbow": true,
+      "marble": true,
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
@@ -41,7 +41,7 @@
           "translation": [2700, 0, -800]
         }
       ],
-      "rainbow": true,
+      "marble": true,
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
@@ -59,7 +59,7 @@
           "translation": [2300, 0, 800]
         }
       ],
-      "rainbow": true,
+      "marble": true,
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,

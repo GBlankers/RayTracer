@@ -8,7 +8,7 @@
 const int W = (int)WINDOW_WIDTH;
 const int H = (int)WINDOW_HEIGHT;
 // Anti alias samples
-#define ANTI_ALIAS_SAMPLING 6
+#define ANTI_ALIAS_SAMPLING 3
 // Number of max reflections/refractions
 #define BOUNCES 3
 // Computer error
