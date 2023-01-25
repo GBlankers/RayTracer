@@ -13,7 +13,7 @@ public:
 
     Collision checkCollision(Ray r) override;
 
-    bool checkHit(Ray r, double &t, bool &inside) override;
+    bool checkHit(Ray r, double &t, bool &inside, double &t2) override;
     bool checkHit(Ray r, double &t) override;
 
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;

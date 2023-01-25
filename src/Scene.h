@@ -44,6 +44,11 @@ private:
     std::vector<std::shared_ptr<LightSource>> lightVector;
     Camera camera{};
     SkyBox sky;
+    // Material and color components
+    std::unordered_map<std::string, Material> materialMap;
+    std::unordered_map<std::string, LightComponents> colorMap;
+
+    std::shared_ptr<Shape> getObject(rapidjson::Value &v);
 public:
     explicit Scene();
     void fillScene(const std::string& filename);

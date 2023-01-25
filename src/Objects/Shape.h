@@ -19,6 +19,8 @@
 #include "../Colors/SingleColor.h"
 #include "../Colors/ImageColor.h"
 
+// TODO: implement boolean object t2 in cube, cone and plane
+
 class Shape {
 protected:
     Transformation t;
@@ -28,7 +30,7 @@ public:
     explicit Shape(Transformation t, LightComponents lightComponents, Material material);
 
     virtual Collision checkCollision(Ray r) = 0;
-    virtual bool checkHit(Ray r, double &t, bool &inside) = 0;
+    virtual bool checkHit(Ray r, double &t, bool &inside, double &t2) = 0;
     virtual bool checkHit(Ray r, double &t) = 0;
 
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;

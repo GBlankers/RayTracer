@@ -2,6 +2,7 @@
 #include "Colors/RainbowColor.h"
 #include "Colors/WoodGrain.h"
 #include "Colors/Marble.h"
+#include "Objects/Boolean/DifferenceBool.h"
 
 Scene::Scene() = default;
 
@@ -71,14 +72,8 @@ void Scene::fillScene(const std::string& filename) {
     // Temporary Variables
     rapidjson::Value value, valueArray;
     Vec4 position{}, pointsAt{}, color{};
-    Transformation temp;
     double fov;
-    LightComponents lightComponents;
-    Material material;
 
-    // Material and color components
-    std::unordered_map<std::string, Material> materialMap;
-    std::unordered_map<std::string, LightComponents> colorMap;
     // Fill up the maps using the objectProperties file
     if(p.HasMember("lightComponents")){
         for(auto& v : p["lightComponents"].GetArray()){
@@ -125,126 +120,16 @@ void Scene::fillScene(const std::string& filename) {
 
     // Add the objects
     assert(s.HasMember("Objects"));
-    for(auto& v : s["Objects"].GetArray()){
-        temp.clear();
-        lightComponents.reset();
-        material.reset();
-        // Check for transformations
-        if(v.HasMember("transformations")){
-            for(auto& i : v["transformations"].GetArray()){
-                if(i.HasMember("scaling")){
-                    assert(i["scaling"].IsArray());
-                    valueArray = i["scaling"].GetArray();
-                    temp.addScaling(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
-                }
-                if(i.HasMember("rotation")){
-                    assert(i["rotation"].IsArray());
-                    for(auto& j : i["rotation"].GetArray()){
-                        if(j.HasMember("x")){
-                            temp.addRotationX(DEG_TO_RADIANS(j["x"].GetDouble()));
-                        } else if(j.HasMember("y")){
-                            temp.addRotationY(DEG_TO_RADIANS(j["y"].GetDouble()));
-                        } else if(j.HasMember("z")){
-                            temp.addRotationZ(DEG_TO_RADIANS(j["z"].GetDouble()));
-                        }
-                    }
-                }
-                if(i.HasMember("translation")){
-                    assert(i["translation"].IsArray());
-                    valueArray = i["translation"].GetArray();
-                    temp.addTranslation(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
-                }
+    for(rapidjson::Value &v : s["Objects"].GetArray()){
+        if(v.HasMember("boolean")){
+            value = v["boolean"];
+            if(strcmp(value["type"].GetString(),"difference") == 0){
+                objectVector.push_back(std::make_shared<DifferenceBool>(DifferenceBool(getObject(value["positiveObject"]),
+                                                                                       getObject(value["negativeObject"])
+                                                                                       )));
             }
-        }
-
-        // Check if a default color is used and if this is present in the color map
-        if(v.HasMember("colorName") and colorMap.count(v["colorName"].GetString())>0){
-            lightComponents = colorMap[v["colorName"].GetString()];
         } else {
-            assert(v.HasMember("ambient"));
-            lightComponents.ambient = v["ambient"].GetDouble();
-            assert(v.HasMember("diffuse"));
-            lightComponents.diffuse = v["diffuse"].GetDouble();
-            assert(v.HasMember("specular"));
-            lightComponents.specular = v["specular"].GetDouble();
-            assert(v.HasMember("specularExponent"));
-            lightComponents.specularExponent = v["specularExponent"].GetDouble();
-        }
-
-        // Check color/path to png file
-        if(v.HasMember("checkerBoard")){
-            Vec4 secondColor = {};
-            if(v.HasMember("color2")){
-                valueArray = v["color2"];
-                assert(valueArray.IsArray());
-                secondColor = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
-            }
-            valueArray = v["color"];
-            assert(valueArray.IsArray());
-            lightComponents.color = new CheckerBoard({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0},
-                                                     secondColor, v["checkerBoard"].GetDouble());
-        } else if(v.HasMember("color")){
-            valueArray = v["color"];
-            assert(valueArray.IsArray());
-            lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
-        } else if(v.HasMember("path")){
-            lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
-        } else if(v.HasMember("rainbow")){
-            lightComponents.color = new RainbowColor();
-        } else if(v.HasMember("woodGrain")){
-            valueArray = v["woodGrain"];
-            if(valueArray.IsArray()){
-                lightComponents.color = new WoodGrain(valueArray[0].GetDouble(), valueArray[1].GetDouble(),
-                                                      valueArray[2].GetDouble(), valueArray[3].GetDouble());
-            } else {
-                lightComponents.color = new WoodGrain();
-            }
-        } else if(v.HasMember("marble")){
-            lightComponents.color = new Marble();
-        }
-
-        // Check if a default material is used and if this material is present in the material map
-        if(v.HasMember("materialName") and materialMap.count(v["materialName"].GetString())>0){
-            material = materialMap[v["materialName"].GetString()];
-        } else {
-            if(v.HasMember("reflectivity")){
-                material.reflectivity = v["reflectivity"].GetDouble();
-            } else {
-                material.reflectivity = 0;
-            }
-            if(v.HasMember("roughness")){
-                material.roughness = v["roughness"].GetDouble();
-            } else {
-                material.roughness = 0;
-            }
-            if(v.HasMember("transparency")){
-                material.transparency = v["transparency"].GetDouble();
-                assert(v.HasMember("refractiveIndex"));
-                material.refractiveIndex = v["refractiveIndex"].GetDouble();
-            } else {
-                material.transparency = 0;
-                material.refractiveIndex = 1;
-            }
-        }
-
-        if(v.HasMember("normalMap")){
-            material.manipulator = new normalImage(v["normalMap"].GetString());
-        } else {
-            material.manipulator = new normalRoughness();
-        }
-
-        // Check object type
-        assert(v.HasMember("type"));
-        if(strcmp(v["type"].GetString(), "cube") == 0){
-            objectVector.push_back(std::make_shared<Cube>(Cube(temp, lightComponents, material)));
-        } else if(strcmp(v["type"].GetString(), "sphere") == 0){
-            objectVector.push_back(std::make_shared<Sphere>(Sphere(temp, lightComponents, material)));
-        } else if(strcmp(v["type"].GetString(), "plane") == 0){
-            objectVector.push_back(std::make_shared<Plane>(Plane(temp, lightComponents, material)));
-        } else if(strcmp(v["type"].GetString(), "cone") == 0){
-            objectVector.push_back(std::make_shared<Cone>(Cone(temp, lightComponents, material)));
-        } else {
-            perror("Unknown object type in json file");
+            objectVector.push_back(getObject(v));
         }
     }
 
@@ -285,5 +170,131 @@ void Scene::fillScene(const std::string& filename) {
         }
     } else {
         sky = SkyBox();
+    }
+}
+
+std::shared_ptr<Shape> Scene::getObject(rapidjson::Value& v) {
+    Material material;
+    LightComponents lightComponents;
+    Transformation temp;
+    rapidjson::Value valueArray;
+
+    // Check for transformations
+    if(v.HasMember("transformations")){
+        for(auto& i : v["transformations"].GetArray()){
+            if(i.HasMember("scaling")){
+                assert(i["scaling"].IsArray());
+                valueArray = i["scaling"].GetArray();
+                temp.addScaling(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+            }
+            if(i.HasMember("rotation")){
+                assert(i["rotation"].IsArray());
+                for(auto& j : i["rotation"].GetArray()){
+                    if(j.HasMember("x")){
+                        temp.addRotationX(DEG_TO_RADIANS(j["x"].GetDouble()));
+                    } else if(j.HasMember("y")){
+                        temp.addRotationY(DEG_TO_RADIANS(j["y"].GetDouble()));
+                    } else if(j.HasMember("z")){
+                        temp.addRotationZ(DEG_TO_RADIANS(j["z"].GetDouble()));
+                    }
+                }
+            }
+            if(i.HasMember("translation")){
+                assert(i["translation"].IsArray());
+                valueArray = i["translation"].GetArray();
+                temp.addTranslation(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+            }
+        }
+    }
+
+    // Check if a default color is used and if this is present in the color map
+    if(v.HasMember("colorName") and colorMap.count(v["colorName"].GetString())>0){
+        lightComponents = colorMap[v["colorName"].GetString()];
+    } else {
+        assert(v.HasMember("ambient"));
+        lightComponents.ambient = v["ambient"].GetDouble();
+        assert(v.HasMember("diffuse"));
+        lightComponents.diffuse = v["diffuse"].GetDouble();
+        assert(v.HasMember("specular"));
+        lightComponents.specular = v["specular"].GetDouble();
+        assert(v.HasMember("specularExponent"));
+        lightComponents.specularExponent = v["specularExponent"].GetDouble();
+    }
+
+    // Check color/path to png file
+    if(v.HasMember("checkerBoard")){
+        Vec4 secondColor = {};
+        if(v.HasMember("color2")){
+            valueArray = v["color2"];
+            assert(valueArray.IsArray());
+            secondColor = {valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0};
+        }
+        valueArray = v["color"];
+        assert(valueArray.IsArray());
+        lightComponents.color = new CheckerBoard({valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0},
+                                                 secondColor, v["checkerBoard"].GetDouble());
+    } else if(v.HasMember("color")){
+        valueArray = v["color"];
+        assert(valueArray.IsArray());
+        lightComponents.color = new SingleColor(Vec4{valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble(), 0});
+    } else if(v.HasMember("path")){
+        lightComponents.color = new ImageColor(std::string(v["path"].GetString()));
+    } else if(v.HasMember("rainbow")){
+        lightComponents.color = new RainbowColor();
+    } else if(v.HasMember("woodGrain")){
+        valueArray = v["woodGrain"];
+        if(valueArray.IsArray()){
+            lightComponents.color = new WoodGrain(valueArray[0].GetDouble(), valueArray[1].GetDouble(),
+                                                  valueArray[2].GetDouble(), valueArray[3].GetDouble());
+        } else {
+            lightComponents.color = new WoodGrain();
+        }
+    } else if(v.HasMember("marble")){
+        lightComponents.color = new Marble();
+    }
+
+    // Check if a default material is used and if this material is present in the material map
+    if(v.HasMember("materialName") and materialMap.count(v["materialName"].GetString())>0){
+        material = materialMap[v["materialName"].GetString()];
+    } else {
+        if(v.HasMember("reflectivity")){
+            material.reflectivity = v["reflectivity"].GetDouble();
+        } else {
+            material.reflectivity = 0;
+        }
+        if(v.HasMember("roughness")){
+            material.roughness = v["roughness"].GetDouble();
+        } else {
+            material.roughness = 0;
+        }
+        if(v.HasMember("transparency")){
+            material.transparency = v["transparency"].GetDouble();
+            assert(v.HasMember("refractiveIndex"));
+            material.refractiveIndex = v["refractiveIndex"].GetDouble();
+        } else {
+            material.transparency = 0;
+            material.refractiveIndex = 1;
+        }
+    }
+
+    if(v.HasMember("normalMap")){
+        material.manipulator = new normalImage(v["normalMap"].GetString());
+    } else {
+        material.manipulator = new normalRoughness();
+    }
+
+    // Check object type
+    assert(v.HasMember("type"));
+    if(strcmp(v["type"].GetString(), "cube") == 0){
+        return std::make_shared<Cube>(Cube(temp, lightComponents, material));
+    } else if(strcmp(v["type"].GetString(), "sphere") == 0){
+        return std::make_shared<Sphere>(Sphere(temp, lightComponents, material));
+    } else if(strcmp(v["type"].GetString(), "plane") == 0){
+        return std::make_shared<Plane>(Plane(temp, lightComponents, material));
+    } else if(strcmp(v["type"].GetString(), "cone") == 0){
+        return std::make_shared<Cone>(Cone(temp, lightComponents, material));
+    } else {
+        perror("Unknown object type in json file");
+        return {};
     }
 }

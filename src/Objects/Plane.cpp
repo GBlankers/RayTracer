@@ -5,10 +5,10 @@ Plane::Plane(const Transformation &t, LightComponents lightComponents, Material 
 
 // Default plane at y=0 and limited between -1 and 1 for x and z
 Collision Plane::checkCollision(Ray r) {
-    double t;
+    double t, t2;
     bool inside;
 
-    if(checkHit(r, t, inside)){
+    if(checkHit(r, t, inside, t2)){
         Vec4 hit = r.at(t);
         LightComponents l = this->lightComponents;
         double red, green, blue;
@@ -21,7 +21,7 @@ Collision Plane::checkCollision(Ray r) {
     return {};
 }
 
-bool Plane::checkHit(Ray r, double &t, bool &inside) {
+bool Plane::checkHit(Ray r, double &t, bool &inside, double &t2) {
     // assume the plane is infinitely thin
     inside = false;
     return checkHit(r, t);

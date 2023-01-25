@@ -1,0 +1,65 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 100,
+    "pointsAt": [2000, 0, 0],
+    "location": [1200, 0, 1000]
+  },
+  "Objects": [
+    {
+      "boolean": {
+        "type": "difference",
+        "positiveObject": {
+          "type": "cube",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2300, 0, 0]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.1,
+          "diffuse": 0.9,
+          "specular": 0,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2000, 0, 0]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    }
+  ],
+  "Light": [
+    {
+      "position": [500, 2000, 0],
+      "pointsAt": [2300, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ],
+  "SkyBox": {
+    "color": [0, 0, 0]
+  }
+}

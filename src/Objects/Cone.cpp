@@ -4,10 +4,10 @@ Cone::Cone(const Transformation &t, LightComponents lightComponents, Material ma
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
 Collision Cone::checkCollision(Ray r) {
-    double t;
+    double t, t2;
     bool inside;
 
-    if(checkHit(r, t, inside)){
+    if(checkHit(r, t, inside, t2)){
         double red, green, blue;
         LightComponents l = this->lightComponents;
         Vec4 hit = r.at(t);
@@ -20,7 +20,7 @@ Collision Cone::checkCollision(Ray r) {
 }
 
 
-bool Cone::checkHit(Ray r, double &t, bool &inside) {
+bool Cone::checkHit(Ray r, double &t, bool &inside, double &t2) {
     // Inverse transform the ray and the light source
     Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);

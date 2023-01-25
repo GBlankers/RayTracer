@@ -9,12 +9,13 @@ public:
 
     Collision checkCollision(Ray r) override;
 
-    bool checkHit(Ray r, double &t, bool &inside) override;
+    bool checkHit(Ray r, double &t, bool &inside, double &t2) override;
     bool checkHit(Ray r, double &t) override;
 
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
 
     static bool checkInCube(Ray r, double t);
+    static void give2Smallest(std::vector<double> tList, double &t1, double &t2);
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
 };
