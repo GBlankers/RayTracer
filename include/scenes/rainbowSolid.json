@@ -10,10 +10,10 @@
       "type": "sphere",
       "transformations": [
         {
-          "scaling": [350, 350, 350]
+          "scaling": [150, 150, 150]
         },
         {
-          "translation": [2300, 0, 0]
+          "translation": [2300, 0, -300]
         }
       ],
       "rainbow": true,
@@ -35,10 +35,10 @@
           ]
         },
         {
-          "scaling": [350, 350, 350]
+          "scaling": [150, 150, 150]
         },
         {
-          "translation": [2700, 0, -800]
+          "translation": [2500, 0, -900]
         }
       ],
       "rainbow": true,
@@ -53,10 +53,35 @@
       "type": "cube",
       "transformations": [
         {
-          "scaling": [250, 250, 250]
+          "scaling": [100, 100, 100]
         },
         {
-          "translation": [2300, 0, 800]
+          "translation": [2300, 0, 300]
+        }
+      ],
+      "rainbow": true,
+      "ambient": 0.8,
+      "diffuse": 0.2,
+      "specular": 0.2,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "rotation": [
+            {
+              "z": 40
+            }
+          ]
+        },
+        {
+          "scaling": [200, 10, 200]
+        },
+        {
+          "translation": [2300, 0, 900]
         }
       ],
       "rainbow": true,

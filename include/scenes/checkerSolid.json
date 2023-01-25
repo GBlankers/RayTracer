@@ -16,13 +16,15 @@
           "translation": [2300, 0, -300]
         }
       ],
-      "marble": true,
+      "color": [1, 1, 1],
+      "color2": [1, 0, 1],
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "checkerBoard": 0.05
     },
     {
       "type": "cone",
@@ -41,13 +43,15 @@
           "translation": [2500, 0, -900]
         }
       ],
-      "marble": true,
+      "color": [0, 0, 0],
+      "color2": [0, 0, 1],
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "checkerBoard": 0.05
     },
     {
       "type": "cube",
@@ -59,13 +63,15 @@
           "translation": [2300, 0, 300]
         }
       ],
-      "marble": true,
+      "color": [1, 1, 0],
+      "color2": [0, 1, 0],
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "checkerBoard": 0.05
     },
     {
       "type": "plane",
@@ -73,7 +79,7 @@
         {
           "rotation": [
             {
-            "z": 40
+              "z": 40
             }
           ]
         },
@@ -84,13 +90,15 @@
           "translation": [2300, 0, 900]
         }
       ],
-      "marble": true,
+      "color": [0, 1, 1],
+      "color2": [1, 0, 1],
       "ambient": 0.8,
       "diffuse": 0.2,
       "specular": 0.2,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "checkerBoard": 0.05
     },
     {
       "type": "plane",

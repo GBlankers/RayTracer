@@ -10,25 +10,37 @@
       "type": "sphere",
       "transformations": [
         {
+          "rotation":[
+            {
+            "y": 90
+            }
+          ]
+        },
+        {
           "scaling": [150, 150, 150]
         },
         {
           "translation": [2300, 0, -300]
         }
       ],
-      "marble": true,
-      "ambient": 0.8,
-      "diffuse": 0.2,
-      "specular": 0.2,
+      "path": "../assets/pepe.png",
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1
     },
     {
       "type": "cone",
       "transformations": [
         {
           "rotation": [
+            {
+              "y": 60
+            },
             {
               "z": -45
             }
@@ -41,17 +53,26 @@
           "translation": [2500, 0, -900]
         }
       ],
-      "marble": true,
-      "ambient": 0.8,
-      "diffuse": 0.2,
-      "specular": 0.2,
+      "path": "../assets/pepe.png",
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1
     },
     {
       "type": "cube",
       "transformations": [
+        {
+          "rotation": [
+            {
+              "x": -90
+            }
+          ]
+        },
         {
           "scaling": [100, 100, 100]
         },
@@ -59,13 +80,15 @@
           "translation": [2300, 0, 300]
         }
       ],
-      "marble": true,
-      "ambient": 0.8,
-      "diffuse": 0.2,
-      "specular": 0.2,
+      "path": "../assets/pepe.png",
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1
     },
     {
       "type": "plane",
@@ -73,7 +96,7 @@
         {
           "rotation": [
             {
-            "z": 40
+              "z": 40
             }
           ]
         },
@@ -84,13 +107,15 @@
           "translation": [2300, 0, 900]
         }
       ],
-      "marble": true,
-      "ambient": 0.8,
-      "diffuse": 0.2,
-      "specular": 0.2,
+      "path": "../assets/pepe.png",
+      "ambient": 0.6,
+      "diffuse": 0.3,
+      "specular": 0.3,
       "specularExponent": 10,
       "reflectivity": 0,
-      "roughness": 0
+      "roughness": 0,
+      "transparency": 0,
+      "refractiveIndex": 1
     },
     {
       "type": "plane",
