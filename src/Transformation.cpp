@@ -78,6 +78,10 @@ const Matrix4 &Transformation::getInverse() const{
     return inverse;
 }
 
+bool Transformation::getEmpty() const {
+    return firstTransformation;
+}
+
 void Transformation::clear() {
     forward = Matrix4();
     inverse = Matrix4();

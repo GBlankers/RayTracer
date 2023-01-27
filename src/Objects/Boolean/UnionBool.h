@@ -1,0 +1,10 @@
+#ifndef RAYTRACER_UNIONBOOL_H
+#define RAYTRACER_UNIONBOOL_H
+
+
+class UnionBool {
+
+};
+
+
+#endif //RAYTRACER_UNIONBOOL_H

@@ -3,7 +3,7 @@
   "Camera": {
     "fov": 100,
     "pointsAt": [2000, 0, 0],
-    "location": [0, 0, 400]
+    "location": [0, 800, 400]
   },
   "Objects": [
     {
@@ -13,34 +13,33 @@
           "boolean": {
             "type": "difference",
             "positiveObject": {
-              "type": "cube",
+              "type": "sphere",
               "transformations": [
                 {
-                  "scaling": [600, 600, 600]
+                  "scaling": [1200, 1200, 1200]
                 },
                 {
                   "translation": [2300, 0, 0]
                 }
               ],
               "color": [0, 0, 1],
-              "ambient": 0.1,
-              "diffuse": 0.9,
-              "specular": 0,
+              "ambient": 0.3,
+              "diffuse": 0.6,
+              "specular": 0.6,
               "specularExponent": 10,
               "reflectivity": 0,
               "roughness": 0,
               "transparency": 0,
-              "refractiveIndex": 1,
-              "checkerBoard": 0.05
+              "refractiveIndex": 1
             },
             "negativeObject": {
-              "type": "sphere",
+              "type": "cube",
               "transformations": [
                 {
-                  "scaling": [600, 600, 600]
+                  "scaling": [1200, 1200, 1200]
                 },
                 {
-                  "translation": [2300, 0, 300]
+                  "translation": [2300, 600, 0]
                 }
               ],
               "color": [0, 0, 1],
@@ -59,10 +58,10 @@
           "type": "sphere",
           "transformations": [
             {
-              "scaling": [600, 600, 600]
+              "scaling": [1140, 1140, 1140]
             },
             {
-              "translation": [2000, 0, 0]
+              "translation": [2300, 0, 0]
             }
           ],
           "color": [0, 0, 1],
@@ -80,7 +79,7 @@
   ],
   "Light": [
     {
-      "position": [500, 2000, 0],
+      "position": [2300, 2400, 3000],
       "pointsAt": [2300, 0, 0],
       "color": [1, 1, 1]
     }

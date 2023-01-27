@@ -1,4 +1,5 @@
 #include "Cone.h"
+#include <iostream>
 
 Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
@@ -14,7 +15,7 @@ Collision Cone::checkCollision(Ray r) {
         this->getColor(hit, red, green, blue);
         l.color = new SingleColor(Vec4{red, green, blue, 0});
 
-        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material};
+        return {r, t, calculateNormal(r.at(t), inside), inside, l, this->material, t2};
     }
     return {};
 }
@@ -36,34 +37,39 @@ bool Cone::checkHit(Ray r, double &t, bool &inside, double &t2) {
     // Check for hit with cone
     Vec4 rd = transformedRay.getDirectionVector();
     Vec4 rp = transformedRay.getStartPoint();
-
     double a = pow(rd.getX(), 2) + pow(rd.getZ(), 2) - pow(rd.getY(), 2);
     double b = rd.getX()*rp.getX()+rd.getZ()*rp.getZ()-rd.getY()*rp.getY();
     double c = pow(rp.getX(), 2) + pow(rp.getZ(), 2) - pow(rp.getY(), 2);
 
-    t = (-b - sqrt(pow(b, 2)-(a*c)))/a;
+    if(pow(b, 2)-a*c < 0) return false; // negative discriminant
 
+    double tempT1 = -1, tempT2 = -1, tempT3 = -1, tempT4 = -1;
+    std::vector<double> tList;
 
-    Vec4 hitPointL = transformedRay.at(t);
+    // Intersections with the cone
+    tempT1 = (-b - sqrt(pow(b, 2)-(a*c)))/a;
+    tempT2 = (-b + sqrt(pow(b, 2)-(a*c)))/a;
+    // Intersection with the bottom plane
+    if(fabs(rd.getY())>EPSILON){ tempT3 = (-rp.getY()-1)/rd.getY(); }
+    // If a == 0 -> ray parallel with the cone legs
+    if(a == 0){ tempT4 = -c/b; }
 
-    // The hit with the cone is not inside the defined unit cone
-    if(hitPointL.getY() > -1 and hitPointL.getY() < 0){
+    // Check if these are inside the cone -> add to list
+    if(tempT1 > 0 and insideUnitCone(transformedRay.at(tempT1))) tList.emplace_back(tempT1);
+    if(tempT2 > 0 and insideUnitCone(transformedRay.at(tempT2))) tList.emplace_back(tempT2);
+    if(tempT3 > 0 and insideUnitCone(transformedRay.at(tempT3))) tList.emplace_back(tempT3);
+    if(tempT4 > 0 and insideUnitCone(transformedRay.at(tempT4))) tList.emplace_back(tempT4);
+
+    if(tList.empty()){ return false; }
+
+    std::sort(tList.begin(), tList.end());
+
+    if(tList.size() > 1){
+        t = tList[0];
+        t2 = tList[1];
         return true;
     }
-    // Check for hit with the bottom plane
-    if(fabs(rd.getY()) > EPSILON){
-        double t1 = (-rp.getY()-1)/rd.getY();
 
-        // Check if hit in front of the eye
-        if(t1>0){
-            hitPointL = transformedRay.at(t1);
-            // Check if the hit is inside the unit circle
-            if(sqrt(pow(hitPointL.getX(), 2) + pow(hitPointL.getZ(), 2)) <= 1){
-                t = t1;
-                return true;
-            }
-        }
-    }
     return false;
 }
 
@@ -75,34 +81,31 @@ bool Cone::checkHit(Ray r, double &t) {
     // Check for hit with cone
     Vec4 rd = transformedRay.getDirectionVector();
     Vec4 rp = transformedRay.getStartPoint();
-
     double a = pow(rd.getX(), 2) + pow(rd.getZ(), 2) - pow(rd.getY(), 2);
     double b = rd.getX()*rp.getX()+rd.getZ()*rp.getZ()-rd.getY()*rp.getY();
     double c = pow(rp.getX(), 2) + pow(rp.getZ(), 2) - pow(rp.getY(), 2);
 
-    t = (-b - sqrt(pow(b, 2)-(a*c)))/a;
+    if(pow(b, 2)-a*c < 0) return false; // negative discriminant
 
+    double tempT1 = -1, tempT2 = -1, tempT3 = -1, tempT4 = -1;
+    std::vector<double> tList;
 
-    Vec4 hitPointL = transformedRay.at(t);
+    // Intersections with the cone
+    tempT1 = (-b - sqrt(pow(b, 2)-(a*c)))/a;
+    tempT2 = (-b + sqrt(pow(b, 2)-(a*c)))/a;
+    // Intersection with the bottom plane
+    if(fabs(rd.getY())>EPSILON){ tempT3 = (-rp.getY()-1)/rd.getY(); }
+    // If a == 0 -> ray parallel with the cone legs
+    if(a == 0){ tempT4 = -c/b; }
 
-    // The hit with the cone is not inside the defined unit cone
-    if(hitPointL.getY() > -1 and hitPointL.getY() < 0){
-        return true;
-    }
-    // Check for hit with the bottom plane
-    if(fabs(rd.getY()) > EPSILON){
-        double t1 = (-rp.getY()-1)/rd.getY();
+    // Check if these are inside the cone -> add to list
+    if(tempT1 > 0 and insideUnitCone(transformedRay.at(tempT1))) tList.emplace_back(tempT1);
+    if(tempT2 > 0 and insideUnitCone(transformedRay.at(tempT2))) tList.emplace_back(tempT2);
+    if(tempT3 > 0 and insideUnitCone(transformedRay.at(tempT3))) tList.emplace_back(tempT3);
+    if(tempT4 > 0 and insideUnitCone(transformedRay.at(tempT4))) tList.emplace_back(tempT4);
 
-        // Check if hit in front of the eye
-        if(t1>0){
-            hitPointL = transformedRay.at(t1);
-            // Check if the hit is inside the unit circle
-            if(sqrt(pow(hitPointL.getX(), 2) + pow(hitPointL.getZ(), 2)) <= 1){
-                t = t1;
-                return true;
-            }
-        }
-    }
+    if(tList.size() > 1){ return true; }
+
     return false;
 }
 
@@ -141,4 +144,13 @@ void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     r = c.getX();
     g = c.getY();
     b = c.getZ();
+}
+
+bool Cone::insideUnitCone(Vec4 hitPoint) {
+    // Hit with cone
+    if(hitPoint.getY() <= 0 and hitPoint.getY() > -1) return true;
+    // Hit with bottom plane
+    if(sqrt(pow(hitPoint.getX(), 2) + pow(hitPoint.getZ(), 2)) <= 1 and fabs(hitPoint.getY()+1) <= EPSILON) return true;
+
+    return false;
 }

@@ -49,6 +49,7 @@ private:
     std::unordered_map<std::string, LightComponents> colorMap;
 
     std::shared_ptr<Shape> getObject(rapidjson::Value &v);
+    std::shared_ptr<Shape> getBoolean(rapidjson::Value &v);
 public:
     explicit Scene();
     void fillScene(const std::string& filename);

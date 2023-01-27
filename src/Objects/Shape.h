@@ -19,8 +19,6 @@
 #include "../Colors/SingleColor.h"
 #include "../Colors/ImageColor.h"
 
-// TODO: implement boolean object t2 in cube, cone and plane
-
 class Shape {
 protected:
     Transformation t;

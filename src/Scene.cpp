@@ -122,12 +122,7 @@ void Scene::fillScene(const std::string& filename) {
     assert(s.HasMember("Objects"));
     for(rapidjson::Value &v : s["Objects"].GetArray()){
         if(v.HasMember("boolean")){
-            value = v["boolean"];
-            if(strcmp(value["type"].GetString(),"difference") == 0){
-                objectVector.push_back(std::make_shared<DifferenceBool>(DifferenceBool(getObject(value["positiveObject"]),
-                                                                                       getObject(value["negativeObject"])
-                                                                                       )));
-            }
+            objectVector.push_back(getBoolean(v));
         } else {
             objectVector.push_back(getObject(v));
         }
@@ -297,4 +292,62 @@ std::shared_ptr<Shape> Scene::getObject(rapidjson::Value& v) {
         perror("Unknown object type in json file");
         return {};
     }
+}
+
+std::shared_ptr<Shape> Scene::getBoolean(rapidjson::Value &v) {
+    rapidjson::Value booleanObject, positiveObject, negativeObject, transformationValue, valueArray;
+    std::shared_ptr<Shape> posObject, negObject;
+    Transformation t;
+
+    booleanObject = v["boolean"];
+    std::string type = booleanObject["type"].GetString();
+    positiveObject = booleanObject["positiveObject"];
+    negativeObject = booleanObject["negativeObject"];
+
+    if(booleanObject.HasMember("transformations")){
+        transformationValue = booleanObject["transformations"];
+
+        for(auto& i : transformationValue.GetArray()){
+            if(i.HasMember("scaling")){
+                assert(i["scaling"].IsArray());
+                valueArray = i["scaling"].GetArray();
+                t.addScaling(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+            }
+            if(i.HasMember("rotation")){
+                assert(i["rotation"].IsArray());
+                for(auto& j : i["rotation"].GetArray()){
+                    if(j.HasMember("x")){
+                        t.addRotationX(DEG_TO_RADIANS(j["x"].GetDouble()));
+                    } else if(j.HasMember("y")){
+                        t.addRotationY(DEG_TO_RADIANS(j["y"].GetDouble()));
+                    } else if(j.HasMember("z")){
+                        t.addRotationZ(DEG_TO_RADIANS(j["z"].GetDouble()));
+                    }
+                }
+            }
+            if(i.HasMember("translation")){
+                assert(i["translation"].IsArray());
+                valueArray = i["translation"].GetArray();
+                t.addTranslation(valueArray[0].GetDouble(), valueArray[1].GetDouble(), valueArray[2].GetDouble());
+            }
+        }
+    }
+
+    if(positiveObject.HasMember("boolean")) {
+        posObject = getBoolean(positiveObject);
+    } else {
+        posObject = getObject(positiveObject);
+    }
+
+    if(negativeObject.HasMember("boolean")) {
+        negObject = getBoolean(negativeObject);
+    } else {
+        negObject = getObject(negativeObject);
+    }
+
+    if(strcmp(booleanObject["type"].GetString(),"difference") == 0){
+        return std::make_shared<DifferenceBool>(DifferenceBool(posObject, negObject, t));
+    }
+
+    return {};
 }

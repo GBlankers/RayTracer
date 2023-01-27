@@ -1,0 +1,10 @@
+#ifndef RAYTRACER_INTERSECTIONBOOL_H
+#define RAYTRACER_INTERSECTIONBOOL_H
+
+
+class IntersectionBool {
+
+};
+
+
+#endif //RAYTRACER_INTERSECTIONBOOL_H

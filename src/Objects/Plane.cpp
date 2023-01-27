@@ -24,7 +24,9 @@ Collision Plane::checkCollision(Ray r) {
 bool Plane::checkHit(Ray r, double &t, bool &inside, double &t2) {
     // assume the plane is infinitely thin
     inside = false;
-    return checkHit(r, t);
+    bool hit = checkHit(r, t);
+    t2 = t;
+    return hit;
 }
 
 bool Plane::checkHit(Ray r, double &t) {

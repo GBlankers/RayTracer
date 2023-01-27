@@ -3,10 +3,18 @@
 #include <utility>
 
 DifferenceBool::DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2) : BooleanObject(std::move(s1), std::move(s2)){}
+DifferenceBool::DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2, Transformation t) : BooleanObject(std::move(s1), std::move(s2), t) {}
 
 Collision DifferenceBool::checkCollision(Ray r) {
+    // Check for transformation at boolean object level
+    Ray transformedRay = r;
+    if(!this->t.getEmpty()){
+        Matrix4 inverse = getTransformation().getInverse();
+        transformedRay = r.transform(inverse);
+    }
+
     // Implementation for basic case
-    Collision c1 = s1->checkCollision(r), c2 = s2->checkCollision(r);
+    Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
     double tin1 = c1.getT(), tout1 = c1.getT2(), tin2 = c2.getT(), tout2= c2.getT2(), newT1, newT2;
 
     // Hit with the positive object
@@ -18,15 +26,21 @@ Collision DifferenceBool::checkCollision(Ray r) {
         // Negative object consumes the positive object => nothing will be hit
         else {newT1 = -1; newT2 = -1;}
 
-        return {r, newT1, s2->calculateNormal(r.at(newT1), true), false, c1.getLightComponents(), c1.getMaterial(), newT2};
+        return {transformedRay, newT1, s2->calculateNormal(transformedRay.at(newT1), true), false, c1.getLightComponents(), c1.getMaterial(), newT2};
     }
 
     return {};
 }
 
 bool DifferenceBool::checkHit(Ray r, double &t) {
+    // Check for transformation at boolean object level
+    Ray transformedRay = r;
+    if(!this->t.getEmpty()){
+        Matrix4 inverse = getTransformation().getInverse();
+        transformedRay = r.transform(inverse);
+    }
     // Implementation for basic case
-    Collision c1 = s1->checkCollision(r), c2 = s2->checkCollision(r);
+    Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
     double tin1 = c1.getT(), tout1 = c1.getT2(), tin2 = c2.getT(), tout2= c2.getT2();
 
     // Hit with the positive object
