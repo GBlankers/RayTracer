@@ -13,6 +13,10 @@ public:
     bool checkHit(Ray r, double &t) override;
 
     const LightComponents &getLightComponents() const override;
+
+    SingleColor *getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) override;
+
+    bool isPointInside(Vec4 hitPoint) const override;
 };
 
 

@@ -197,3 +197,14 @@ SingleColor* Cube::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
     Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
     return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
 }
+
+bool Cube::isPointInside(Vec4 hitPoint) const {
+    Vec4 collisionPoint = t.getInverse() * hitPoint;
+
+    if (fabs(collisionPoint.getX()) <= (1+EPSILON) &&
+        fabs(collisionPoint.getY()) <= (1+EPSILON) &&
+        fabs(collisionPoint.getZ()) <= (1+EPSILON)) {
+        return true;
+    }
+    return false;
+}

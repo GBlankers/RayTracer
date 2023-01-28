@@ -27,11 +27,7 @@ bool Sphere::checkHit(Ray r, double &t, bool &inside, double &t2) {
     Matrix4 inverse = getTransformation().getInverse();
     Ray transformedRay = r.transform(inverse);
 
-    if(sqrt(Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint())) <=1){
-        inside = true;
-    } else {
-        inside = false;
-    }
+    inside = isPointInside(r.getStartPoint());
 
     // Calculate the intersection between the ray and the sphere -> results in 2nd grade function
     double A = Vec4::dot(transformedRay.getDirectionVector(), transformedRay.getDirectionVector());
@@ -119,4 +115,9 @@ SingleColor* Sphere::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l)
     // Get color components
     Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
     return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
+}
+
+bool Sphere::isPointInside(Vec4 hitPoint) const {
+    Vec4 localPoint = t.getInverse()*hitPoint;
+    return sqrt(Vec4::dot(localPoint, localPoint)) <=1;
 }

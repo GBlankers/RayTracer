@@ -16,6 +16,8 @@ public:
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
 
+    bool isPointInside(Vec4 hitPoint) const override;
+
     SingleColor* getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) override;
 };
 

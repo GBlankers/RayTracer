@@ -83,3 +83,7 @@ SingleColor* Plane::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) 
     Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
     return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
 }
+
+bool Plane::isPointInside(Vec4 hitPoint) const {
+    return false;
+}

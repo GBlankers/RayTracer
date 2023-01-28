@@ -37,6 +37,8 @@ public:
 
     const Transformation &getTransformation() const;
     virtual const LightComponents &getLightComponents() const;
+
+    virtual bool isPointInside(Vec4 hitPoint) const = 0;
 };
 
 #endif //RAYTRACER_SHAPE_H

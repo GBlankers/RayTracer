@@ -3,7 +3,7 @@
   "Camera": {
     "fov": 100,
     "pointsAt": [2000, 0, 0],
-    "location": [0, 0, 400]
+    "location": [0, 0, 1700]
   },
   "Objects": [
     {

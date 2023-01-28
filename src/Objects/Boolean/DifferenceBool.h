@@ -16,6 +16,8 @@ public:
     bool checkHit(Ray r, double &t) override;
 
     const LightComponents &getLightComponents() const override;
+
+    bool isPointInside(Vec4 hitPoint) const override;
 };
 
 

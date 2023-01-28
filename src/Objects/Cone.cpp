@@ -175,3 +175,8 @@ bool Cone::insideUnitCone(Vec4 hitPoint) {
 
     return false;
 }
+
+bool Cone::isPointInside(Vec4 hitPoint) const {
+    Vec4 localPoint = t.getInverse()*hitPoint;
+    return insideUnitCone(localPoint);
+}

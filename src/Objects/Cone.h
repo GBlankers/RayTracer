@@ -18,6 +18,8 @@ public:
     SingleColor* getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) override;
 
     static bool insideUnitCone(Vec4 hitPoint);
+
+    bool isPointInside(Vec4 hitPoint) const override;
 };
 
 

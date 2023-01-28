@@ -95,3 +95,15 @@ bool UnionBool::checkHit(Ray r, double &t) {
 const LightComponents &UnionBool::getLightComponents() const {
     return s1->getLightComponents();
 }
+
+SingleColor *UnionBool::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    if(s1->isPointInside(hitPoint)){
+        return s1->getBooleanDifferenceColor(hitPoint, l);
+    } else {
+        return s2->getBooleanDifferenceColor(hitPoint, l);
+    }
+}
+
+bool UnionBool::isPointInside(Vec4 hitPoint) const {
+    return s1->isPointInside(hitPoint) or s2->isPointInside(hitPoint);
+}

@@ -142,3 +142,7 @@ bool DifferenceBool::checkHit(Ray r, double &t) {
 const LightComponents &DifferenceBool::getLightComponents() const {
     return s1->getLightComponents();
 }
+
+bool DifferenceBool::isPointInside(Vec4 hitPoint) const {
+    return s1->isPointInside(hitPoint) and !s2->isPointInside(hitPoint);
+}

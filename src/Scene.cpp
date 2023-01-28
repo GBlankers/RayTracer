@@ -3,6 +3,8 @@
 #include "Colors/WoodGrain.h"
 #include "Colors/Marble.h"
 #include "Objects/Boolean/DifferenceBool.h"
+#include "Objects/Boolean/UnionBool.h"
+#include "Objects/Boolean/IntersectionBool.h"
 
 Scene::Scene() = default;
 
@@ -347,6 +349,10 @@ std::shared_ptr<Shape> Scene::getBoolean(rapidjson::Value &v) {
 
     if(strcmp(booleanObject["type"].GetString(),"difference") == 0){
         return std::make_shared<DifferenceBool>(DifferenceBool(posObject, negObject, t));
+    } else if(strcmp(booleanObject["type"].GetString(),"union") == 0){
+        return std::make_shared<UnionBool>(UnionBool(posObject, negObject, t));
+    }else if(strcmp(booleanObject["type"].GetString(),"intersection") == 0){
+        return std::make_shared<IntersectionBool>(IntersectionBool(posObject, negObject, t));
     }
 
     return {};
