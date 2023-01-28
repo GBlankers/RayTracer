@@ -11,6 +11,8 @@ public:
 
     Collision checkCollision(Ray r) override;
     bool checkHit(Ray r, double &t) override;
+
+    const LightComponents &getLightComponents() const override;
 };
 
 

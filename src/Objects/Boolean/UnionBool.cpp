@@ -55,11 +55,43 @@ Collision UnionBool::checkCollision(Ray r) {
         }
     } else if (tin1>0) { // Only 1 object is hit
         return {r, tin1, s1->calculateNormal(r.at(tin1), false), false, c1.getLightComponents(), c1.getMaterial(), tout1};
-    } else {
+    } else if (tin2>0){
         return {r, tin2, s2->calculateNormal(r.at(tin2), false), false, c2.getLightComponents(), c2.getMaterial(), tout2};
     }
+    return {};
 }
 
 bool UnionBool::checkHit(Ray r, double &t) {
+    // Check for transformation at boolean object level
+    Ray transformedRay = r;
+    if(!this->t.getEmpty()){
+        Matrix4 inverse = getTransformation().getInverse();
+        transformedRay = r.transform(inverse);
+    }
+
+    // Get all collisions and t's of in and out
+    Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
+    double tin1 = c1.getT(), tin2 = c2.getT();
+
+    if(tin1>0 and tin2>0){
+        // check which object is closer
+        if(tin1 < tin2){ // first object is closer
+            t = tin1;
+            return true;
+        } else { // second object is closer
+            t = tin2;
+            return true;
+        }
+    } else if (tin1>0) { // Only 1 object is hit
+        t = tin1;
+        return true;
+    } else if (tin2>0){
+        t = tin2;
+        return true;
+    }
     return false;
+}
+
+const LightComponents &UnionBool::getLightComponents() const {
+    return s1->getLightComponents();
 }
