@@ -18,6 +18,8 @@ public:
     static void give2Smallest(std::vector<double> tList, double &t1, double &t2);
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
+
+    SingleColor* getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) override;
 };
 
 

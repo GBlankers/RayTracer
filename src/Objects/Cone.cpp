@@ -68,6 +68,10 @@ bool Cone::checkHit(Ray r, double &t, bool &inside, double &t2) {
         t = tList[0];
         t2 = tList[1];
         return true;
+    } else {
+        t = tList[0];
+        t2 = -1;
+        return true;
     }
 
     return false;
@@ -146,9 +150,26 @@ void Cone::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     b = c.getZ();
 }
 
+SingleColor* Cone::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    Vec4 localHit = t.getInverse()*hitPoint;
+    // uv-mapping
+    double u, v;
+    if(localHit.getY() <= -1+EPSILON){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
+    } else {
+        u = (1+atan2(localHit.getX(), localHit.getZ())/M_PI)/2;
+        v = fabs(localHit.getY());
+    }
+    // get color components
+    Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
+    return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
+}
+
 bool Cone::insideUnitCone(Vec4 hitPoint) {
     // Hit with cone
-    if(hitPoint.getY() <= 0 and hitPoint.getY() > -1) return true;
+    if(hitPoint.getY() <= 0 and hitPoint.getY() > -1
+                and (pow(hitPoint.getX(), 2) + pow(hitPoint.getZ(), 2) - pow(hitPoint.getY(), 2) < EPSILON)) return true;
     // Hit with bottom plane
     if(sqrt(pow(hitPoint.getX(), 2) + pow(hitPoint.getZ(), 2)) <= 1 and fabs(hitPoint.getY()+1) <= EPSILON) return true;
 

@@ -13,3 +13,7 @@ Shape::Shape(Transformation t, LightComponents lightComponents, Material materia
 const Transformation &Shape::getTransformation() const {
     return t;
 }
+
+const LightComponents &Shape::getLightComponents() const {
+    return lightComponents;
+}

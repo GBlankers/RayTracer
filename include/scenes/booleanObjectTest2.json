@@ -1,9 +1,9 @@
 {
   "Scene": true,
   "Camera": {
-    "fov": 100,
+    "fov": 80,
     "pointsAt": [2000, 0, 0],
-    "location": [0, 0, 0]
+    "location": [0, 1500, 0]
   },
   "Objects": [
     {
@@ -53,7 +53,7 @@
           "specularExponent": 10,
           "reflectivity": 0,
           "roughness": 0,
-          "transparency": 0,
+          "transparency": 1,
           "refractiveIndex": 1
         }
       }
@@ -61,7 +61,7 @@
   ],
   "Light": [
     {
-      "position": [500, 1000, 0],
+      "position": [500, 2000, 0],
       "pointsAt": [2300, 0, 0],
       "color": [1, 1, 1]
     }

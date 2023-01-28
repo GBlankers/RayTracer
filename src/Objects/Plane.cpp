@@ -73,3 +73,13 @@ void Plane::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     g = c.getY();
     b = c.getZ();
 }
+
+SingleColor* Plane::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    // uv-map
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = (localHit.getX()+1)/2;
+    double v = (localHit.getZ()+1)/2;
+    // Get color components
+    Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
+    return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
+}

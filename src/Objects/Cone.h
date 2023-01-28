@@ -15,6 +15,7 @@ public:
     Vec4 calculateNormal(Vec4 hitPoint, bool inside) override;
 
     void getColor(Vec4 hitPoint, double &r, double &g, double &b) override;
+    SingleColor* getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) override;
 
     static bool insideUnitCone(Vec4 hitPoint);
 };

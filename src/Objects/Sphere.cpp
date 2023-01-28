@@ -39,6 +39,8 @@ bool Sphere::checkHit(Ray r, double &t, bool &inside, double &t2) {
     double C = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint()) - 1;
     double D = pow(B, 2) - (A * C);
 
+    if(D < 0) return false;
+
     double t1 = (-B-sqrt(D))/A;
     double tt = (-B + sqrt(D)) / A;
 
@@ -67,6 +69,8 @@ bool Sphere::checkHit(Ray r, double &t) {
     double B = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getDirectionVector());
     double C = Vec4::dot(transformedRay.getStartPoint(), transformedRay.getStartPoint()) - 1;
     double D = pow(B, 2) - (A * C);
+
+    if(D < 0) return false;
 
     double t1 = (-B-sqrt(D))/A;
     double t2 = (-B+sqrt(D))/A;
@@ -105,4 +109,14 @@ void Sphere::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     r = c.getX();
     g = c.getY();
     b = c.getZ();
+}
+
+SingleColor* Sphere::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    // uv-map
+    Vec4 localHit = t.getInverse() * hitPoint;
+    double u = 0.5 + (atan2(localHit.getX(), localHit.getZ()) / (2 * M_PI));
+    double v = 0.5 + asin(localHit.getY() * -1) / M_PI;
+    // Get color components
+    Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
+    return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
 }

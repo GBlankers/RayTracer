@@ -33,8 +33,10 @@ public:
 
     virtual Vec4 calculateNormal(Vec4 hitPoint, bool inside) = 0;
     virtual void getColor(Vec4 hitPoint, double &r, double &g, double &b) = 0;
+    virtual SingleColor* getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) = 0;
 
     const Transformation &getTransformation() const;
+    virtual const LightComponents &getLightComponents() const;
 };
 
 #endif //RAYTRACER_SHAPE_H

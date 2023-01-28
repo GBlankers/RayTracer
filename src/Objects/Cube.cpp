@@ -18,6 +18,7 @@ bool Cube::checkInCube(Ray r, double t){
 
 void Cube::give2Smallest(std::vector<double> tList, double &t1, double &t2) {
     if(tList.empty()){t1 = -1; t2 = -1; return;}
+    if(tList.size() == 1){t1 = tList[0]; t2 = -1; return;}
     std::sort(tList.begin(), tList.end());
     t1 = tList[0];
     t2 = tList[1];
@@ -176,4 +177,23 @@ void Cube::getColor(Vec4 hitPoint, double &r, double &g, double &b) {
     r = c.getX();
     g = c.getY();
     b = c.getZ();
+}
+
+SingleColor* Cube::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    Vec4 localHit = t.getInverse()*hitPoint;
+    // uv-map
+    double u, v;
+    if(localHit.getZ() <= (-1+EPSILON) or localHit.getZ() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getY())/2;
+    } else if(localHit.getY() <= (-1+EPSILON) or localHit.getY() >= (1-EPSILON)){
+        u = (1+localHit.getX())/2;
+        v = (1+localHit.getZ())/2;
+    } else {
+        u = (1+localHit.getY())/2;
+        v = (1+localHit.getZ())/2;
+    }
+    // Get color components
+    Vec4 c = l.color->getColor(u, v, localHit, hitPoint);
+    return new SingleColor({c.getX(), c.getY(), c.getZ(), 0});
 }
