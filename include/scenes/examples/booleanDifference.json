@@ -1,0 +1,180 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 100,
+    "pointsAt": [2000, 0, 0],
+    "location": [0, 700, 250]
+  },
+  "Objects": [
+    {
+      "boolean": {
+        "type": "difference",
+        "positiveObject": {
+          "boolean": {
+            "type": "difference",
+            "positiveObject": {
+              "type": "cube",
+              "transformations": [
+                {
+                  "scaling": [600, 600, 600]
+                },
+                {
+                  "translation": [2300, 0, -2000]
+                }
+              ],
+              "color": [0, 0, 1],
+              "ambient": 0.3,
+              "diffuse": 0.7,
+              "specular": 0,
+              "specularExponent": 10,
+              "reflectivity": 0,
+              "roughness": 0,
+              "transparency": 0,
+              "refractiveIndex": 1,
+              "checkerBoard": 0.05
+            },
+            "negativeObject": {
+              "type": "sphere",
+              "transformations": [
+                {
+                  "scaling": [600, 600, 600]
+                },
+                {
+                  "translation": [2300, 0, -1700]
+                }
+              ],
+              "color": [0, 0, 1],
+              "ambient": 0.5,
+              "diffuse": 0.5,
+              "specular": 0.2,
+              "specularExponent": 10,
+              "reflectivity": 0,
+              "roughness": 0,
+              "transparency": 0,
+              "refractiveIndex": 1
+            }
+          }
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2000, 0, -2000]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    },
+    {
+      "boolean": {
+        "type": "difference",
+        "positiveObject": {
+          "type": "cube",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2300, 0, 0]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.3,
+          "diffuse": 0.7,
+          "specular": 0,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1,
+          "checkerBoard": 0.05
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [800, 800, 800]
+            },
+            {
+              "translation": [2300, 0, 0]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    },
+    {
+      "boolean": {
+        "type": "difference",
+        "positiveObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [700, 700, 700]
+            },
+            {
+              "translation": [2300, 0, 2000]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.3,
+          "diffuse": 0.7,
+          "specular": 0,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1,
+          "checkerBoard": 0.05
+        },
+        "negativeObject": {
+          "type": "cube",
+          "transformations": [
+            {
+              "scaling": [500, 500, 500]
+            },
+            {
+              "translation": [2300, 0, 2000]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    }
+  ],
+  "Light": [
+    {
+      "position": [500, 2000, 0],
+      "pointsAt": [2300, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ]
+}

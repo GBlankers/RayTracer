@@ -36,6 +36,9 @@ Collision DifferenceBool::checkCollision(Ray r) {
             } else if(c2.isInside()){ // ray inside the negative object
                 return {};
             } else if(tin1 < tout2){ // ray outside and overlap
+                if(tout1<tout2){ // positive is consumed by the negative
+                    return {};
+                }
                 newT1 = tout2;
                 newT2 = tout1;
                 LightComponents temp = s1->getLightComponents();

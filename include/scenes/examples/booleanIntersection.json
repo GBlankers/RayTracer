@@ -1,0 +1,152 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 100,
+    "pointsAt": [2000, 0, 0],
+    "location": [0, 0, 0]
+  },
+  "Objects": [
+    {
+      "boolean": {
+        "type": "intersection",
+        "positiveObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [1200, 1200, 1200]
+            },
+            {
+              "translation": [2700, 0, 500]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [900, 900, 900]
+            },
+            {
+              "translation": [2700, 0, -500]
+            }
+          ],
+          "color": [1, 0, 0],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    },
+    {
+      "boolean": {
+        "type": "intersection",
+        "positiveObject": {
+          "type": "cone",
+          "transformations": [
+            {
+              "scaling": [1200, 1200, 1200]
+            },
+            {
+              "translation": [2700, 0, -2000]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [900, 900, 900]
+            },
+            {
+              "translation": [2700, 0, -2000]
+            }
+          ],
+          "color": [1, 0, 0],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    },
+    {
+      "boolean": {
+        "type": "intersection",
+        "positiveObject": {
+          "type": "cube",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2700, 0, 2000]
+            }
+          ],
+          "color": [0, 0, 1],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        },
+        "negativeObject": {
+          "type": "sphere",
+          "transformations": [
+            {
+              "scaling": [600, 600, 600]
+            },
+            {
+              "translation": [2700, 400, 1800]
+            }
+          ],
+          "color": [1, 0, 0],
+          "ambient": 0.5,
+          "diffuse": 0.5,
+          "specular": 0.2,
+          "specularExponent": 10,
+          "reflectivity": 0,
+          "roughness": 0,
+          "transparency": 0,
+          "refractiveIndex": 1
+        }
+      }
+    }
+  ],
+  "Light": [
+    {
+      "position": [500, 2000, 0],
+      "pointsAt": [2300, 0, 0],
+      "color": [1, 1, 1]
+    }
+  ]
+}

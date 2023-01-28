@@ -23,7 +23,7 @@ All the written code can be found in this folder. Under src, the main classes us
 - Colors. Different possibilities to give a color to an object: using an image, a single color or using a checkerboard pattern. Other solid textures can be added here.
 - Math. Math related classes/functions for matrices, vectors and random number generators.
 - Normal. Classes used for normal manipulation. This can be done using a roughness parameter, where the normal is adapted based on a random vector. Or using a normal image which gives information about how the normal should be to represent a type of material.
-- Objects. All the different shapes can be found here (plane, cube, sphere and cone) as well as light sources, a skybox(what if a ray does not hit anything? -> it gets the color of the skybox) and object properties structs to keep the object classes more clean.
+- Objects. All the different shapes can be found here (plane, cube, sphere and cone) as well as boolean objects, light sources, a skybox(what if a ray does not hit anything? -> it gets the color of the skybox) and object properties structs to keep the object classes more clean.
 
 
 ## Features
@@ -37,6 +37,7 @@ All the written code can be found in this folder. Under src, the main classes us
 - anti-aliasing
 - roughness and normal mapping defined with a custom `png` file.
 - multi-threading to speed up the rendering.
+- Boolean Objects (union, difference, intersection).
 
 ## Creating a New Scene
 ### How to?
@@ -87,6 +88,14 @@ The scene files are json files which need to have certain keywords in order to b
       - **(Optional)**`"transparency": double`, is the object see through. Default is 0. **Needs to be between 0 and 1**
         - `"refractiveIndex": double`, when the object is transparent, we also need to define a refractive index. Default is 1.
   - **(Optional)**`"normalMap"`, use an image to construct the normals of the object. This file needs to be located in the assets' folder, the path will be `"../assets/<filename>.png"`
+- The `"Objects"` list can also have boolean objects. These are defined in an object with the `"boolean"` keyword. This keyword contains an object as value which has to following properties:
+  - `"type"`, the type of boolean object. This can be:
+    - `"union"`, combine 2 shapes in 1 shape
+    - `"intersection"`, take the intersection of 2 shapes
+    - `"difference"`, remove a shape from another shape
+  - `"positiveObject"`, the first object. This can also be a boolean object
+  - `"negativeObject"`, the second object. This can also be a boolean object.
+  - **(Optional)**`"transformations"`, give the total boolean object a transformation. See Object>transformations for more information.
 
 ## Dependencies
 - rapidJSON
