@@ -234,24 +234,29 @@ Vec4 refract(Collision c, int bouncesToDo, const Scene& scene){
 
 Vec4 objectColorHit(Collision& c, int bouncesToDo, const Scene& scene){
     Vec4 color, reflection, refraction;
-
+    // material properties will be used to scale the different parts of the color
     Material m = c.getMaterial();
     // For every point calculate the lighting, always present
     color = lighting(c, scene);
 
+    // We need to limit the amount of bounces to eliminate infinite loops between reflective and refractive objects.
     if(bouncesToDo == 0){
         return color;
     }
 
     // Object is reflective
     if(m.reflectivity>EPSILON){
+        // calculate the color of the reflection and scale it using the reflectivity material property
         reflection = reflect(c, bouncesToDo-1, scene)*m.reflectivity;
+        // Add the reflection part to the total color
         color += reflection;
     }
 
     // Object is transparent
     if(m.transparency>EPSILON){
+        // calculate the refracted color and scale it using the transparency material property
         refraction = refract(c, bouncesToDo-1, scene)*m.transparency;
+        // Add the refraction part to the total color
         color += refraction;
     }
 
@@ -362,6 +367,7 @@ void renderer(){
         }
     }
 
+    // Print duration of rendering for comparisons
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Time elapsed during rendering: " << duration.count() << " s" << std::endl;

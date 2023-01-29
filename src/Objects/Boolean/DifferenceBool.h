@@ -9,7 +9,6 @@
  */
 class DifferenceBool : public BooleanObject{
 public:
-    DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2);
     DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2, Transformation t);
 
     Collision checkCollision(Ray r) override;

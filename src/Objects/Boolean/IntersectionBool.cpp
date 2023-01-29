@@ -1,6 +1,5 @@
 #include "IntersectionBool.h"
 
-IntersectionBool::IntersectionBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2) : BooleanObject(std::move(s1), std::move(s2)) {}
 IntersectionBool::IntersectionBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2, Transformation t) : BooleanObject(std::move(s1), std::move(s2),t) {}
 
 Collision IntersectionBool::checkCollision(Ray r) {

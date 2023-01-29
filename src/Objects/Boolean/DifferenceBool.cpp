@@ -1,6 +1,5 @@
 #include "DifferenceBool.h"
 
-DifferenceBool::DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2) : BooleanObject(std::move(s1), std::move(s2)){}
 DifferenceBool::DifferenceBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2, Transformation t) : BooleanObject(std::move(s1), std::move(s2), t) {}
 
 Collision DifferenceBool::checkCollision(Ray r) {
@@ -78,11 +77,42 @@ bool DifferenceBool::checkHit(Ray r, double &t) {
     Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
     double tin1 = c1.getT(), tout1 = c1.getT2(), tin2 = c2.getT(), tout2 = c2.getT2();
 
+//    if(tin1 > 0){ // there is a hit with the positive object
+//        if(tin2 > 0){ // there is a hit with the negative object
+//            if(tin2 < tin1){ // negative object is hit first
+//                t = tin2;
+//                if(c1.isInside() and c2.isInside()){ // ray inside both objects and negative is hit first
+//                    return true;
+//                } else if(c1.isInside()){ // ray inside the positive object
+//                    return true;
+//                } else if(c2.isInside()){ // ray only inside the second object -> no hit
+//                    return false;
+//                } else { // ray outside
+//                    // check overlap
+//                    if(tin1 < tout2){
+//                        t = tout2;
+//                        return true;
+//                    } else if (tout1 < tout2){// check if fully consumed
+//                        return false;
+//                    }
+//                }
+//            } else {
+//                t = tin1;
+//                return true;
+//            }
+//        }
+//        t = tin1;
+//        return true; // Hit with the positive and not with the negative will always be a hit
+//    }
+//    // If the positive object is not hit then there will be no hit
+//    return false;
+
     // Hit with the positive object
     if(tin1 > 0){
+        // Ray is inside both objects
         if(tout1 <= 0 and tout2 <= 0) {t = -1; return false;}
-        // No hit with the negative object or the positive object is hit first or negative and positive do not touch
-        if(tin2 < 0 or (tin1 < tin2 and tin2 > 0) or tout2 < tin1) {t = tin1;return true;}
+        // No hit with the negative object || the positive object is hit first || negative and positive do not touch
+        if(tin2 < 0 or (tin1 < tin2 and tin2 > 0) or tout2 < tin1) {t = tin1; return true;}
         // Negative object ends inside the positive object
         if(tout2 < tout1){t = tout2; return true;}
         // Negative object consumes the positive object => nothing will be hit
@@ -91,55 +121,6 @@ bool DifferenceBool::checkHit(Ray r, double &t) {
     }
     t = -1;
     return false;
-
-
-    // DOES NOT WORK
-//    // Check for transformation at boolean object level
-//    Ray transformedRay = r;
-//    if(!this->t.getEmpty()){
-//        Matrix4 inverse = getTransformation().getInverse();
-//        transformedRay = r.transform(inverse);
-//    }
-//
-//    // Get all collisions and t's of in and out
-//    Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
-//    double tin1 = c1.getT(), tin2 = c2.getT(), tout2= c2.getT2();
-//
-//    // Hit with the positive object
-//    if(tin1 > 0){
-//        // no hit with the negative object -> nothing will be deleted
-//        if(tin2 < 0){t = tin1; return true;}
-//        // negative object is hit first
-//        if(tin2 < tin1){
-//            if(c1.isInside() and c2.isInside()){ // ray inside both objects
-//                t = tin2;
-//                return true;
-//            } else if(c1.isInside()){ // ray inside the positive object
-//                t = tin2;
-//                return true;
-//            } else if(c2.isInside()){ // ray inside the negative object
-//                t = -1;
-//                return false;
-//            } else if(tin1 < tout2){ // ray outside and overlap
-//                t = tout2;
-//                return true;
-//            } else { // ray outside and no overlap
-//                t = tin1;
-//                return true;
-//            }
-//        }
-//        // Positive object is hit first
-//        // ray inside both objects and positive hit first -> will be deleted by negative object
-//        if(c1.isInside() and c2.isInside()){ t = -1; return false;}
-//        else if(c2.isInside()){ // inside the negative object
-//            t = tin2;
-//            return true;
-//        }
-//        t = tin1;
-//        return true;
-//    }
-//    t = -1;
-//    return false;
 }
 
 const LightComponents &DifferenceBool::getLightComponents() const {

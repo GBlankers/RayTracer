@@ -1,6 +1,5 @@
 #include "UnionBool.h"
 
-UnionBool::UnionBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2) : BooleanObject(std::move(s1), std::move(s2)) {}
 UnionBool::UnionBool(std::shared_ptr<Shape> s1, std::shared_ptr<Shape> s2, Transformation t) : BooleanObject(std::move(s1), std::move(s2),t) {}
 
 Collision UnionBool::checkCollision(Ray r) {
