@@ -64,7 +64,6 @@ Collision DifferenceBool::checkCollision(Ray r) {
     return {};
 }
 
-// TODO : check different implementation
 bool DifferenceBool::checkHit(Ray r, double &t) {
     // Check for transformation at boolean object level
     Ray transformedRay = r;
@@ -76,36 +75,6 @@ bool DifferenceBool::checkHit(Ray r, double &t) {
     // Get all collisions and t's of in and out
     Collision c1 = s1->checkCollision(transformedRay), c2 = s2->checkCollision(transformedRay);
     double tin1 = c1.getT(), tout1 = c1.getT2(), tin2 = c2.getT(), tout2 = c2.getT2();
-
-//    if(tin1 > 0){ // there is a hit with the positive object
-//        if(tin2 > 0){ // there is a hit with the negative object
-//            if(tin2 < tin1){ // negative object is hit first
-//                t = tin2;
-//                if(c1.isInside() and c2.isInside()){ // ray inside both objects and negative is hit first
-//                    return true;
-//                } else if(c1.isInside()){ // ray inside the positive object
-//                    return true;
-//                } else if(c2.isInside()){ // ray only inside the second object -> no hit
-//                    return false;
-//                } else { // ray outside
-//                    // check overlap
-//                    if(tin1 < tout2){
-//                        t = tout2;
-//                        return true;
-//                    } else if (tout1 < tout2){// check if fully consumed
-//                        return false;
-//                    }
-//                }
-//            } else {
-//                t = tin1;
-//                return true;
-//            }
-//        }
-//        t = tin1;
-//        return true; // Hit with the positive and not with the negative will always be a hit
-//    }
-//    // If the positive object is not hit then there will be no hit
-//    return false;
 
     // Hit with the positive object
     if(tin1 > 0){
@@ -129,4 +98,8 @@ const LightComponents &DifferenceBool::getLightComponents() const {
 
 bool DifferenceBool::isPointInside(Vec4 hitPoint) const {
     return s1->isPointInside(hitPoint) and !s2->isPointInside(hitPoint);
+}
+
+SingleColor *DifferenceBool::getBooleanDifferenceColor(Vec4 hitPoint, LightComponents l) {
+    return s1->getBooleanDifferenceColor(hitPoint, l);
 }

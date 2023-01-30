@@ -1,7 +1,5 @@
 #include "Cube.h"
 
-#include <utility>
-
 Cube::Cube(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 

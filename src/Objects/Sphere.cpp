@@ -1,7 +1,5 @@
 #include "Sphere.h"
 
-#include <utility>
-
 Sphere::Sphere(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
 
@@ -37,9 +35,11 @@ bool Sphere::checkHit(Ray r, double &t, bool &inside, double &t2) {
 
     if(D < 0) return false;
 
+    // Get both the hit points
     double t1 = (-B-sqrt(D))/A;
     double tt = (-B + sqrt(D)) / A;
 
+    // check which hit is closer
     if((t1 < tt and t1 > 0) or (t1 > 0 and tt < 0)){
         t = t1;
         t2 = tt;

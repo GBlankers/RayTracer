@@ -4,6 +4,9 @@
 #include "Shape.h"
 #include "LightSource.h"
 
+/**
+ * Implementation for the plane shape
+ */
 class Plane : public Shape{
 public:
     explicit Plane(const Transformation &t, LightComponents lightComponents, Material material);

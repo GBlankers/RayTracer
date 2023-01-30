@@ -1,5 +1,4 @@
 #include "Cone.h"
-#include <iostream>
 
 Cone::Cone(const Transformation &t, LightComponents lightComponents, Material material) :
         Shape(t, LightComponents(std::move(lightComponents)), Material(std::move(material))) {}
@@ -73,8 +72,6 @@ bool Cone::checkHit(Ray r, double &t, bool &inside, double &t2) {
         t2 = -1;
         return true;
     }
-
-    return false;
 }
 
 bool Cone::checkHit(Ray r, double &t) {
