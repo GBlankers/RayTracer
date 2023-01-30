@@ -10,7 +10,7 @@ const int H = (int)WINDOW_HEIGHT;
 // Anti alias samples
 #define ANTI_ALIAS_SAMPLING 8
 // Number of max reflections/refractions
-#define BOUNCES 4
+#define BOUNCES 3
 // Computer error
 #define EPSILON 0.000000001
 // Number of threads

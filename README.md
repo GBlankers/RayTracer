@@ -28,16 +28,18 @@ All the written code can be found in this folder. Under src, the main classes us
 
 ## Features
 - Different objects: sphere, cube, plane, cone
-- Easily definable camera (position + looks at + up vector angle)
-- Light sources with custom intensity, color and location
-- Skybox with color or png image
-- SDL using json to define the scene
 - phong lighting (ambient, diffuse, specular)
 - reflection and refraction up to custom depth with definable reflectivity, roughness, transparency and refractive index
+- Light sources with custom intensity, color and location
+- Easily definable camera (position + looks at + up vector angle)
+- Solid textures (images, wood grain, checkerboard, marble).
+- Boolean Objects (union, difference, intersection).
+- Skybox with color or png image
 - anti-aliasing
 - roughness and normal mapping defined with a custom `png` file.
+- Pre-definable materials and colors
+- SDL using json to define the scene
 - multi-threading to speed up the rendering.
-- Boolean Objects (union, difference, intersection).
 
 ## Creating a New Scene
 ### How to?

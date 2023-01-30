@@ -1,0 +1,34 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 100,
+    "pointsAt": [1500, 100, 0],
+    "location": [500, 800, 2000],
+    "angle": [40, 0]
+  },
+  "Objects": [
+    {
+      "type": "sphere",
+      "transformations": [
+        {"scaling": [700, 700, 700]},
+        {"translation": [3000, 0, -1000]}
+      ],
+      "color": [1, 0, 0],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0
+    }
+  ],
+  "Light": [
+    {
+      "position": [1000, 2000, 2000],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1],
+      "intensity": 1
+    }
+  ],
+  "SkyBox": {"path": "../assets/background.png"}
+}

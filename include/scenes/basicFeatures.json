@@ -1,0 +1,130 @@
+{
+  "Scene": true,
+  "Camera": {
+    "fov": 100,
+    "pointsAt": [1500, 100, 0],
+    "location": [0, 400, 0]
+  },
+  "Objects": [
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [700, 700, 700]
+        },
+        {
+          "translation": [3000, 0, -1000]
+        }
+      ],
+      "color": [1, 0, 0],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0
+    },
+    {
+      "type": "cube",
+      "transformations": [
+        {
+          "rotation": [
+            {
+              "x": 60
+            },
+            {
+              "z" : -60
+            }
+          ]
+        },
+        {
+          "scaling": [500, 500, 500]
+        },
+        {
+          "translation": [3000, 0, 1000]
+        }
+      ],
+      "color": [0, 1, 0],
+      "ambient": 0.2,
+      "diffuse": 0.6,
+      "specular": 0.3,
+      "specularExponent": 10,
+      "reflectivity": 0.1,
+      "roughness": 0
+    },
+    {
+      "type": "plane",
+      "transformations": [
+        {
+          "scaling": [1300, 1, 3000]
+        },
+        {
+          "translation": [2200, -800, 0]
+        }
+      ],
+      "color": [0.68, 0.7, 0.74],
+      "ambient": 0.4,
+      "diffuse": 0.2,
+      "specular": 0,
+      "specularExponent": 10,
+      "reflectivity": 0.1,
+      "roughness": 0
+    },
+    {
+      "type": "sphere",
+      "transformations": [
+        {
+          "scaling": [400, 400, 400]
+        },
+        {
+          "translation": [1000, -300, 400]
+        }
+      ],
+      "color": [1, 1, 1],
+      "ambient": 0.1,
+      "diffuse": 0,
+      "specular": 0,
+      "specularExponent": 10,
+      "reflectivity": 0,
+      "roughness": 0,
+      "transparency": 0.8,
+      "refractiveIndex": 0.6
+    },
+    {
+      "type": "cone",
+      "transformations": [
+        {
+          "scaling": [400, 600, 400]
+        },
+        {
+          "rotation": [
+            {
+              "x": 45
+            },
+            {
+              "y": 30
+            }
+          ]
+        },
+        {
+          "translation": [1500, 200, -1700]
+        }
+      ],
+      "color": [0, 0, 1],
+      "ambient": 0.3,
+      "diffuse": 0.5,
+      "specular": 0,
+      "specularExponent": 10,
+      "reflectivity": 0.3,
+      "roughness": 0
+    }
+  ],
+  "Light": [
+    {
+      "position": [1000, 2000, 2000],
+      "pointsAt": [2500, 0, 0],
+      "color": [1, 1, 1],
+      "intensity": 1
+    }
+  ]
+}
