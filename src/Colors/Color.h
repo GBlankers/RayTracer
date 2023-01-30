@@ -6,8 +6,12 @@
 #include <string>
 #include <vector>
 
+/**
+ * Abstract color class, used for solid textures
+ */
 class Color {
 public:
+
     explicit Color() = default;
 
     /**

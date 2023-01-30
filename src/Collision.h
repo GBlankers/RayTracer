@@ -5,6 +5,9 @@
 #include "Objects/objectProperties.h"
 #include "Ray.h"
 
+/**
+ * Collision class to keep all the important information about a collision
+ */
 class Collision {
 private:
     Ray incoming; // incoming ray

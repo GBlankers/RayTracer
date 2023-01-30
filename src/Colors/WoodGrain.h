@@ -3,8 +3,14 @@
 
 #include "Color.h"
 
+/**
+ * Solid texture to give a wood pattern to objects
+ */
 class WoodGrain : public Color{
 private:
+    /**
+     * Different parameters to change the pattern
+     */
     double M, K, N, B;
 public:
     explicit WoodGrain(double M = 12, double K = 4, double N = 0.4, double B = 0.006);

@@ -4,6 +4,10 @@
 #include "Vec4.h"
 #include <cmath>
 
+/**
+ * Matrix class, ray tracer transformations can be added (scaling, translation and rotation) as well as operator overloading
+ * to easily to matrix-vector math where needed
+ */
 class Matrix4 {
 public:
     double matrix[4][4] = {{1,0,0,0},{0,1,0,0},

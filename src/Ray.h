@@ -4,6 +4,9 @@
 #include "Math/Vec4.h"
 #include "Math/Matrix4.h"
 
+/**
+ * Ray class with the parameters of the ray as well as methods to transform the ray and to get the hit point at a certain time point
+ */
 class Ray {
 private:
     Vec4 startPoint; // Starting point

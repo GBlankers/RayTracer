@@ -5,8 +5,6 @@ Vec4 WoodGrain::getColor(double u, double v, Vec4 localHit, Vec4 worldHit) {
     double temp = (r/M)+K*sin((asin(localHit.getY())/N)+B*worldHit.getY());
     int rings = ((int)(temp))%2;
 
-
-
     // Darker brown
     Vec4 color1 = {164.0/256, 116.0/256, 73.0/256, 0};
     // Lighter brown

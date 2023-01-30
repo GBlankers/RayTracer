@@ -4,6 +4,9 @@
 #include "Math/Vec4.h"
 #include "Math/Matrix4.h"
 
+/**
+ * A transformation class to do all the necessary math to calculate the forward and inverse transformation matrices
+ */
 class Transformation {
 private:
     Matrix4 forward;

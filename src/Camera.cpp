@@ -29,10 +29,6 @@ Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement, double
     this->crossDirection = Vec4::cross(this->viewDirection, this->upDirection);
 }
 
-Ray Camera::getRayFromPixel(double pixelX, double pixelY) {
-    return {eyePosition,Vec4::normalize((displacement+crossDirection*pixelX+upDirection*pixelY)-eyePosition)};
-}
-
 Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : displacement(virtualScreenDisplacement){
     this->distanceEyeFromScreen = W/(tan(fov*M_PI/360));
     this->viewDirection = Vec4::normalize(pointsAt-virtualScreenDisplacement);
@@ -53,6 +49,10 @@ Camera::Camera(double fov, Vec4 pointsAt, Vec4 virtualScreenDisplacement) : disp
 
     // Cross vector calculation
     this->crossDirection = Vec4::cross(this->viewDirection, this->upDirection);
+}
+
+Ray Camera::getRayFromPixel(double pixelX, double pixelY) {
+    return {eyePosition,Vec4::normalize((displacement+crossDirection*pixelX+upDirection*pixelY)-eyePosition)};
 }
 
 #pragma clang diagnostic pop

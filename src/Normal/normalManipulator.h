@@ -3,6 +3,9 @@
 
 #include "../Math/Vec4.h"
 
+/**
+ * Class to manipulate normals
+ */
 class normalManipulator {
 public:
     explicit normalManipulator() = default;

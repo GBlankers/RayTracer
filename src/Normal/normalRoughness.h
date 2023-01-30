@@ -3,8 +3,14 @@
 
 #include "normalManipulator.h"
 
+/**
+ * Use the roughness parameter to randomly change the normals
+ */
 class normalRoughness : public normalManipulator{
 private:
+    /**
+     * Use hashes of the coordinates to generate the random values
+     */
     std::hash<double> doubleHash;
 public:
     normalRoughness() = default;

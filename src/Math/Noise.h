@@ -8,6 +8,9 @@
 #define INDEX(ix, iy, iz) PERM(ix + PERM(iy + PERM(iz)))
 #define linearInterpolation(F, A, B) A+F*(B-A)
 
+/**
+ * Noise class used for marble. Implementation from the ray tracing book
+ */
 class Noise {
 private:
     float* noiseTable;

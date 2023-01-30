@@ -6,6 +6,9 @@
 #include <algorithm>
 #include "Utils.h"
 
+/**
+ * Vector class. With operator overloading, vector math and basic getters/setters
+ */
 class Vec4 {
 private:
     double x, y, z;

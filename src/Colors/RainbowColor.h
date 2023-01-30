@@ -3,6 +3,9 @@
 
 #include "Color.h"
 
+/**
+ * Solid texture for a rainbow pattern
+ */
 class RainbowColor : public Color{
 public:
     RainbowColor() = default;

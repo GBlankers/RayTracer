@@ -1,6 +1,7 @@
 #include "CheckerBoard.h"
 
 CheckerBoard::CheckerBoard(Vec4 c1, Vec4 c2, double size) {
+    // make sure the colors are within range
     assert(c1.getX()>=0 && c1.getX()<=1.0);
     assert(c1.getY()>=0 && c1.getY()<=1.0);
     assert(c1.getZ()>=0 && c1.getZ()<=1.0);
@@ -15,6 +16,7 @@ CheckerBoard::CheckerBoard(Vec4 c1, Vec4 c2, double size) {
 Vec4 CheckerBoard::getColor(double u, double v, Vec4 localHit, Vec4 worldHit) {
     int A = 100; // shift pattern to not get origin weirdness
 
+    // Checkerboard formula
     if(((int) (A + u / checkerBoardSize) + (int) (A + v / checkerBoardSize)) % 2){
         return color1;
     }
